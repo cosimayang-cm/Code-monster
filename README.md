@@ -1,93 +1,45 @@
-# CodeMonster
+# CodeMonster 🐲
 
+> 名稱靈感來自知名 YouTuber [酷的夢](https://www.youtube.com/@Kudreamwastaken) 的 Chinese Monster
 
+## 這是什麼？
 
-## Getting started
+CodeMonster 是一個程式架構設計練習場。這裡會出各種程式設計題目，讓你練習：
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- 設計模式 (Design Patterns)
+- 軟體架構設計
+- API 介面設計
+- 程式碼組織與模組化
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## 目錄結構
 
 ```
-cd existing_repo
-git remote add origin http://192.168.10.147:8080/marvin_lin/CodeMonster.git
-git branch -M master
-git push -uf origin master
+CodeMonster/
+├── CodeMonsters/     # 題目區 - 所有的設計題目都在這裡
+│   └── monster1.md   # 題目 #1: Feature Toggle 車輛系統
+├── cosima/           # Cosima 的解答
+├── sonia/            # Sonia 的解答
+└── yuta/             # Yuta 的解答
 ```
 
-## Integrate with your tools
+## 如何參與
 
-- [ ] [Set up project integrations](http://192.168.10.147:8080/marvin_lin/CodeMonster/-/settings/integrations)
+1. 到 `CodeMonsters/` 資料夾選擇一個題目
+2. 在你的專屬資料夾內建立解答
+3. 每個人的解法可能不同，重點是思考
+4. 在寫完第一版後， **要自己再題目上，再加條件**
+5. 在然後再寫一版，加上條件後的程式碼    
 
-## Collaborate with your team
+> 💡 **關於題目份量**
+>
+> 題目的實作量是以「有 AI Agent 輔助 coding」為前提設計的，因此元件數量、功能數量會比傳統練習題多。建議搭配 AI 工具（如 Claude Code、Cursor、Copilot 等）一起完成。
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## 目前題目
 
-## Test and Deploy
+| # | 題目名稱 | 學習重點 |
+|---|----------|----------|
+| 1 | [Feature Toggle 車輛系統](CodeMonsters/monster1.md) | Feature Toggle 設計模式、功能相依性管理 |
 
-Use the built-in continuous integration in GitLab.
+## 貢獻新題目
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+歡迎在 `CodeMonsters/` 資料夾新增題目，命名格式：`monster{編號}.md`

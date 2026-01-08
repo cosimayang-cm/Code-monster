@@ -18,19 +18,25 @@
 | # | 元件 | 類別名稱 | 類型 | 可 Toggle |
 |---|------|----------|------|-----------|
 | 1 | 車輪 | `Wheel` | 必要 | 否 |
-| 2 | 引擎 | `Engine` | 必要 | 否 |
-| 3 | 空調系統 | `AirConditioner` | 選配 | 是 |
-| 4 | 導航系統 | `NavigationSystem` | 選配 | 是 |
-| 5 | 自動駕駛 | `AutoPilot` | 選配 | 是 |
-| 6 | 倒車鏡頭 | `RearCamera` | 選配 | 是 |
-| 7 | 停車輔助 | `ParkingAssist` | 選配 | 是 |
-| 8 | 車道維持 | `LaneKeeping` | 選配 | 是 |
-| 9 | 盲點偵測 | `BlindSpotDetection` | 選配 | 是 |
-| 10 | 緊急煞車 | `EmergencyBraking` | 選配 | 是 |
+| 2 | 引擎 | `Engine` | 必要 | 否（但有 start/stop） |
+| 3 | 電池 | `Battery` | 必要 | 否 |
+| 4 | 中控電腦 | `CentralComputer` | 必要 | 否（但有 on/off） |
+| 5 | 空調系統 | `AirConditioner` | 選配 | 是 |
+| 6 | 導航系統 | `NavigationSystem` | 選配 | 是 |
+| 7 | 娛樂系統 | `EntertainmentSystem` | 選配 | 是 |
+| 8 | 藍牙系統 | `BluetoothSystem` | 選配 | 是 |
+| 9 | 倒車鏡頭 | `RearCamera` | 選配 | 是 |
+| 10 | 環景攝影 | `SurroundViewCamera` | 選配 | 是 |
+| 11 | 盲點偵測 | `BlindSpotDetection` | 選配 | 是 |
+| 12 | 前方雷達 | `FrontRadar` | 選配 | 是 |
+| 13 | 停車輔助 | `ParkingAssist` | 選配 | 是 |
+| 14 | 車道維持 | `LaneKeeping` | 選配 | 是 |
+| 15 | 緊急煞車 | `EmergencyBraking` | 選配 | 是 |
+| 16 | 自動駕駛 | `AutoPilot` | 選配 | 是 |
 
 ### Car 類別 Spec
 
-- 定義 `Feature` 列舉，包含八個可 toggle 的功能
+- 定義 `Feature` 列舉，包含 12 個可 toggle 的功能
 - 定義 `FeatureError` 錯誤類型
 - `Car` 類別需提供以下功能：
   - 啟用指定功能，回傳成功或錯誤
@@ -44,50 +50,65 @@
 
 ### 功能相依性
 
-| 功能 | 相依條件 |
-|------|----------|
-| `airConditioner` | 無相依 |
-| `navigation` | Engine 運行中 |
-| `rearCamera` | Engine 運行中 |
-| `blindSpotDetection` | Engine 運行中 |
-| `parkingAssist` | RearCamera + BlindSpotDetection |
-| `laneKeeping` | Navigation + BlindSpotDetection |
-| `emergencyBraking` | BlindSpotDetection |
-| `autoPilot` | Navigation + LaneKeeping + EmergencyBraking |
+| 功能 | 相依條件 | 說明 |
+|------|----------|------|
+| `airConditioner` | 中控電腦 | 冷氣由中控電腦控制 |
+| `navigation` | 中控電腦 | 導航顯示在中控螢幕 |
+| `entertainment` | 中控電腦 | 音樂、影片等娛樂功能 |
+| `bluetooth` | 中控電腦 | 藍牙連接手機等裝置 |
+| `rearCamera` | 中控電腦 | 倒車影像顯示在中控螢幕 |
+| `surroundView` | 中控電腦 + 倒車鏡頭 | 環景需要多個鏡頭，含倒車鏡頭 |
+| `blindSpotDetection` | 中控電腦 | 偵測兩側盲點 |
+| `frontRadar` | 中控電腦 | 偵測前方障礙物 |
+| `parkingAssist` | 環景攝影 + 盲點偵測 | 停車時需要全方位感知 |
+| `laneKeeping` | 導航 + 前方雷達 + 引擎運行中 | 行駛中才需要車道維持 |
+| `emergencyBraking` | 前方雷達 + 引擎運行中 | 行駛中偵測前方障礙自動煞車 |
+| `autoPilot` | 車道維持 + 緊急煞車 + 環景攝影 | 最高階自駕需要所有輔助系統 |
 
 ### 相依性圖
 
 ```
+                         ┌─────────────────┐
+                         │    AutoPilot    │
+                         └────────┬────────┘
+                ┌─────────────────┼─────────────────┐
+                ▼                 ▼                 ▼
+         ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
+         │ LaneKeeping │   │ Emergency   │   │ SurroundView│
+         │             │   │ Braking     │   │ Camera      │
+         └──────┬──────┘   └──────┬──────┘   └──────┬──────┘
+                │                 │                 │
+       ┌────────┼────────┐        │          ┌──────┴──────┐
+       ▼        ▼        ▼        ▼          ▼             ▼
+┌──────────┐ ┌───────┐ ┌───────────┐   ┌───────────┐ ┌───────────┐
+│Navigation│ │Front  │ │  Engine   │   │ RearCamera│ │ Parking   │
+│          │ │Radar  │ │ (運行中)   │   │           │ │ Assist    │
+└────┬─────┘ └───┬───┘ └───────────┘   └─────┬─────┘ └─────┬─────┘
+     │           │                           │             │
+     │           │                           │      ┌──────┴──────┐
+     │           │                           │      ▼             ▼
+     │           │                           │ ┌───────────┐ ┌───────────┐
+     │           │                           │ │SurroundView│ │BlindSpot │
+     │           │                           │ │Camera     │ │Detection │
+     │           │                           │ └─────┬─────┘ └─────┬─────┘
+     │           │                           │       │             │
+     └───────────┴───────────┬───────────────┴───────┴─────────────┘
+                             ▼
                     ┌─────────────────┐
-                    │    AutoPilot    │
-                    └────────┬────────┘
-           ┌─────────────────┼─────────────────┐
-           ▼                 ▼                 ▼
-    ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
-    │ LaneKeeping │   │ Navigation  │   │ Emergency   │
-    │             │   │             │   │ Braking     │
-    └──────┬──────┘   └──────┬──────┘   └──────┬──────┘
-           │                 │                 │
-     ┌─────┴─────┐           │                 │
-     ▼           ▼           │                 │
-┌─────────┐ ┌─────────────┐  │                 │
-│Navigation│ │BlindSpot   │◀─┴─────────────────┘
-│         │ │Detection   │
-└────┬────┘ └──────┬─────┘
-     │             │
-     │      ┌──────┴──────┐
-     │      ▼             ▼
-     │ ┌─────────┐ ┌─────────────┐
-     │ │Parking  │ │ RearCamera  │
-     │ │Assist   │ └──────┬──────┘
-     │ └────┬────┘        │
-     │      │             │
-     └──────┴──────┬──────┘
-                   ▼
-            ┌─────────────┐
-            │   Engine    │
-            │ (運行中)     │
-            └─────────────┘
+                    │ CentralComputer │
+                    │    (開啟中)      │
+                    └─────────────────┘
+
+獨立功能（僅依賴中控電腦）：
+┌───────────────┐  ┌───────────────┐  ┌───────────────┐
+│AirConditioner │  │Entertainment  │  │  Bluetooth    │
+└───────┬───────┘  └───────┬───────┘  └───────┬───────┘
+        │                  │                  │
+        └──────────────────┼──────────────────┘
+                           ▼
+                  ┌─────────────────┐
+                  │ CentralComputer │
+                  └─────────────────┘
 ```
 
 ### 啟用/停用邏輯
@@ -97,11 +118,32 @@
   - 方案 A: 回傳錯誤，拒絕停用
   - 方案 B: 連帶停用所有依賴它的功能（遞迴）
 
----
+### 中控電腦狀態整合
 
-## 進階需求
+- CentralComputer 需有 on/off 功能與運行狀態
+- CentralComputer 關閉時，所有依賴它的功能必須連鎖停用
 
 ### Engine 狀態整合
 
 - Engine 需有 start/stop 功能與運行狀態
-- Engine 停止時，所有依賴 Engine 的功能必須連鎖停用
+- Engine 停止時，僅影響需要「引擎運行中」的功能（LaneKeeping、EmergencyBraking）
+- 注意：大部分功能只需要中控電腦，不需要引擎運行
+
+---
+
+## 使用範例
+
+```swift
+let car = Car()
+```
+
+使用者應該可以透過 `car` 物件進行以下操作：
+
+- 開啟/關閉中控電腦
+- 啟動/停止引擎
+- 啟用指定功能（若相依條件不滿足，應回傳錯誤）
+- 停用指定功能（若有其他功能依賴此功能，應連鎖停用或回傳錯誤）
+- 查詢指定功能是否已啟用
+- 取得目前所有已啟用功能的列表
+- 當中控電腦關閉時，所有依賴它的功能應自動停用
+- 當引擎停止時，需要引擎運行的功能應自動停用
