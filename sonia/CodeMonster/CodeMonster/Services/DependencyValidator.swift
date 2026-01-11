@@ -8,7 +8,7 @@
 import Foundation
 
 /// 功能相依性驗證器
-class DependencyValidator {
+class DependencyValidator: DependencyValidating {
     
     /// 定義每個功能的相依條件
     private let dependencies: [Feature: DependencyRule] = [

@@ -32,7 +32,7 @@ class Car {
     
     // MARK: - Services
     
-    private let dependencyValidator = DependencyValidator()
+    private let dependencyValidator: DependencyValidating
     
     // MARK: - State
     
@@ -42,7 +42,8 @@ class Car {
     
     // MARK: - Initialization
     
-    init() {
+    init(dependencyValidator: DependencyValidating = DependencyValidator()) {
+        self.dependencyValidator = dependencyValidator
         print("🚗 Car initialized")
     }
     
