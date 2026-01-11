@@ -35,10 +35,3 @@ class ConsoleLogger: Logger {
         print("\(level.icon) \(message)")
     }
 }
-
-/// 靜默日誌（用於測試）
-class SilentLogger: Logger {
-    func log(_ message: String, level: LogLevel) {
-        // 不輸出任何內容
-    }
-}
