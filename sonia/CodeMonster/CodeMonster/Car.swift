@@ -242,9 +242,35 @@ class Car {
         return enabledFeatures.contains(feature)
     }
     
+    /// 查詢指定功能是否可以啟用（依賴條件是否滿足）
+    func isFeatureAvailable(_ feature: Feature) -> Bool {
+        let validationResult = dependencyValidator.validateEnable(
+            feature: feature,
+            centralComputerOn: centralComputer.isActive,
+            engineRunning: engine.isActive,
+            enabledFeatures: enabledFeatures
+        )
+        
+        return validationResult.isSuccess
+    }
+    
     /// 取得所有已啟用功能的列表
     func getEnabledFeatures() -> [Feature] {
         return Array(enabledFeatures).sorted { $0.displayName < $1.displayName }
+    }
+    
+    /// 取得所有可用（可啟用）但尚未啟用的功能列表
+    func getAvailableFeatures() -> [Feature] {
+        return Feature.allCases.filter { feature in
+            !isFeatureEnabled(feature) && isFeatureAvailable(feature)
+        }
+    }
+    
+    /// 取得所有不可用（無法啟用）的功能列表
+    func getUnavailableFeatures() -> [Feature] {
+        return Feature.allCases.filter { feature in
+            !isFeatureAvailable(feature)
+        }
     }
     
     /// 印出當前狀態
