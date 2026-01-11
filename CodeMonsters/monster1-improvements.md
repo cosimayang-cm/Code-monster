@@ -167,29 +167,57 @@ class StrictDisableStrategy: DisableStrategy {
 - ✅ 可測試性：可獨立測試每種策略
 - ✅ 彈性：可在運行時切換策略（如測試模式 vs 生產模式）
 
-### 2.2 Observer Pattern - 功能狀態變化通知
+### 2.2 Observer Pattern - 功能狀態變化通知 ✅
 
 **目的**：解耦功能狀態變化與 UI 更新
 
+**優化方案**：使用 **CarEventPublisher** 分離通知職責（符合 SRP）
+
 ```swift
-protocol CarEventObserver: AnyObject {
-    func car(_ car: Car, didEnableFeature feature: Feature)
-    func car(_ car: Car, didDisableFeature feature: Feature, cascaded: Bool)
-    func car(_ car: Car, featureBecameAvailable feature: Feature)
-    func car(_ car: Car, featureBecameUnavailable feature: Feature)
+/// 事件類型定義
+enum CarEvent {
+    case centralComputerTurnedOn
+    case centralComputerTurnedOff
+    case engineStarted
+    case engineStopped
+    case featureEnabled(Feature)
+    case featureDisabled(Feature)
+    case featuresCascadeDisabled([Feature])
 }
 
-class Car {
-    private var observers: [CarEventObserver] = []
+/// 觀察者協定
+protocol CarEventObserver: AnyObject {
+    func carDidChangeState(_ event: CarEvent)
+}
+
+/// 專門負責事件發布與觀察者管理 (SRP)
+class CarEventPublisher {
+    private var observers: [WeakObserver] = []
     
     func addObserver(_ observer: CarEventObserver) { ... }
     func removeObserver(_ observer: CarEventObserver) { ... }
+    func publish(_ event: CarEvent) { ... }
+}
+
+class Car {
+    private let eventPublisher: CarEventPublisher
     
-    private func notifyFeatureEnabled(_ feature: Feature) {
-        observers.forEach { $0.car(self, didEnableFeature: feature) }
+    init(eventPublisher: CarEventPublisher = CarEventPublisher(), ...) {
+        self.eventPublisher = eventPublisher
+    }
+    
+    func enableFeature(...) {
+        // 業務邏輯
+        eventPublisher.publish(.featureEnabled(feature))
     }
 }
 ```
+
+**優點**：
+- ✅ **SRP**：Car 專注車輛邏輯，Publisher 專注通知機制
+- ✅ **依賴注入**：可注入 mock publisher 進行測試
+- ✅ **擴展性**：未來可加入事件過濾、延遲通知、事件日誌等
+- ✅ **記憶體安全**：使用 weak reference 避免循環引用
 
 **應用場景**：
 - UI 即時更新功能按鈕狀態

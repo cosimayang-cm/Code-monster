@@ -33,6 +33,7 @@ class Car {
     // MARK: - Services
     
     private let dependencyValidator: DependencyValidating
+    private let eventPublisher: CarEventPublisher
     
     // MARK: - State
     
@@ -42,8 +43,10 @@ class Car {
     
     // MARK: - Initialization
     
-    init(dependencyValidator: DependencyValidating = DependencyValidator()) {
+    init(dependencyValidator: DependencyValidating = DependencyValidator(),
+         eventPublisher: CarEventPublisher = CarEventPublisher()) {
         self.dependencyValidator = dependencyValidator
+        self.eventPublisher = eventPublisher
         print("🚗 Car initialized")
     }
     
@@ -56,6 +59,7 @@ class Car {
             return
         }
         centralComputer.turnOn()
+        eventPublisher.publish(.centralComputerTurnedOn)
     }
     
     func turnOffCentralComputer() {
@@ -77,7 +81,10 @@ class Car {
         
         if !allDisabledFeatures.isEmpty {
             print("⚠️ Central Computer OFF - Disabled features: \(allDisabledFeatures.map { $0.displayName }.joined(separator: ", "))")
+            eventPublisher.publish(.featuresCascadeDisabled(allDisabledFeatures))
         }
+        
+        eventPublisher.publish(.centralComputerTurnedOff)
     }
     
     var isCentralComputerOn: Bool {
@@ -93,6 +100,7 @@ class Car {
             return
         }
         engine.turnOn()
+        eventPublisher.publish(.engineStarted)
     }
     
     func stopEngine() {
@@ -115,7 +123,10 @@ class Car {
         
         if !allDisabledFeatures.isEmpty {
             print("⚠️ Engine stopped - Disabled features: \(allDisabledFeatures.map { $0.displayName }.joined(separator: ", "))")
+            eventPublisher.publish(.featuresCascadeDisabled(allDisabledFeatures))
         }
+        
+        eventPublisher.publish(.engineStopped)
     }
     
     var isEngineRunning: Bool {
@@ -146,6 +157,7 @@ class Car {
             setFeatureEnabled(feature, enabled: true)
             enabledFeatures.insert(feature)
             print("✅ Enabled: \(feature.displayName)")
+            eventPublisher.publish(.featureEnabled(feature))
             return .success(())
             
         case .failure(let error):
@@ -168,6 +180,9 @@ class Car {
         if allDisabled.count > 1 {
             let dependents = allDisabled.filter { $0 != feature }
             print("⚠️ Also disabled dependent features: \(dependents.map { $0.displayName }.joined(separator: ", "))")
+            eventPublisher.publish(.featuresCascadeDisabled(allDisabled))
+        } else if allDisabled.count == 1 {
+            eventPublisher.publish(.featureDisabled(feature))
         }
         
         return .success(())
@@ -271,6 +286,18 @@ class Car {
         return Feature.allCases.filter { feature in
             !isFeatureAvailable(feature)
         }
+    }
+    
+    // MARK: - Observer Management
+    
+    /// 加入觀察者
+    func addObserver(_ observer: CarEventObserver) {
+        eventPublisher.addObserver(observer)
+    }
+    
+    /// 移除觀察者
+    func removeObserver(_ observer: CarEventObserver) {
+        eventPublisher.removeObserver(observer)
     }
     
     /// 印出當前狀態
