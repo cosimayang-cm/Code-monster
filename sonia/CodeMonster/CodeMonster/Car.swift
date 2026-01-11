@@ -67,12 +67,15 @@ class Car {
         
         // 連鎖停用所有依賴中控電腦的功能
         let affectedFeatures = enabledFeatures.filter { _ in true } // 所有功能都依賴中控電腦
+        
+        var allDisabledFeatures: [Feature] = []
         for feature in affectedFeatures {
-            disableFeatureCascade(feature)
+            let disabled = disableFeatureRecursive(feature)
+            allDisabledFeatures.append(contentsOf: disabled)
         }
         
-        if !affectedFeatures.isEmpty {
-            print("⚠️ Central Computer OFF - Disabled features: \(affectedFeatures.map { $0.displayName }.joined(separator: ", "))")
+        if !allDisabledFeatures.isEmpty {
+            print("⚠️ Central Computer OFF - Disabled features: \(allDisabledFeatures.map { $0.displayName }.joined(separator: ", "))")
         }
     }
     
@@ -99,16 +102,18 @@ class Car {
         }
         engine.turnOff()
         
-        // 只影響需要引擎運行的功能
+        // 只影響需要引擎運行的功能（使用連鎖停用）
         let engineRequiredFeatures = dependencyValidator.getEngineRequiredFeatures()
         let affectedFeatures = enabledFeatures.filter { engineRequiredFeatures.contains($0) }
         
+        var allDisabledFeatures: [Feature] = []
         for feature in affectedFeatures {
-            disableFeatureCascade(feature)
+            let disabled = disableFeatureRecursive(feature)
+            allDisabledFeatures.append(contentsOf: disabled)
         }
         
-        if !affectedFeatures.isEmpty {
-            print("⚠️ Engine stopped - Disabled features: \(affectedFeatures.map { $0.displayName }.joined(separator: ", "))")
+        if !allDisabledFeatures.isEmpty {
+            print("⚠️ Engine stopped - Disabled features: \(allDisabledFeatures.map { $0.displayName }.joined(separator: ", "))")
         }
     }
     
