@@ -8,7 +8,7 @@
 import Foundation
 
 /// 可 Toggle 的功能列舉
-enum Feature: CaseIterable {
+enum Feature: String, CaseIterable, Hashable {
     case airConditioner
     case navigation
     case entertainment

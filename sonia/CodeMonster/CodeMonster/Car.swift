@@ -49,10 +49,20 @@ class Car {
     // MARK: - Central Computer Control
     
     func turnOnCentralComputer() {
+        // ✅ 檢查是否已開啟（避免重複操作）
+        guard !centralComputer.isActive else {
+            print("⚠️ Central Computer is already ON - skipping")
+            return
+        }
         centralComputer.turnOn()
     }
     
     func turnOffCentralComputer() {
+        // ✅ 檢查是否已關閉（避免重複操作）
+        guard centralComputer.isActive else {
+            print("⚠️ Central Computer is already OFF - skipping")
+            return
+        }
         centralComputer.turnOff()
         
         // 連鎖停用所有依賴中控電腦的功能
@@ -73,10 +83,20 @@ class Car {
     // MARK: - Engine Control
     
     func startEngine() {
+        // ✅ 檢查是否已啟動（避免重複操作）
+        guard !engine.isActive else {
+            print("⚠️ Engine is already running - skipping")
+            return
+        }
         engine.turnOn()
     }
     
     func stopEngine() {
+        // ✅ 檢查是否已停止（避免重複操作）
+        guard engine.isActive else {
+            print("⚠️ Engine is already stopped - skipping")
+            return
+        }
         engine.turnOff()
         
         // 只影響需要引擎運行的功能
@@ -100,9 +120,9 @@ class Car {
     
     /// 啟用指定功能
     func enableFeature(_ feature: Feature) -> Result<Void, FeatureError> {
-        // 檢查是否已啟用
-        if enabledFeatures.contains(feature) {
-            print("ℹ️ \(feature.displayName) is already enabled")
+        // ✅ 檢查是否已啟用（避免重複操作）
+        guard !enabledFeatures.contains(feature) else {
+            print("⚠️ \(feature.displayName) is already enabled - skipping")
             return .success(())
         }
         
@@ -130,9 +150,9 @@ class Car {
     
     /// 停用指定功能（連鎖停用依賴它的功能）
     func disableFeature(_ feature: Feature) -> Result<Void, FeatureError> {
-        // 檢查是否已停用
+        // ✅ 檢查是否已停用（避免重複操作）
         guard enabledFeatures.contains(feature) else {
-            print("ℹ️ \(feature.displayName) is already disabled")
+            print("⚠️ \(feature.displayName) is already disabled - skipping")
             return .success(())
         }
         
