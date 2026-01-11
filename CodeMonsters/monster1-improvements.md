@@ -17,20 +17,79 @@
 #### ❌ Single Responsibility Principle (SRP)
 **問題**：
 - `Car` 類別承擔過多職責：
-  - 管理 16 個元件實例
-  - 管理功能啟用狀態
+  - 管理 4 個基礎元件（wheel, engine, battery, centralComputer）
+  - 管理功能元件字典（featureComponents）
+  - 管理功能啟用狀態（enabledFeatures）
   - 驗證相依性（透過 DependencyValidator）
-  - 處理連鎖停用邏輯
-  - 控制引擎和中控電腦
+  - 處理連鎖停用邏輯（遞迴算法）
+  - 控制引擎和中控電腦生命週期
+  - 協調事件發布與日誌記錄
 
-**改進**：
+**改進**（Phase 6 計劃）：
 ```swift
-// 分離職責到專門的管理器
-FeatureStateManager      // 管理功能啟用狀態
-ComponentLifecycleManager // 管理元件生命週期
-CascadeDisableHandler    // 處理連鎖停用邏輯
-Car (Facade)             // 只作為統一介面
+/// 管理基礎元件生命週期
+class ComponentLifecycleManager {
+    private let engine: Engine
+    private let centralComputer: CentralComputer
+    private let wheel: Wheel
+    private let battery: Battery
+    
+    func startEngine() -> Result<Void, FeatureError>
+    func stopEngine()
+    func turnOnCentralComputer()
+    func turnOffCentralComputer()
+    
+    var isEngineRunning: Bool { engine.isActive }
+    var isCentralComputerOn: Bool { centralComputer.isActive }
+}
+
+/// 管理功能狀態與連鎖停用邏輯
+class FeatureStateManager {
+    private var enabledFeatures: Set<Feature> = []
+    private var featureComponents: [Feature: FeatureToggleComponent] = [:]
+    private let validator: DependencyValidating
+    
+    init(configuration: CarConfiguration, validator: DependencyValidating)
+    
+    func enable(_ feature: Feature, 
+                centralComputerOn: Bool, 
+                engineRunning: Bool) -> Result<Void, FeatureError>
+    
+    func disable(_ feature: Feature) -> Result<[Feature], FeatureError>
+    
+    func disableRecursive(_ feature: Feature) -> [Feature]
+    
+    func isEnabled(_ feature: Feature) -> Bool
+    func getEnabledFeatures() -> [Feature]
+}
+
+/// Car 變成純粹的 Facade（協調者）
+class Car {
+    private let lifecycle: ComponentLifecycleManager
+    private let features: FeatureStateManager
+    private let eventPublisher: CarEventPublisher
+    private let logger: Logger
+    
+    init(configuration: CarConfiguration = .full(),
+         lifecycle: ComponentLifecycleManager = ComponentLifecycleManager(),
+         features: FeatureStateManager,
+         eventPublisher: CarEventPublisher = CarEventPublisher(),
+         logger: Logger = ConsoleLogger())
+    
+    // 委派給對應的 Manager，只負責協調與事件發布
+    func enableFeature(_ feature: Feature) -> Result<Void, FeatureError>
+    func disableFeature(_ feature: Feature) -> Result<Void, FeatureError>
+    func startEngine()
+    func stopEngine()
+    // ...
+}
 ```
+
+**優點**：
+- ✅ 每個類別職責單一，易於理解和維護
+- ✅ 可以獨立測試生命週期管理和狀態管理
+- ✅ Car 類別從 ~314 行降到 ~100 行
+- ✅ 符合 SOLID 的 SRP 原則
 
 #### ❌ Open/Closed Principle (OCP)
 **問題**：
@@ -976,24 +1035,396 @@ extension CarControlViewController: CarEventObserver {
 
 ## 9. 設計決策總結
 
-### ✅ 已確認
+### ✅ 已完成
+- **Phase 1**: 測試基礎設施（107 tests）
+- **Phase 2**: SOLID 重構（DIP, Repository Pattern）
+- **Phase 3**: 語意優化（Available vs Enabled）
+- **Phase 4**: Observer Pattern（CarEventPublisher）
+- **Phase 5**: Builder + Factory Pattern（車輛配置系統）
+- **重構**: Logger 協議、移除未使用代碼
+
+**設計決策**：
 - **停用策略**：連鎖停用（符合真實車輛行為）
 - **開發方法**：TDD（測試驅動開發）
 - **設計原則**：SOLID 五大原則
-- **主要模式**：Strategy、Repository、Observer
+- **主要模式**：Repository、Observer、Builder、Factory、Facade
 
-### 📋 待實作
-- Phase 1: 測試基礎設施
-- Phase 2: SOLID 重構
-- Phase 3: 語意優化
-- Phase 4: 進階功能（可選）
+### 📋 Phase 6: SRP 深化 - Car 職責分離
+
+**目標**：進一步分離 Car 類別的職責，使其成為純粹的 Facade
+
+**當前問題**：
+- Car.swift 有 314 行，承擔多個職責
+- 管理基礎元件、功能狀態、連鎖停用邏輯
+- 雖然已有良好結構，但仍可進一步改進
+
+**實作計劃**：
+
+#### 1. 創建 ComponentLifecycleManager
+**職責**：管理 4 個基礎元件的生命週期
+```swift
+class ComponentLifecycleManager {
+    private let engine: Engine
+    private let centralComputer: CentralComputer
+    private let wheel: Wheel
+    private let battery: Battery
+    
+    init(engine: Engine = Engine(),
+         centralComputer: CentralComputer = CentralComputer(),
+         wheel: Wheel = Wheel(),
+         battery: Battery = Battery()) {
+        self.engine = engine
+        self.centralComputer = centralComputer
+        self.wheel = wheel
+        self.battery = battery
+    }
+    
+    // MARK: - Engine Control
+    func startEngine() {
+        guard !engine.isActive else { return }
+        engine.turnOn()
+    }
+    
+    func stopEngine() {
+        guard engine.isActive else { return }
+        engine.turnOff()
+    }
+    
+    var isEngineRunning: Bool { engine.isActive }
+    
+    // MARK: - Central Computer Control
+    func turnOnCentralComputer() {
+        guard !centralComputer.isActive else { return }
+        centralComputer.turnOn()
+    }
+    
+    func turnOffCentralComputer() {
+        guard centralComputer.isActive else { return }
+        centralComputer.turnOff()
+    }
+    
+    var isCentralComputerOn: Bool { centralComputer.isActive }
+}
+```
+
+#### 2. 創建 FeatureStateManager
+**職責**：管理功能狀態與連鎖停用邏輯
+```swift
+class FeatureStateManager {
+    private var enabledFeatures: Set<Feature> = []
+    private var featureComponents: [Feature: FeatureToggleComponent] = [:]
+    private let validator: DependencyValidating
+    
+    init(configuration: CarConfiguration,
+         validator: DependencyValidating = DependencyValidator()) {
+        self.validator = validator
+        
+        // 根據配置安裝元件
+        configuration.features.forEach { feature in
+            featureComponents[feature] = ComponentFactory.create(feature)
+        }
+    }
+    
+    // MARK: - Feature Toggle
+    func enable(_ feature: Feature,
+                centralComputerOn: Bool,
+                engineRunning: Bool) -> Result<Void, FeatureError> {
+        // 檢查是否已安裝
+        guard featureComponents[feature] != nil else {
+            return .failure(.featureNotInstalled)
+        }
+        
+        // 檢查是否已啟用
+        guard !enabledFeatures.contains(feature) else {
+            return .success(())
+        }
+        
+        // 驗證依賴
+        let result = validator.validateEnable(
+            feature: feature,
+            centralComputerOn: centralComputerOn,
+            engineRunning: engineRunning,
+            enabledFeatures: enabledFeatures
+        )
+        
+        guard result.isSuccess else {
+            return result
+        }
+        
+        // 啟用功能
+        featureComponents[feature]?.isEnabled = true
+        enabledFeatures.insert(feature)
+        return .success(())
+    }
+    
+    func disable(_ feature: Feature) -> Result<[Feature], FeatureError> {
+        guard featureComponents[feature] != nil else {
+            return .failure(.featureNotInstalled)
+        }
+        
+        guard enabledFeatures.contains(feature) else {
+            return .success([])
+        }
+        
+        let disabled = disableRecursive(feature)
+        return .success(disabled)
+    }
+    
+    // MARK: - Recursive Disable Logic
+    func disableRecursive(_ feature: Feature) -> [Feature] {
+        var disabledFeatures: [Feature] = []
+        
+        // 找出依賴此功能的其他功能
+        let dependents = validator.getDependentFeatures(
+            of: feature,
+            from: enabledFeatures
+        )
+        
+        // 遞迴停用每個依賴者
+        for dependent in dependents {
+            let cascadeDisabled = disableRecursive(dependent)
+            disabledFeatures.append(contentsOf: cascadeDisabled)
+        }
+        
+        // 停用自己
+        if enabledFeatures.contains(feature) {
+            featureComponents[feature]?.isEnabled = false
+            enabledFeatures.remove(feature)
+            disabledFeatures.append(feature)
+        }
+        
+        return disabledFeatures
+    }
+    
+    // MARK: - Query
+    func isEnabled(_ feature: Feature) -> Bool {
+        enabledFeatures.contains(feature)
+    }
+    
+    func getEnabledFeatures() -> [Feature] {
+        Array(enabledFeatures).sorted { $0.displayName < $1.displayName }
+    }
+    
+    func isAvailable(_ feature: Feature,
+                     centralComputerOn: Bool,
+                     engineRunning: Bool) -> Bool {
+        validator.validateEnable(
+            feature: feature,
+            centralComputerOn: centralComputerOn,
+            engineRunning: engineRunning,
+            enabledFeatures: enabledFeatures
+        ).isSuccess
+    }
+    
+    func getInstalledFeatures() -> [Feature] {
+        Array(featureComponents.keys).sorted { $0.displayName < $1.displayName }
+    }
+}
+```
+
+#### 3. 重構 Car 成為純 Facade
+**職責**：協調各 Manager，發布事件，記錄日誌
+```swift
+class Car {
+    // MARK: - Managers
+    private let lifecycle: ComponentLifecycleManager
+    private let features: FeatureStateManager
+    private let eventPublisher: CarEventPublisher
+    private let logger: Logger
+    
+    // MARK: - Initialization
+    init(configuration: CarConfiguration = .full(),
+         lifecycle: ComponentLifecycleManager = ComponentLifecycleManager(),
+         features: FeatureStateManager? = nil,
+         validator: DependencyValidating = DependencyValidator(),
+         eventPublisher: CarEventPublisher = CarEventPublisher(),
+         logger: Logger = ConsoleLogger()) {
+        
+        self.lifecycle = lifecycle
+        self.features = features ?? FeatureStateManager(
+            configuration: configuration,
+            validator: validator
+        )
+        self.eventPublisher = eventPublisher
+        self.logger = logger
+        
+        logger.log("Car initialized with \(configuration.features.count) features", level: .info)
+    }
+    
+    // MARK: - Central Computer (委派給 lifecycle)
+    func turnOnCentralComputer() {
+        guard !lifecycle.isCentralComputerOn else {
+            logger.log("Central Computer is already ON - skipping", level: .warning)
+            return
+        }
+        
+        lifecycle.turnOnCentralComputer()
+        eventPublisher.publish(.centralComputerTurnedOn)
+    }
+    
+    func turnOffCentralComputer() {
+        guard lifecycle.isCentralComputerOn else {
+            logger.log("Central Computer is already OFF - skipping", level: .warning)
+            return
+        }
+        
+        lifecycle.turnOffCentralComputer()
+        
+        // 連鎖停用所有功能
+        let enabledFeatures = features.getEnabledFeatures()
+        var allDisabled: [Feature] = []
+        
+        for feature in enabledFeatures {
+            if let result = try? features.disable(feature).get() {
+                allDisabled.append(contentsOf: result)
+            }
+        }
+        
+        if !allDisabled.isEmpty {
+            logger.log("Central Computer OFF - Disabled features: \(allDisabled.map { $0.displayName }.joined(separator: ", "))", level: .warning)
+            eventPublisher.publish(.featuresCascadeDisabled(allDisabled))
+        }
+        
+        eventPublisher.publish(.centralComputerTurnedOff)
+    }
+    
+    var isCentralComputerOn: Bool {
+        lifecycle.isCentralComputerOn
+    }
+    
+    // MARK: - Engine (委派給 lifecycle)
+    func startEngine() {
+        guard !lifecycle.isEngineRunning else {
+            logger.log("Engine is already running - skipping", level: .warning)
+            return
+        }
+        
+        lifecycle.startEngine()
+        eventPublisher.publish(.engineStarted)
+    }
+    
+    func stopEngine() {
+        guard lifecycle.isEngineRunning else {
+            logger.log("Engine is already stopped - skipping", level: .warning)
+            return
+        }
+        
+        lifecycle.stopEngine()
+        
+        // 停用需要引擎的功能
+        let validator = DependencyValidator()
+        let engineFeatures = validator.getEngineRequiredFeatures()
+        let enabledEngineFeatures = features.getEnabledFeatures()
+            .filter { engineFeatures.contains($0) }
+        
+        var allDisabled: [Feature] = []
+        for feature in enabledEngineFeatures {
+            if let result = try? features.disable(feature).get() {
+                allDisabled.append(contentsOf: result)
+            }
+        }
+        
+        if !allDisabled.isEmpty {
+            logger.log("Engine stopped - Disabled features: \(allDisabled.map { $0.displayName }.joined(separator: ", "))", level: .warning)
+            eventPublisher.publish(.featuresCascadeDisabled(allDisabled))
+        }
+        
+        eventPublisher.publish(.engineStopped)
+    }
+    
+    var isEngineRunning: Bool {
+        lifecycle.isEngineRunning
+    }
+    
+    // MARK: - Features (委派給 features)
+    func enableFeature(_ feature: Feature) -> Result<Void, FeatureError> {
+        let result = features.enable(
+            feature,
+            centralComputerOn: lifecycle.isCentralComputerOn,
+            engineRunning: lifecycle.isEngineRunning
+        )
+        
+        switch result {
+        case .success:
+            logger.log("Enabled: \(feature.displayName)", level: .info)
+            eventPublisher.publish(.featureEnabled(feature))
+        case .failure(let error):
+            logger.log("Failed to enable \(feature.displayName): \(error.localizedDescription)", level: .error)
+        }
+        
+        return result
+    }
+    
+    func disableFeature(_ feature: Feature) -> Result<Void, FeatureError> {
+        let result = features.disable(feature)
+        
+        switch result {
+        case .success(let disabled):
+            if disabled.count > 1 {
+                let dependents = disabled.filter { $0 != feature }
+                logger.log("Also disabled dependent features: \(dependents.map { $0.displayName }.joined(separator: ", "))", level: .warning)
+                eventPublisher.publish(.featuresCascadeDisabled(disabled))
+            } else if disabled.count == 1 {
+                eventPublisher.publish(.featureDisabled(feature))
+            }
+            return .success(())
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+    
+    // MARK: - Query (委派給 features)
+    func isFeatureEnabled(_ feature: Feature) -> Bool {
+        features.isEnabled(feature)
+    }
+    
+    func isFeatureAvailable(_ feature: Feature) -> Bool {
+        features.isAvailable(
+            feature,
+            centralComputerOn: lifecycle.isCentralComputerOn,
+            engineRunning: lifecycle.isEngineRunning
+        )
+    }
+    
+    func getEnabledFeatures() -> [Feature] {
+        features.getEnabledFeatures()
+    }
+    
+    func getInstalledFeatures() -> [Feature] {
+        features.getInstalledFeatures()
+    }
+    
+    // MARK: - Observer Management
+    func addObserver(_ observer: CarEventObserver) {
+        eventPublisher.addObserver(observer)
+    }
+    
+    func removeObserver(_ observer: CarEventObserver) {
+        eventPublisher.removeObserver(observer)
+    }
+}
+```
+
+**預期成果**：
+- ✅ Car 從 314 行減少到約 150 行
+- ✅ ComponentLifecycleManager: ~80 行
+- ✅ FeatureStateManager: ~150 行
+- ✅ 每個類別職責單一，易於測試
+- ✅ Car 成為純粹的協調者（Facade Pattern）
+- ✅ 所有現有測試繼續通過（行為不變）
+
+**測試策略**：
+1. 為 ComponentLifecycleManager 新增單元測試
+2. 為 FeatureStateManager 新增單元測試
+3. 確保 Car 的整合測試全部通過
+4. 新增約 30 個測試，總測試數達到 ~135
 
 ### 🎯 預期效果
-- ✅ **可測試性**：100% 單元測試覆蓋率
+- ✅ **可測試性**：107+ 單元測試覆蓋率
 - ✅ **可維護性**：職責清晰，易於修改
 - ✅ **可擴展性**：新增功能不需修改現有程式碼
 - ✅ **語意清晰**：Available vs Enabled 明確區分
-- ✅ **符合 SOLID**：每個類別職責單一，依賴抽象而非實作_ car: Car, didDisableFeature feature: Feature, cascaded: Bool) {
+- ✅ **完全符合 SOLID**：每個類別職責單一，依賴抽象而非實作_ car: Car, didDisableFeature feature: Feature, cascaded: Bool) {
         disabledFeatures.append((feature, cascaded))
     }
 }
