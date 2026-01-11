@@ -25,12 +25,12 @@ class Engine: StatefulComponent {
     
     func turnOn() {
         isActive = true
-        print("🚗 Engine started")
+        // 移除 print，讓 Car 的 Logger 負責記錄
     }
     
     func turnOff() {
         isActive = false
-        print("🚗 Engine stopped")
+        // 移除 print，讓 Car 的 Logger 負責記錄
     }
 }
 
@@ -50,11 +50,11 @@ class CentralComputer: StatefulComponent {
     
     func turnOn() {
         isActive = true
-        print("💻 Central Computer powered on")
+        // 移除 print，讓 Car 的 Logger 負責記錄
     }
     
     func turnOff() {
         isActive = false
-        print("💻 Central Computer powered off")
+        // 移除 print，讓 Car 的 Logger 負責記錄
     }
 }

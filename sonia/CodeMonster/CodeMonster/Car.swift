@@ -24,6 +24,7 @@ class Car {
     
     private let dependencyValidator: DependencyValidating
     private let eventPublisher: CarEventPublisher
+    private let logger: Logger
     
     // MARK: - State
     
@@ -35,16 +36,18 @@ class Car {
     
     init(configuration: CarConfiguration = .full(),
          dependencyValidator: DependencyValidating = DependencyValidator(),
-         eventPublisher: CarEventPublisher = CarEventPublisher()) {
+         eventPublisher: CarEventPublisher = CarEventPublisher(),
+         logger: Logger = ConsoleLogger()) {
         self.dependencyValidator = dependencyValidator
         self.eventPublisher = eventPublisher
+        self.logger = logger
         
         // 根據配置安裝元件
         configuration.features.forEach { feature in
             featureComponents[feature] = ComponentFactory.create(feature)
         }
         
-        print("🚗 Car initialized with \(configuration.features.count) features")
+        logger.log("Car initialized with \(configuration.features.count) features", level: .info)
     }
     
     // MARK: - Central Computer Control
@@ -52,7 +55,7 @@ class Car {
     func turnOnCentralComputer() {
         // ✅ 檢查是否已開啟（避免重複操作）
         guard !centralComputer.isActive else {
-            print("⚠️ Central Computer is already ON - skipping")
+            logger.log("Central Computer is already ON - skipping", level: .warning)
             return
         }
         centralComputer.turnOn()
@@ -62,7 +65,7 @@ class Car {
     func turnOffCentralComputer() {
         // ✅ 檢查是否已關閉（避免重複操作）
         guard centralComputer.isActive else {
-            print("⚠️ Central Computer is already OFF - skipping")
+            logger.log("Central Computer is already OFF - skipping", level: .warning)
             return
         }
         centralComputer.turnOff()
@@ -77,7 +80,7 @@ class Car {
         }
         
         if !allDisabledFeatures.isEmpty {
-            print("⚠️ Central Computer OFF - Disabled features: \(allDisabledFeatures.map { $0.displayName }.joined(separator: ", "))")
+            logger.log("Central Computer OFF - Disabled features: \(allDisabledFeatures.map { $0.displayName }.joined(separator: ", "))", level: .warning)
             eventPublisher.publish(.featuresCascadeDisabled(allDisabledFeatures))
         }
         
@@ -93,7 +96,7 @@ class Car {
     func startEngine() {
         // ✅ 檢查是否已啟動（避免重複操作）
         guard !engine.isActive else {
-            print("⚠️ Engine is already running - skipping")
+            logger.log("Engine is already running - skipping", level: .warning)
             return
         }
         engine.turnOn()
@@ -103,7 +106,7 @@ class Car {
     func stopEngine() {
         // ✅ 檢查是否已停止（避免重複操作）
         guard engine.isActive else {
-            print("⚠️ Engine is already stopped - skipping")
+            logger.log("Engine is already stopped - skipping", level: .warning)
             return
         }
         engine.turnOff()
@@ -119,7 +122,7 @@ class Car {
         }
         
         if !allDisabledFeatures.isEmpty {
-            print("⚠️ Engine stopped - Disabled features: \(allDisabledFeatures.map { $0.displayName }.joined(separator: ", "))")
+            logger.log("Engine stopped - Disabled features: \(allDisabledFeatures.map { $0.displayName }.joined(separator: ", "))", level: .warning)
             eventPublisher.publish(.featuresCascadeDisabled(allDisabledFeatures))
         }
         
@@ -142,7 +145,7 @@ class Car {
         
         // ✅ 檢查是否已啟用（避免重複操作）
         guard !enabledFeatures.contains(feature) else {
-            print("⚠️ \(feature.displayName) is already enabled - skipping")
+            logger.log("\(feature.displayName) is already enabled - skipping", level: .warning)
             return .success(())
         }
         
@@ -159,12 +162,12 @@ class Car {
             // 啟用功能
             setFeatureEnabled(feature, enabled: true)
             enabledFeatures.insert(feature)
-            print("✅ Enabled: \(feature.displayName)")
+            logger.log("Enabled: \(feature.displayName)", level: .info)
             eventPublisher.publish(.featureEnabled(feature))
             return .success(())
             
         case .failure(let error):
-            print("❌ Failed to enable \(feature.displayName): \(error.localizedDescription)")
+            logger.log("Failed to enable \(feature.displayName): \(error.localizedDescription)", level: .error)
             return .failure(error)
         }
     }
@@ -173,13 +176,13 @@ class Car {
     func disableFeature(_ feature: Feature) -> Result<Void, FeatureError> {
         // ✅ 檢查功能是否已安裝
         guard featureComponents[feature] != nil else {
-            print("❌ \(feature.displayName) is not installed in this car")
+            logger.log("\(feature.displayName) is not installed in this car", level: .error)
             return .failure(.featureNotInstalled)
         }
         
         // ✅ 檢查是否已停用（避免重複操作）
         guard enabledFeatures.contains(feature) else {
-            print("⚠️ \(feature.displayName) is already disabled - skipping")
+            logger.log("\(feature.displayName) is already disabled - skipping", level: .warning)
             return .success(())
         }
         
@@ -188,7 +191,7 @@ class Car {
         
         if allDisabled.count > 1 {
             let dependents = allDisabled.filter { $0 != feature }
-            print("⚠️ Also disabled dependent features: \(dependents.map { $0.displayName }.joined(separator: ", "))")
+            logger.log("Also disabled dependent features: \(dependents.map { $0.displayName }.joined(separator: ", "))", level: .warning)
             eventPublisher.publish(.featuresCascadeDisabled(allDisabled))
         } else if allDisabled.count == 1 {
             eventPublisher.publish(.featureDisabled(feature))
@@ -226,7 +229,7 @@ class Car {
     private func disableFeatureCascade(_ feature: Feature) {
         setFeatureEnabled(feature, enabled: false)
         enabledFeatures.remove(feature)
-        print("🔴 Disabled: \(feature.displayName)")
+        logger.log("Disabled: \(feature.displayName)", level: .info)
     }
     
     /// 設定功能元件的啟用狀態
