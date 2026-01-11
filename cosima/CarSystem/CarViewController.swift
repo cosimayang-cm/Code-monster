@@ -5,6 +5,7 @@
 //  Created by Claude on 2026/1/11.
 //
 import UIKit
+import Combine
 
 class CarViewController: UIViewController {
     
@@ -17,11 +18,14 @@ class CarViewController: UIViewController {
     // MARK: - Properties
     private let car = Car()
     
+    /// Combine 訂閱管理
+    private var cancellables = Set<AnyCancellable>()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        updateStatus()
+        setupBindings()
     }
     
     private func setupUI() {
@@ -38,39 +42,58 @@ class CarViewController: UIViewController {
         statusLabel.layer.cornerRadius = 8
         statusLabel.clipsToBounds = true
         
-        // 註冊 TableView Cell (不需要再設置 delegate 和 dataSource，已在 Storyboard 連接)
+        // 註冊 TableView Cell
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "FeatureCell")
+    }
+    
+    // MARK: - Combine 資料綁定
+    private func setupBindings() {
+        // 監聽中控電腦狀態變化 → 自動更新 UI
+        car.$isComputerOn
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateStatus()
+                self?.tableView?.reloadData()
+            }
+            .store(in: &cancellables)
+        
+        // 監聽引擎狀態變化 → 自動更新 UI
+        car.$isEngineRunning
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateStatus()
+                self?.tableView?.reloadData()
+            }
+            .store(in: &cancellables)
+        
+        // 監聽已啟用功能變化 → 自動更新 UI
+        car.$enabledFeatures
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateStatus()
+                self?.tableView?.reloadData()
+            }
+            .store(in: &cancellables)
     }
     
     // MARK: - IBActions
     @IBAction func toggleComputerTapped(_ sender: UIButton) {
-        if car.centralComputer.isOn {
-            car.centralComputer.turnOff()
-            car.syncCentralComputerState()
-        } else {
-            car.centralComputer.turnOn()
-        }
-        updateStatus()
-        tableView.reloadData()
+        car.toggleCentralComputer()
+        // Combine 會自動觸發 UI 更新，不需要手動調用
     }
     
     @IBAction func toggleEngineTapped(_ sender: UIButton) {
-        if car.engine.isRunning {
-            car.engine.stop()
-            car.syncEngineState()
-        } else {
-            car.engine.start()
-        }
-        updateStatus()
-        tableView.reloadData()
+        car.toggleEngine()
+        // Combine 會自動觸發 UI 更新，不需要手動調用
     }
     
+    // MARK: - UI 更新
     private func updateStatus() {
-        let computerStatus = car.centralComputer.isOn ? "✅ 開啟" : "❌ 關閉"
-        let engineStatus = car.engine.isRunning ? "✅ 運行中" : "❌ 停止"
+        let computerStatus = car.isComputerOn ? "✅ 開啟" : "❌ 關閉"
+        let engineStatus = car.isEngineRunning ? "✅ 運行中" : "❌ 停止"
         let enabledCount = car.enabledFeatures.count
         
-        statusLabel.text = "中控電腦: \(computerStatus) | 引擎: \(engineStatus) | 已啟用功能: \(enabledCount) 個"
+        statusLabel?.text = "中控電腦: \(computerStatus) | 引擎: \(engineStatus) | 已啟用功能: \(enabledCount) 個"
     }
     
     private func showAlert(message: String) {
@@ -91,9 +114,12 @@ extension CarViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FeatureCell", for: indexPath)
         let feature = Feature.allCases[indexPath.row]
         
+        // 取得功能對應的元件（所有資訊都在元件裡）
+        let component = car.component(for: feature)
+        
         var config = cell.defaultContentConfiguration()
-        config.text = feature.displayName
-        config.secondaryText = feature.description
+        config.text = component.name
+        config.secondaryText = component.description
         
         let isEnabled = car.isFeatureEnabled(feature)
         cell.accessoryType = isEnabled ? .checkmark : .none
@@ -111,6 +137,7 @@ extension CarViewController: UITableViewDelegate, UITableViewDataSource {
             // 停用功能
             switch car.disable(feature) {
             case .success:
+                // Combine 會自動更新 UI
                 break
             case .failure(let error):
                 showAlert(message: "停用失敗: \(error.localizedDescription)")
@@ -119,14 +146,12 @@ extension CarViewController: UITableViewDelegate, UITableViewDataSource {
             // 啟用功能
             switch car.enable(feature) {
             case .success:
+                // Combine 會自動更新 UI
                 break
             case .failure(let error):
                 showAlert(message: "啟用失敗: \(error.localizedDescription)")
             }
         }
-        
-        updateStatus()
-        tableView.reloadData()
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

@@ -1,244 +1,23 @@
 //
 //  Car.swift
-//  CarSystem
+//  CarSystem 車輛主類別
 //
 //  Created by Claude on 2026/1/11.
 //
+
 import Foundation
+import Combine
 
-// MARK: - CarComponent Protocol
-protocol CarComponent {
-    var name: String { get }
-    var isRequired: Bool { get }
-}
-
-// MARK: - Feature 列舉
-enum Feature: String, CaseIterable {
-    case airConditioner = "airConditioner"
-    case navigation = "navigation"
-    case entertainment = "entertainment"
-    case bluetooth = "bluetooth"
-    case rearCamera = "rearCamera"
-    case surroundView = "surroundView"
-    case blindSpotDetection = "blindSpotDetection"
-    case frontRadar = "frontRadar"
-    case parkingAssist = "parkingAssist"
-    case laneKeeping = "laneKeeping"
-    case emergencyBraking = "emergencyBraking"
-    case autoPilot = "autoPilot"
+/// 車輛主類別 - 使用 ObservableObject 實現資料綁定
+class Car: ObservableObject {
     
-    var displayName: String {
-        switch self {
-        case .airConditioner: return "🌡️ 空調系統"
-        case .navigation: return "🗺️ 導航系統"
-        case .entertainment: return "🎵 娛樂系統"
-        case .bluetooth: return "📱 藍牙系統"
-        case .rearCamera: return "📷 倒車鏡頭"
-        case .surroundView: return "🔄 環景攝影"
-        case .blindSpotDetection: return "👁️ 盲點偵測"
-        case .frontRadar: return "📡 前方雷達"
-        case .parkingAssist: return "🅿️ 停車輔助"
-        case .laneKeeping: return "🛤️ 車道維持"
-        case .emergencyBraking: return "🛑 緊急煞車"
-        case .autoPilot: return "🤖 自動駕駛"
-        }
-    }
-    
-    var description: String {
-        switch self {
-        case .airConditioner: return "冷暖氣控制"
-        case .navigation: return "GPS 導航"
-        case .entertainment: return "音樂影片播放"
-        case .bluetooth: return "藍牙連接裝置"
-        case .rearCamera: return "倒車影像顯示"
-        case .surroundView: return "360度環景影像"
-        case .blindSpotDetection: return "偵測兩側盲點"
-        case .frontRadar: return "前方障礙物偵測"
-        case .parkingAssist: return "自動停車輔助"
-        case .laneKeeping: return "自動維持車道"
-        case .emergencyBraking: return "自動緊急煞車"
-        case .autoPilot: return "全自動駕駛模式"
-        }
-    }
-    
-    /// 取得此功能的相依功能
-    var dependencies: [Feature] {
-        switch self {
-        case .airConditioner, .navigation, .entertainment, .bluetooth, .rearCamera, .blindSpotDetection, .frontRadar:
-            return [] // 只依賴中控電腦
-        case .surroundView:
-            return [.rearCamera]
-        case .parkingAssist:
-            return [.surroundView, .blindSpotDetection]
-        case .laneKeeping:
-            return [.navigation, .frontRadar]
-        case .emergencyBraking:
-            return [.frontRadar]
-        case .autoPilot:
-            return [.laneKeeping, .emergencyBraking, .surroundView]
-        }
-    }
-    
-    /// 是否需要中控電腦
-    var requiresCentralComputer: Bool {
-        return true // 所有功能都需要中控電腦
-    }
-    
-    /// 是否需要引擎運行中
-    var requiresEngineRunning: Bool {
-        switch self {
-        case .laneKeeping, .emergencyBraking:
-            return true
-        default:
-            return false
-        }
-    }
-}
-
-// MARK: - FeatureError 錯誤類型
-enum FeatureError: Error, LocalizedError {
-    case centralComputerOff
-    case engineNotRunning
-    case dependencyNotEnabled(Feature)
-    case featureHasDependents([Feature])
-    case featureAlreadyEnabled
-    case featureAlreadyDisabled
-    
-    var errorDescription: String? {
-        switch self {
-        case .centralComputerOff:
-            return "中控電腦未開啟"
-        case .engineNotRunning:
-            return "引擎未運行"
-        case .dependencyNotEnabled(let feature):
-            return "相依功能 \(feature.displayName) 未啟用"
-        case .featureHasDependents(let features):
-            let names = features.map { $0.displayName }.joined(separator: ", ")
-            return "以下功能依賴此功能: \(names)"
-        case .featureAlreadyEnabled:
-            return "功能已啟用"
-        case .featureAlreadyDisabled:
-            return "功能已停用"
-        }
-    }
-}
-
-// MARK: - 必要元件
-
-class Wheel: CarComponent {
-    let name = "車輪"
-    let isRequired = true
-}
-
-class Engine: CarComponent {
-    let name = "引擎"
-    let isRequired = true
-    private(set) var isRunning = false
-    
-    func start() {
-        isRunning = true
-        print("🔧 引擎已啟動")
-    }
-    
-    func stop() {
-        isRunning = false
-        print("🔧 引擎已停止")
-    }
-}
-
-class Battery: CarComponent {
-    let name = "電池"
-    let isRequired = true
-}
-
-class CentralComputer: CarComponent {
-    let name = "中控電腦"
-    let isRequired = true
-    private(set) var isOn = false
-    
-    func turnOn() {
-        isOn = true
-        print("💻 中控電腦已開啟")
-    }
-    
-    func turnOff() {
-        isOn = false
-        print("💻 中控電腦已關閉")
-    }
-}
-
-// MARK: - 選配元件
-
-class AirConditioner: CarComponent {
-    let name = "空調系統"
-    let isRequired = false
-}
-
-class NavigationSystem: CarComponent {
-    let name = "導航系統"
-    let isRequired = false
-}
-
-class EntertainmentSystem: CarComponent {
-    let name = "娛樂系統"
-    let isRequired = false
-}
-
-class BluetoothSystem: CarComponent {
-    let name = "藍牙系統"
-    let isRequired = false
-}
-
-class RearCamera: CarComponent {
-    let name = "倒車鏡頭"
-    let isRequired = false
-}
-
-class SurroundViewCamera: CarComponent {
-    let name = "環景攝影"
-    let isRequired = false
-}
-
-class BlindSpotDetection: CarComponent {
-    let name = "盲點偵測"
-    let isRequired = false
-}
-
-class FrontRadar: CarComponent {
-    let name = "前方雷達"
-    let isRequired = false
-}
-
-class ParkingAssist: CarComponent {
-    let name = "停車輔助"
-    let isRequired = false
-}
-
-class LaneKeeping: CarComponent {
-    let name = "車道維持"
-    let isRequired = false
-}
-
-class EmergencyBraking: CarComponent {
-    let name = "緊急煞車"
-    let isRequired = false
-}
-
-class AutoPilot: CarComponent {
-    let name = "自動駕駛"
-    let isRequired = false
-}
-
-// MARK: - Car 類別
-
-class Car {
-    // 必要元件
+    // MARK: - 必要元件（4 個）
     let wheels: [Wheel]
     let engine: Engine
     let battery: Battery
     let centralComputer: CentralComputer
     
-    // 選配元件
+    // MARK: - 選配元件（12 個）
     let airConditioner: AirConditioner
     let navigationSystem: NavigationSystem
     let entertainmentSystem: EntertainmentSystem
@@ -252,21 +31,65 @@ class Car {
     let emergencyBraking: EmergencyBraking
     let autoPilot: AutoPilot
     
-    // 已啟用的功能
-    private var _enabledFeatures: Set<Feature> = []
+    // MARK: - 發布狀態（使用 Combine）
+    @Published private(set) var enabledFeatures: Set<Feature> = []
+    @Published private(set) var isComputerOn: Bool = false
+    @Published private(set) var isEngineRunning: Bool = false
     
-    var enabledFeatures: [Feature] {
-        return Array(_enabledFeatures).sorted { $0.rawValue < $1.rawValue }
+    // MARK: - Combine 訂閱管理
+    private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - 元件查詢
+    
+    /// 所有選配元件（實作 ToggleableComponent）
+    var toggleableComponents: [ToggleableComponent] {
+        [
+            airConditioner, navigationSystem, entertainmentSystem, bluetoothSystem,
+            rearCamera, surroundViewCamera, blindSpotDetection, frontRadar,
+            parkingAssist, laneKeeping, emergencyBraking, autoPilot
+        ]
     }
     
+    /// 所有元件
+    var allComponents: [CarComponent] {
+        var components: [CarComponent] = []
+        components.append(contentsOf: wheels as [CarComponent])
+        components.append(contentsOf: [engine, battery, centralComputer] as [CarComponent])
+        components.append(contentsOf: toggleableComponents as [CarComponent])
+        return components
+    }
+    
+    /// 根據 Feature 取得對應的元件
+    func component(for feature: Feature) -> ToggleableComponent {
+        guard let component = toggleableComponents.first(where: { $0.feature == feature }) else {
+            fatalError("Component not found for feature: \(feature). Please ensure all features have corresponding components.")
+        }
+        return component
+    }
+    
+    /// 取得所有必要元件
+    var requiredComponents: [CarComponent] {
+        var components: [CarComponent] = []
+        components.append(contentsOf: wheels as [CarComponent])
+        components.append(contentsOf: [engine, battery, centralComputer] as [CarComponent])
+        return components
+    }
+    
+    /// 取得所有選配元件
+    var optionalComponents: [CarComponent] {
+        toggleableComponents as [CarComponent]
+    }
+    
+    // MARK: - 初始化
+    
     init() {
-        // 初始化必要元件
+        // 必要元件
         self.wheels = [Wheel(), Wheel(), Wheel(), Wheel()]
         self.engine = Engine()
         self.battery = Battery()
         self.centralComputer = CentralComputer()
         
-        // 初始化選配元件
+        // 選配元件
         self.airConditioner = AirConditioner()
         self.navigationSystem = NavigationSystem()
         self.entertainmentSystem = EntertainmentSystem()
@@ -280,121 +103,129 @@ class Car {
         self.emergencyBraking = EmergencyBraking()
         self.autoPilot = AutoPilot()
         
-        print("🚗 車輛已建立，配備 \(wheels.count) 個車輪")
+        setupBindings()
     }
     
-    // MARK: - 功能管理
+    // MARK: - Combine 綁定
     
-    /// 檢查功能是否已啟用
+    private func setupBindings() {
+        centralComputer.$isOn
+            .sink { [weak self] isOn in
+                guard let self = self else { return }
+                self.isComputerOn = isOn
+                if !isOn { self.onCentralComputerOff() }
+            }
+            .store(in: &cancellables)
+        
+        engine.$isRunning
+            .sink { [weak self] isRunning in
+                guard let self = self else { return }
+                self.isEngineRunning = isRunning
+                if !isRunning { self.onEngineStop() }
+            }
+            .store(in: &cancellables)
+    }
+    
+    // MARK: - 元件控制 API
+    
+    /// 切換中控電腦狀態
+    func toggleCentralComputer() {
+        if centralComputer.isOn {
+            centralComputer.turnOff()
+        } else {
+            centralComputer.turnOn()
+        }
+    }
+    
+    /// 切換引擎狀態
+    func toggleEngine() {
+        if engine.isRunning {
+            engine.stop()
+        } else {
+            engine.start()
+        }
+    }
+    
+    // MARK: - 功能管理 API
+    
     func isFeatureEnabled(_ feature: Feature) -> Bool {
-        return _enabledFeatures.contains(feature)
+        enabledFeatures.contains(feature)
     }
     
-    /// 啟用功能
     @discardableResult
     func enable(_ feature: Feature) -> Result<Void, FeatureError> {
-        // 檢查是否已啟用
+        let comp = component(for: feature)
+        
         if isFeatureEnabled(feature) {
             return .failure(.featureAlreadyEnabled)
         }
         
-        // 檢查中控電腦
-        if feature.requiresCentralComputer && !centralComputer.isOn {
+        if comp.requiresCentralComputer && !centralComputer.isOn {
             return .failure(.centralComputerOff)
         }
         
-        // 檢查引擎
-        if feature.requiresEngineRunning && !engine.isRunning {
+        if comp.requiresEngineRunning && !engine.isRunning {
             return .failure(.engineNotRunning)
         }
         
-        // 檢查相依功能
-        for dependency in feature.dependencies {
-            if !isFeatureEnabled(dependency) {
-                return .failure(.dependencyNotEnabled(dependency))
+        for dep in comp.dependencies {
+            if !isFeatureEnabled(dep) {
+                return .failure(.dependencyNotEnabled(dep))
             }
         }
         
-        // 啟用功能
-        _enabledFeatures.insert(feature)
-        print("✅ 已啟用: \(feature.displayName)")
+        enabledFeatures.insert(feature)
         return .success(())
     }
     
-    /// 停用功能（方案 B：連鎖停用依賴它的功能）
     @discardableResult
     func disable(_ feature: Feature) -> Result<Void, FeatureError> {
-        // 檢查是否已停用
         if !isFeatureEnabled(feature) {
             return .failure(.featureAlreadyDisabled)
         }
-        
-        // 找出依賴此功能的其他功能並連鎖停用
         cascadeDisable(feature)
-        
         return .success(())
     }
     
-    /// 遞迴停用功能及其依賴者
+    var enabledFeaturesList: [Feature] {
+        Array(enabledFeatures).sorted { $0.rawValue < $1.rawValue }
+    }
+    
+    // MARK: - 私有方法
+    
     private func cascadeDisable(_ feature: Feature) {
-        // 找出所有依賴此功能的功能
-        let dependents = Feature.allCases.filter { 
-            $0.dependencies.contains(feature) && isFeatureEnabled($0)
+        let dependents = toggleableComponents.filter {
+            $0.dependencies.contains(feature) && isFeatureEnabled($0.feature)
         }
         
-        // 先遞迴停用依賴者
         for dependent in dependents {
-            cascadeDisable(dependent)
+            cascadeDisable(dependent.feature)
         }
         
-        // 停用此功能
-        if _enabledFeatures.remove(feature) != nil {
-            print("❌ 已停用: \(feature.displayName)")
-        }
+        enabledFeatures.remove(feature)
     }
     
-    /// 取得依賴指定功能的所有功能
     func getDependents(of feature: Feature) -> [Feature] {
-        return Feature.allCases.filter {
-            $0.dependencies.contains(feature) && isFeatureEnabled($0)
+        toggleableComponents
+            .filter { $0.dependencies.contains(feature) && isFeatureEnabled($0.feature) }
+            .map { $0.feature }
+    }
+    
+    private func onCentralComputerOff() {
+        let toDisable = toggleableComponents.filter {
+            $0.requiresCentralComputer && isFeatureEnabled($0.feature)
+        }
+        for comp in toDisable {
+            cascadeDisable(comp.feature)
         }
     }
     
-    // MARK: - 中控電腦狀態整合
-    
-    /// 當中控電腦關閉時，停用所有依賴它的功能
-    func onCentralComputerOff() {
-        let featuresToDisable = _enabledFeatures.filter { $0.requiresCentralComputer }
-        for feature in featuresToDisable {
-            cascadeDisable(feature)
+    private func onEngineStop() {
+        let toDisable = toggleableComponents.filter {
+            $0.requiresEngineRunning && isFeatureEnabled($0.feature)
         }
-    }
-    
-    // MARK: - 引擎狀態整合
-    
-    /// 當引擎停止時，停用需要引擎運行的功能
-    func onEngineStop() {
-        let featuresToDisable = _enabledFeatures.filter { $0.requiresEngineRunning }
-        for feature in featuresToDisable {
-            cascadeDisable(feature)
-        }
-    }
-}
-
-// MARK: - Car Extension for State Sync
-
-extension Car {
-    /// 同步中控電腦狀態
-    func syncCentralComputerState() {
-        if !centralComputer.isOn {
-            onCentralComputerOff()
-        }
-    }
-    
-    /// 同步引擎狀態
-    func syncEngineState() {
-        if !engine.isRunning {
-            onEngineStop()
+        for comp in toDisable {
+            cascadeDisable(comp.feature)
         }
     }
 }
