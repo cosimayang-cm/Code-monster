@@ -8,204 +8,173 @@
 import Foundation
 
 /// 車輛主類別 - Facade Pattern
+/// 負責協調各 Manager，發布事件，記錄日誌
 class Car {
     
-    // MARK: - Components
+    // MARK: - Managers
     
-    private let wheel = Wheel()
-    private let engine = Engine()
-    private let battery = Battery()
-    private let centralComputer = CentralComputer()
-    
-    private let airConditioner = AirConditioner()
-    private let navigation = NavigationSystem()
-    private let entertainment = EntertainmentSystem()
-    private let bluetooth = BluetoothSystem()
-    private let rearCamera = RearCamera()
-    private let surroundView = SurroundViewCamera()
-    private let blindSpotDetection = BlindSpotDetection()
-    private let frontRadar = FrontRadar()
-    private let parkingAssist = ParkingAssist()
-    private let laneKeeping = LaneKeeping()
-    private let emergencyBraking = EmergencyBraking()
-    private let autoPilot = AutoPilot()
-    
-    // MARK: - Services
-    
-    private let dependencyValidator = DependencyValidator()
-    
-    // MARK: - State
-    
-    /// 已啟用的功能集合
-    private var enabledFeatures: Set<Feature> = []
-
+    private let lifecycle: ComponentLifecycleManager
+    private let features: FeatureStateManager
+    private let eventPublisher: CarEventPublisher
+    private let logger: Logger
     
     // MARK: - Initialization
     
-    init() {
-        print("🚗 Car initialized")
+    init(configuration: CarConfiguration = .full(),
+         lifecycle: ComponentLifecycleManager = ComponentLifecycleManager(),
+         features: FeatureStateManager? = nil,
+         validator: DependencyValidating = DependencyValidator(),
+         eventPublisher: CarEventPublisher = CarEventPublisher(),
+         logger: Logger = ConsoleLogger()) {
+        
+        self.lifecycle = lifecycle
+        self.features = features ?? FeatureStateManager(
+            configuration: configuration,
+            validator: validator
+        )
+        self.eventPublisher = eventPublisher
+        self.logger = logger
+        
+        logger.log("Car initialized with \(configuration.features.count) features", level: .info)
     }
     
     // MARK: - Central Computer Control
     
     func turnOnCentralComputer() {
-        centralComputer.turnOn()
+        guard !lifecycle.isCentralComputerOn else {
+            logger.log("Central Computer is already ON - skipping", level: .warning)
+            return
+        }
+        
+        lifecycle.turnOnCentralComputer()
+        eventPublisher.publish(.centralComputerTurnedOn)
     }
     
     func turnOffCentralComputer() {
-        centralComputer.turnOff()
-        
-        // 連鎖停用所有依賴中控電腦的功能
-        let affectedFeatures = enabledFeatures.filter { _ in true } // 所有功能都依賴中控電腦
-        for feature in affectedFeatures {
-            disableFeatureCascade(feature)
+        guard lifecycle.isCentralComputerOn else {
+            logger.log("Central Computer is already OFF - skipping", level: .warning)
+            return
         }
         
-        if !affectedFeatures.isEmpty {
-            print("⚠️ Central Computer OFF - Disabled features: \(affectedFeatures.map { $0.displayName }.joined(separator: ", "))")
+        // 先停止引擎（引擎依賴中控電腦）
+        if lifecycle.isEngineRunning {
+            lifecycle.stopEngine()
+            logger.log("Central Computer OFF - Engine stopped", level: .warning)
+            eventPublisher.publish(.engineStopped)
         }
+        
+        lifecycle.turnOffCentralComputer()
+        
+        // 連鎖停用所有功能
+        let enabledFeatures = features.getEnabledFeatures()
+        var allDisabled: [Feature] = []
+        
+        for feature in enabledFeatures {
+            if let result = try? features.disable(feature).get() {
+                allDisabled.append(contentsOf: result)
+            }
+        }
+        
+        if !allDisabled.isEmpty {
+            logger.log("Central Computer OFF - Disabled features: \(allDisabled.map { $0.displayName }.joined(separator: ", "))", level: .warning)
+            eventPublisher.publish(.featuresCascadeDisabled(allDisabled))
+        }
+        
+        eventPublisher.publish(.centralComputerTurnedOff)
     }
     
     var isCentralComputerOn: Bool {
-        return centralComputer.isActive
+        lifecycle.isCentralComputerOn
     }
     
     // MARK: - Engine Control
     
     func startEngine() {
-        engine.turnOn()
+        guard !lifecycle.isEngineRunning else {
+            logger.log("Engine is already running - skipping", level: .warning)
+            return
+        }
+        
+        // 檢查中控電腦是否已開啟（引擎依賴中控電腦）
+        guard lifecycle.isCentralComputerOn else {
+            logger.log("Cannot start engine: Central Computer is OFF", level: .error)
+            return
+        }
+        
+        lifecycle.startEngine()
+        eventPublisher.publish(.engineStarted)
     }
     
     func stopEngine() {
-        engine.turnOff()
-        
-        // 只影響需要引擎運行的功能
-        let engineRequiredFeatures = dependencyValidator.getEngineRequiredFeatures()
-        let affectedFeatures = enabledFeatures.filter { engineRequiredFeatures.contains($0) }
-        
-        for feature in affectedFeatures {
-            disableFeatureCascade(feature)
+        guard lifecycle.isEngineRunning else {
+            logger.log("Engine is already stopped - skipping", level: .warning)
+            return
         }
         
-        if !affectedFeatures.isEmpty {
-            print("⚠️ Engine stopped - Disabled features: \(affectedFeatures.map { $0.displayName }.joined(separator: ", "))")
+        lifecycle.stopEngine()
+        
+        // 停用需要引擎的功能
+        let validator = DependencyValidator()
+        let engineFeatures = validator.getEngineRequiredFeatures()
+        let enabledEngineFeatures = features.getEnabledFeatures()
+            .filter { engineFeatures.contains($0) }
+        
+        var allDisabled: [Feature] = []
+        for feature in enabledEngineFeatures {
+            if let result = try? features.disable(feature).get() {
+                allDisabled.append(contentsOf: result)
+            }
         }
+        
+        if !allDisabled.isEmpty {
+            logger.log("Engine stopped - Disabled features: \(allDisabled.map { $0.displayName }.joined(separator: ", "))", level: .warning)
+            eventPublisher.publish(.featuresCascadeDisabled(allDisabled))
+        }
+        
+        eventPublisher.publish(.engineStopped)
     }
     
     var isEngineRunning: Bool {
-        return engine.isActive
+        lifecycle.isEngineRunning
     }
     
     // MARK: - Feature Toggle
     
     /// 啟用指定功能
     func enableFeature(_ feature: Feature) -> Result<Void, FeatureError> {
-        // 檢查是否已啟用
-        if enabledFeatures.contains(feature) {
-            print("ℹ️ \(feature.displayName) is already enabled")
-            return .success(())
-        }
-        
-        // 驗證相依性
-        let validationResult = dependencyValidator.validateEnable(
-            feature: feature,
-            centralComputerOn: centralComputer.isActive,
-            engineRunning: engine.isActive,
-            enabledFeatures: enabledFeatures
+        let result = features.enable(
+            feature,
+            centralComputerOn: lifecycle.isCentralComputerOn,
+            engineRunning: lifecycle.isEngineRunning
         )
         
-        switch validationResult {
+        switch result {
         case .success:
-            // 啟用功能
-            setFeatureEnabled(feature, enabled: true)
-            enabledFeatures.insert(feature)
-            print("✅ Enabled: \(feature.displayName)")
-            return .success(())
-            
+            logger.log("Enabled: \(feature.displayName)", level: .info)
+            eventPublisher.publish(.featureEnabled(feature))
         case .failure(let error):
-            print("❌ Failed to enable \(feature.displayName): \(error.localizedDescription)")
-            return .failure(error)
+            logger.log("Failed to enable \(feature.displayName): \(error.localizedDescription)", level: .error)
         }
+        
+        return result
     }
     
     /// 停用指定功能（連鎖停用依賴它的功能）
     func disableFeature(_ feature: Feature) -> Result<Void, FeatureError> {
-        // 檢查是否已停用
-        guard enabledFeatures.contains(feature) else {
-            print("ℹ️ \(feature.displayName) is already disabled")
+        let result = features.disable(feature)
+        
+        switch result {
+        case .success(let disabled):
+            if disabled.count > 1 {
+                let dependents = disabled.filter { $0 != feature }
+                logger.log("Also disabled dependent features: \(dependents.map { $0.displayName }.joined(separator: ", "))", level: .warning)
+                eventPublisher.publish(.featuresCascadeDisabled(disabled))
+            } else if disabled.count == 1 {
+                eventPublisher.publish(.featureDisabled(feature))
+            }
             return .success(())
-        }
-        
-        // 遞迴停用所有依賴功能
-        let allDisabled = disableFeatureRecursive(feature)
-        
-        if allDisabled.count > 1 {
-            let dependents = allDisabled.filter { $0 != feature }
-            print("⚠️ Also disabled dependent features: \(dependents.map { $0.displayName }.joined(separator: ", "))")
-        }
-        
-        return .success(())
-    }
-    
-    /// 遞迴停用功能及其所有依賴者
-    private func disableFeatureRecursive(_ feature: Feature) -> [Feature] {
-        var disabledFeatures: [Feature] = []
-        
-        // 先找出直接依賴此功能的其他功能
-        let directDependents = dependencyValidator.getDependentFeatures(
-            of: feature,
-            from: enabledFeatures
-        )
-        
-        // 遞迴停用每個依賴者（深度優先）
-        for dependent in directDependents {
-            let cascadeDisabled = disableFeatureRecursive(dependent)
-            disabledFeatures.append(contentsOf: cascadeDisabled)
-        }
-        
-        // 最後停用自己
-        if enabledFeatures.contains(feature) {
-            disableFeatureCascade(feature)
-            disabledFeatures.append(feature)
-        }
-        
-        return disabledFeatures
-    }
-    
-    /// 直接停用功能（無檢查）
-    private func disableFeatureCascade(_ feature: Feature) {
-        setFeatureEnabled(feature, enabled: false)
-        enabledFeatures.remove(feature)
-        print("🔴 Disabled: \(feature.displayName)")
-    }
-    
-    /// 設定功能元件的啟用狀態
-    private func setFeatureEnabled(_ feature: Feature, enabled: Bool) {
-        switch feature {
-        case .airConditioner:
-            airConditioner.isEnabled = enabled
-        case .navigation:
-            navigation.isEnabled = enabled
-        case .entertainment:
-            entertainment.isEnabled = enabled
-        case .bluetooth:
-            bluetooth.isEnabled = enabled
-        case .rearCamera:
-            rearCamera.isEnabled = enabled
-        case .surroundView:
-            surroundView.isEnabled = enabled
-        case .blindSpotDetection:
-            blindSpotDetection.isEnabled = enabled
-        case .frontRadar:
-            frontRadar.isEnabled = enabled
-        case .parkingAssist:
-            parkingAssist.isEnabled = enabled
-        case .laneKeeping:
-            laneKeeping.isEnabled = enabled
-        case .emergencyBraking:
-            emergencyBraking.isEnabled = enabled
-        case .autoPilot:
-            autoPilot.isEnabled = enabled
+        case .failure(let error):
+            return .failure(error)
         }
     }
     
@@ -213,12 +182,52 @@ class Car {
     
     /// 查詢指定功能是否已啟用
     func isFeatureEnabled(_ feature: Feature) -> Bool {
-        return enabledFeatures.contains(feature)
+        features.isEnabled(feature)
+    }
+    
+    /// 查詢指定功能是否可以啟用（依賴條件是否滿足）
+    func isFeatureAvailable(_ feature: Feature) -> Bool {
+        features.isAvailable(
+            feature,
+            centralComputerOn: lifecycle.isCentralComputerOn,
+            engineRunning: lifecycle.isEngineRunning
+        )
     }
     
     /// 取得所有已啟用功能的列表
     func getEnabledFeatures() -> [Feature] {
-        return Array(enabledFeatures).sorted { $0.displayName < $1.displayName }
+        features.getEnabledFeatures()
+    }
+    
+    /// 取得所有可用（可啟用）但尚未啟用的功能列表
+    func getAvailableFeatures() -> [Feature] {
+        features.getInstalledFeatures().filter { feature in
+            !isFeatureEnabled(feature) && isFeatureAvailable(feature)
+        }
+    }
+    
+    /// 取得所有不可用（無法啟用）的功能列表
+    func getUnavailableFeatures() -> [Feature] {
+        features.getInstalledFeatures().filter { feature in
+            !isFeatureAvailable(feature)
+        }
+    }
+    
+    /// 取得車輛已安裝的所有功能
+    func getInstalledFeatures() -> [Feature] {
+        features.getInstalledFeatures()
+    }
+    
+    // MARK: - Observer Management
+    
+    /// 加入觀察者
+    func addObserver(_ observer: CarEventObserver) {
+        eventPublisher.addObserver(observer)
+    }
+    
+    /// 移除觀察者
+    func removeObserver(_ observer: CarEventObserver) {
+        eventPublisher.removeObserver(observer)
     }
     
     /// 印出當前狀態
@@ -226,10 +235,10 @@ class Car {
         print("\n" + String(repeating: "=", count: 50))
         print("🚗 CAR STATUS")
         print(String(repeating: "=", count: 50))
-        print("Central Computer: \(centralComputer.isActive ? "ON 💻" : "OFF")")
-        print("Engine: \(engine.isActive ? "RUNNING 🏃" : "STOPPED")")
-        print("\nEnabled Features (\(enabledFeatures.count)):")
-        if enabledFeatures.isEmpty {
+        print("Central Computer: \(lifecycle.isCentralComputerOn ? "ON 💻" : "OFF")")
+        print("Engine: \(lifecycle.isEngineRunning ? "RUNNING 🏃" : "STOPPED")")
+        print("\nEnabled Features (\(features.getEnabledFeatures().count)):")
+        if features.getEnabledFeatures().isEmpty {
             print("  (none)")
         } else {
             for feature in getEnabledFeatures() {

@@ -8,7 +8,7 @@
 import Foundation
 
 /// 可 Toggle 的功能列舉
-enum Feature: CaseIterable {
+enum Feature: String, CaseIterable, Hashable {
     case airConditioner
     case navigation
     case entertainment
@@ -53,12 +53,13 @@ enum Feature: CaseIterable {
 }
 
 /// Feature Toggle 相關錯誤
-enum FeatureError: Error, LocalizedError {
+enum FeatureError: Error, LocalizedError, Equatable {
     case dependencyNotMet(feature: Feature, missingDependencies: [String])
     case cannotDisable(feature: Feature, dependentFeatures: [Feature])
     case componentNotAvailable(component: String)
     case centralComputerOff
     case engineNotRunning
+    case featureNotInstalled
     
     var errorDescription: String? {
         switch self {
@@ -72,6 +73,8 @@ enum FeatureError: Error, LocalizedError {
             return "Central Computer is off"
         case .engineNotRunning:
             return "Engine is not running"
+        case .featureNotInstalled:
+            return "Feature is not installed in this car"
         }
     }
 }

@@ -8,71 +8,15 @@
 import Foundation
 
 /// 功能相依性驗證器
-class DependencyValidator {
+class DependencyValidator: DependencyValidating {
     
-    /// 定義每個功能的相依條件
-    private let dependencies: [Feature: DependencyRule] = [
-        .airConditioner: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: false,
-            requiredFeatures: []
-        ),
-        .navigation: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: false,
-            requiredFeatures: []
-        ),
-        .entertainment: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: false,
-            requiredFeatures: []
-        ),
-        .bluetooth: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: false,
-            requiredFeatures: []
-        ),
-        .rearCamera: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: false,
-            requiredFeatures: []
-        ),
-        .surroundView: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: false,
-            requiredFeatures: [.rearCamera]
-        ),
-        .blindSpotDetection: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: false,
-            requiredFeatures: []
-        ),
-        .frontRadar: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: false,
-            requiredFeatures: []
-        ),
-        .parkingAssist: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: false,
-            requiredFeatures: [.surroundView, .blindSpotDetection]
-        ),
-        .laneKeeping: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: true,
-            requiredFeatures: [.navigation, .frontRadar]
-        ),
-        .emergencyBraking: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: true,
-            requiredFeatures: [.frontRadar]
-        ),
-        .autoPilot: DependencyRule(
-            requiredCentralComputer: true,
-            requiredEngine: false,
-            requiredFeatures: [.laneKeeping, .emergencyBraking, .surroundView]
-        )
-    ]
+    /// 依賴規則儲存庫
+    private let repository: DependencyRepository
+    
+    /// 初始化
+    init(repository: DependencyRepository = InMemoryDependencyRepository()) {
+        self.repository = repository
+    }
     
     /// 驗證功能是否可以啟用
     func validateEnable(
@@ -81,7 +25,7 @@ class DependencyValidator {
         engineRunning: Bool,
         enabledFeatures: Set<Feature>
     ) -> Result<Void, FeatureError> {
-        guard let rule = dependencies[feature] else {
+        guard let rule = repository.getDependencyRule(for: feature) else {
             return .success(())
         }
         
@@ -117,14 +61,14 @@ class DependencyValidator {
         from enabledFeatures: Set<Feature>
     ) -> [Feature] {
         return enabledFeatures.filter { enabledFeature in
-            guard let rule = dependencies[enabledFeature] else { return false }
+            guard let rule = repository.getDependencyRule(for: enabledFeature) else { return false }
             return rule.requiredFeatures.contains(feature)
         }
     }
     
     /// 取得需要引擎運行的所有功能
     func getEngineRequiredFeatures() -> [Feature] {
-        return dependencies.compactMap { feature, rule in
+        return repository.getAllDependencyRules().compactMap { feature, rule in
             rule.requiredEngine ? feature : nil
         }
     }
