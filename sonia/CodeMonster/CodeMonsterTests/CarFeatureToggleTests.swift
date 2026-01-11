@@ -101,7 +101,8 @@ final class CarFeatureToggleTests: XCTestCase {
     }
     
     func testStartEngine_SkipsWhenAlreadyRunning() {
-        // Given: 引擎已啟動
+        // Given: 中控電腦開啟，引擎已啟動
+        car.turnOnCentralComputer()
         car.startEngine()
         
         // When: 再次啟動

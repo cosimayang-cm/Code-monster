@@ -236,16 +236,25 @@ class ViewController: UIViewController {
         computerButton.setTitle(isOn ? "Turn OFF Computer" : "Turn ON Computer", for: .normal)
         computerButton.backgroundColor = isOn ? .systemRed.withAlphaComponent(0.2) : .systemGreen.withAlphaComponent(0.2)
         computerButton.setTitleColor(isOn ? .systemRed : .systemGreen, for: .normal)
+        
+        // 更新引擎按鈕狀態（引擎依賴中控電腦）
+        updateEngineUI()
     }
     
     private func updateEngineUI() {
         let isRunning = car.isEngineRunning
+        let computerOn = car.isCentralComputerOn
+        
         engineStatusLabel.text = "🏃 Engine: \(isRunning ? "RUNNING" : "STOPPED")"
         engineStatusLabel.textColor = isRunning ? .systemGreen : .systemRed
         
         engineButton.setTitle(isRunning ? "Stop Engine" : "Start Engine", for: .normal)
         engineButton.backgroundColor = isRunning ? .systemRed.withAlphaComponent(0.2) : .systemGreen.withAlphaComponent(0.2)
         engineButton.setTitleColor(isRunning ? .systemRed : .systemGreen, for: .normal)
+        
+        // 中控電腦關閉時，引擎按鈕不可用
+        engineButton.isEnabled = computerOn || isRunning
+        engineButton.alpha = (computerOn || isRunning) ? 1.0 : 0.5
     }
     
     private func updateAllFeatureButtons() {

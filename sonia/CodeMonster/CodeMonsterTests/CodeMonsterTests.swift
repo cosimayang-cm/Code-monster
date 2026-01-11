@@ -42,8 +42,9 @@ final class CodeMonsterTests: XCTestCase {
         XCTAssertFalse(car.isCentralComputerOn, "Central computer should be off")
     }
     
-    func testEngineControl() {
-        // 启动引擎
+    func testEngineControl() {        // 開啟中控電腦（引擎依賴中控電腦）
+        car.turnOnCentralComputer()
+                // 启动引擎
         car.startEngine()
         XCTAssertTrue(car.isEngineRunning, "Engine should be running")
         
@@ -90,8 +91,8 @@ final class CodeMonsterTests: XCTestCase {
         XCTAssertTrue(car.isCentralComputerOn)
     }
     
-    func testCannotStartEngineTwice() {
-        car.startEngine()
+    func testCannotStartEngineTwice() {        car.turnOnCentralComputer()  // 引擎依賴中控電腦
+                car.startEngine()
         XCTAssertTrue(car.isEngineRunning)
         
         // 重复启动（应该跳过）
@@ -436,5 +437,33 @@ extension Result {
             return true
         }
         return false
+    }
+}
+
+// MARK: - Engine Dependency Tests
+
+extension CodeMonsterTests {
+    
+    func testEngine_RequiresCentralComputer() {
+        // 中控電腦關閉時無法啟動引擎
+        car.startEngine()
+        XCTAssertFalse(car.isEngineRunning, "Engine should not start when central computer is off")
+        
+        // 開啟中控電腦後可以啟動引擎
+        car.turnOnCentralComputer()
+        car.startEngine()
+        XCTAssertTrue(car.isEngineRunning, "Engine should start when central computer is on")
+    }
+    
+    func testTurnOffCentralComputer_StopsEngine() {
+        // 開啟中控電腦並啟動引擎
+        car.turnOnCentralComputer()
+        car.startEngine()
+        XCTAssertTrue(car.isEngineRunning, "Engine should be running")
+        
+        // 關閉中控電腦應該停止引擎
+        car.turnOffCentralComputer()
+        XCTAssertFalse(car.isEngineRunning, "Engine should stop when central computer is turned off")
+        XCTAssertFalse(car.isCentralComputerOn, "Central computer should be off")
     }
 }

@@ -56,6 +56,13 @@ class Car {
             return
         }
         
+        // 先停止引擎（引擎依賴中控電腦）
+        if lifecycle.isEngineRunning {
+            lifecycle.stopEngine()
+            logger.log("Central Computer OFF - Engine stopped", level: .warning)
+            eventPublisher.publish(.engineStopped)
+        }
+        
         lifecycle.turnOffCentralComputer()
         
         // 連鎖停用所有功能
@@ -85,6 +92,12 @@ class Car {
     func startEngine() {
         guard !lifecycle.isEngineRunning else {
             logger.log("Engine is already running - skipping", level: .warning)
+            return
+        }
+        
+        // 檢查中控電腦是否已開啟（引擎依賴中控電腦）
+        guard lifecycle.isCentralComputerOn else {
+            logger.log("Cannot start engine: Central Computer is OFF", level: .error)
             return
         }
         

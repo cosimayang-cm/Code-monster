@@ -56,6 +56,9 @@ final class CarObserverTests: XCTestCase {
     }
     
     func testObserver_ReceivesNotificationWhenEngineStarts() {
+        car.turnOnCentralComputer()
+        observer.events.removeAll()
+        
         car.startEngine()
         
         XCTAssertEqual(observer.events.count, 1)
@@ -67,6 +70,7 @@ final class CarObserverTests: XCTestCase {
     }
     
     func testObserver_ReceivesNotificationWhenEngineStops() {
+        car.turnOnCentralComputer()
         car.startEngine()
         observer.events.removeAll()
         
