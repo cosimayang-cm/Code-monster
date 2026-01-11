@@ -224,22 +224,22 @@ class Car {
 - 記錄功能使用日誌
 - 觸發功能變化的動畫效果
 
-### 2.3 Repository Pattern - 相依性資料管理
+### 2.3 Repository Pattern - 相依性資料管理 ✅
 
 **目的**：分離相依性定義與驗證邏輯
 
 ```swift
 protocol DependencyRepository {
-    func getDependencies(for feature: Feature) -> DependencyRule
-    func getDependents(of feature: Feature, from enabled: Set<Feature>) -> [Feature]
+    func getDependencyRule(for feature: Feature) -> DependencyRule?
+    func getAllDependencyRules() -> [Feature: DependencyRule]
 }
 
 // 記憶體實作（目前使用）
 class InMemoryDependencyRepository: DependencyRepository {
-    private let rules: [Feature: DependencyRule]
+    private let dependencies: [Feature: DependencyRule]
     
-    init(rules: [Feature: DependencyRule]) {
-        self.rules = rules
+    func getDependencyRule(for feature: Feature) -> DependencyRule? {
+        return dependencies[feature]
     }
 }
 
@@ -248,6 +248,110 @@ class ConfigFileDependencyRepository: DependencyRepository {
     init(configPath: String) { ... }
 }
 ```
+
+### 2.4 Builder + Factory Pattern - 車輛配置管理 ⭐
+
+**目的**：支援不同車型配置，移除硬編碼的 components
+
+**當前問題**：
+- Car 硬編碼持有 16 個 components
+- 無法支援選配（所有車都是全配）
+- 違反 OCP：新增功能必須修改 Car 類別
+- `setFeatureEnabled()` 的 switch statement 難以維護
+
+**改進方案**：使用 Builder Pattern（自定義配置） + Factory Pattern（預設車型）
+
+```swift
+// 1️⃣ 車輛配置
+struct CarConfiguration {
+    let features: [Feature]
+}
+
+// 2️⃣ Builder Pattern - 靈活自定義
+class CarConfigurationBuilder {
+    private var features: Set<Feature> = []
+    
+    func add(_ feature: Feature) -> Self {
+        features.insert(feature)
+        return self
+    }
+    
+    func addAll(_ features: [Feature]) -> Self {
+        self.features.formUnion(features)
+        return self
+    }
+    
+    func remove(_ feature: Feature) -> Self {
+        features.remove(feature)
+        return self
+    }
+    
+    func build() -> CarConfiguration {
+        CarConfiguration(features: Array(features))
+    }
+}
+
+// 3️⃣ Factory Pattern - 預設車型配置
+extension CarConfiguration {
+    static func basic() -> CarConfiguration {
+        CarConfigurationBuilder()
+            .addAll([.airConditioner, .navigation, .bluetooth])
+            .build()
+    }
+    
+    static func luxury() -> CarConfiguration {
+        CarConfigurationBuilder()
+            .addAll([.airConditioner, .navigation, .bluetooth, 
+                     .entertainment, .rearCamera, .surroundView,
+                     .blindSpotDetection, .frontRadar, .parkingAssist])
+            .build()
+    }
+    
+    static func full() -> CarConfiguration {
+        CarConfigurationBuilder()
+            .addAll(Feature.allCases)
+            .build()
+    }
+}
+
+// 4️⃣ Car 使用 Dictionary 管理 components
+class Car {
+    // 移除硬編碼
+    // private let airConditioner = AirConditioner() ❌
+    
+    // 改用 Dictionary
+    private var featureComponents: [Feature: ToggleableComponent] = [:]
+    
+    init(configuration: CarConfiguration = .full(), ...) {
+        // 根據配置安裝 components
+        configuration.features.forEach { feature in
+            featureComponents[feature] = ComponentFactory.create(feature)
+        }
+    }
+    
+    private func setFeatureEnabled(_ feature: Feature, enabled: Bool) {
+        // 不再需要 switch
+        featureComponents[feature]?.isEnabled = enabled
+    }
+}
+
+// 使用範例
+let basicCar = Car(configuration: .basic())
+let luxuryCar = Car(configuration: .luxury())
+let customCar = Car(configuration: CarConfigurationBuilder()
+    .addAll([.airConditioner, .navigation])
+    .add(.autoPilot)
+    .build()
+)
+```
+
+**優點**：
+- ✅ **支援選配**：不同車型不同配置
+- ✅ **符合 OCP**：新增功能不修改 Car 類別
+- ✅ **移除 switch statement**：改用 Dictionary lookup
+- ✅ **Fluent API**：Builder 提供鏈式呼叫
+- ✅ **預設配置**：Factory 提供常用車型
+- ✅ **靈活性**：可自由組合功能
 
 **優點3*：
 - ✅ 符合 SRP：驗證邏輯與資料儲存分離

@@ -17,18 +17,8 @@ class Car {
     private let battery = Battery()
     private let centralComputer = CentralComputer()
     
-    private let airConditioner = AirConditioner()
-    private let navigation = NavigationSystem()
-    private let entertainment = EntertainmentSystem()
-    private let bluetooth = BluetoothSystem()
-    private let rearCamera = RearCamera()
-    private let surroundView = SurroundViewCamera()
-    private let blindSpotDetection = BlindSpotDetection()
-    private let frontRadar = FrontRadar()
-    private let parkingAssist = ParkingAssist()
-    private let laneKeeping = LaneKeeping()
-    private let emergencyBraking = EmergencyBraking()
-    private let autoPilot = AutoPilot()
+    /// 功能元件字典（根據車輛配置動態安裝）
+    private var featureComponents: [Feature: FeatureToggleComponent] = [:]
     
     // MARK: - Services
     
@@ -43,11 +33,18 @@ class Car {
     
     // MARK: - Initialization
     
-    init(dependencyValidator: DependencyValidating = DependencyValidator(),
+    init(configuration: CarConfiguration = .full(),
+         dependencyValidator: DependencyValidating = DependencyValidator(),
          eventPublisher: CarEventPublisher = CarEventPublisher()) {
         self.dependencyValidator = dependencyValidator
         self.eventPublisher = eventPublisher
-        print("🚗 Car initialized")
+        
+        // 根據配置安裝元件
+        configuration.features.forEach { feature in
+            featureComponents[feature] = ComponentFactory.create(feature)
+        }
+        
+        print("🚗 Car initialized with \(configuration.features.count) features")
     }
     
     // MARK: - Central Computer Control
@@ -137,6 +134,12 @@ class Car {
     
     /// 啟用指定功能
     func enableFeature(_ feature: Feature) -> Result<Void, FeatureError> {
+        // ✅ 檢查功能是否已安裝
+        guard featureComponents[feature] != nil else {
+            print("❌ \(feature.displayName) is not installed in this car")
+            return .failure(.featureNotInstalled)
+        }
+        
         // ✅ 檢查是否已啟用（避免重複操作）
         guard !enabledFeatures.contains(feature) else {
             print("⚠️ \(feature.displayName) is already enabled - skipping")
@@ -168,6 +171,12 @@ class Car {
     
     /// 停用指定功能（連鎖停用依賴它的功能）
     func disableFeature(_ feature: Feature) -> Result<Void, FeatureError> {
+        // ✅ 檢查功能是否已安裝
+        guard featureComponents[feature] != nil else {
+            print("❌ \(feature.displayName) is not installed in this car")
+            return .failure(.featureNotInstalled)
+        }
+        
         // ✅ 檢查是否已停用（避免重複操作）
         guard enabledFeatures.contains(feature) else {
             print("⚠️ \(feature.displayName) is already disabled - skipping")
@@ -222,32 +231,7 @@ class Car {
     
     /// 設定功能元件的啟用狀態
     private func setFeatureEnabled(_ feature: Feature, enabled: Bool) {
-        switch feature {
-        case .airConditioner:
-            airConditioner.isEnabled = enabled
-        case .navigation:
-            navigation.isEnabled = enabled
-        case .entertainment:
-            entertainment.isEnabled = enabled
-        case .bluetooth:
-            bluetooth.isEnabled = enabled
-        case .rearCamera:
-            rearCamera.isEnabled = enabled
-        case .surroundView:
-            surroundView.isEnabled = enabled
-        case .blindSpotDetection:
-            blindSpotDetection.isEnabled = enabled
-        case .frontRadar:
-            frontRadar.isEnabled = enabled
-        case .parkingAssist:
-            parkingAssist.isEnabled = enabled
-        case .laneKeeping:
-            laneKeeping.isEnabled = enabled
-        case .emergencyBraking:
-            emergencyBraking.isEnabled = enabled
-        case .autoPilot:
-            autoPilot.isEnabled = enabled
-        }
+        featureComponents[feature]?.isEnabled = enabled
     }
     
     // MARK: - Query
@@ -276,16 +260,23 @@ class Car {
     
     /// 取得所有可用（可啟用）但尚未啟用的功能列表
     func getAvailableFeatures() -> [Feature] {
-        return Feature.allCases.filter { feature in
+        // 只包含已安裝的功能
+        return featureComponents.keys.filter { feature in
             !isFeatureEnabled(feature) && isFeatureAvailable(feature)
         }
     }
     
     /// 取得所有不可用（無法啟用）的功能列表
     func getUnavailableFeatures() -> [Feature] {
-        return Feature.allCases.filter { feature in
+        // 只包含已安裝但不可用的功能
+        return featureComponents.keys.filter { feature in
             !isFeatureAvailable(feature)
         }
+    }
+    
+    /// 取得車輛已安裝的所有功能
+    func getInstalledFeatures() -> [Feature] {
+        return Array(featureComponents.keys).sorted { $0.displayName < $1.displayName }
     }
     
     // MARK: - Observer Management
