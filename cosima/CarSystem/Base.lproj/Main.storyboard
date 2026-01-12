@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NavController">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="NavScene">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="NavController" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="NavBar">
+                        <rect key="frame" x="0.0" y="118" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="CarVC" kind="relationship" relationship="rootViewController" id="RootSegue"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NavFirstResponder" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-196" y="37"/>
+        </scene>
+        <!--🚗 車輛控制系統-->
+        <scene sceneID="CarScene">
+            <objects>
+                <viewController id="CarVC" customClass="CarViewController" customModule="CarSystem" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="MainView">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="中控電腦: ❌ 關閉 | 引擎: ❌ 停止 | 已啟用功能: 0 個" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="StatusLabel">
+                                <rect key="frame" x="16" y="178" width="361" height="60"/>
+                                <color key="backgroundColor" systemColor="systemGray6Color"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="StatusHeight"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="8"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                </userDefinedRuntimeAttributes>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ComputerButton">
+                                <rect key="frame" x="16" y="254" width="172.66666666666666" height="44"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="ComputerBtnHeight"/>
+                                </constraints>
+                                <state key="normal" title="中控電腦">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="8"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="toggleComputerTapped:" destination="CarVC" eventType="touchUpInside" id="ComputerAction"/>
+                                </connections>
+                            </button>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="FeatureTableView">
+                                <rect key="frame" x="0.0" y="314" width="393" height="538"/>
+                                <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FeatureCell" id="FeatureCell">
+                                        <rect key="frame" x="20" y="55.333332061767578" width="353" height="44.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FeatureCell" id="CellContent">
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="44.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="CarVC" id="TableDataSource"/>
+                                    <outlet property="delegate" destination="CarVC" id="TableDelegate"/>
+                                </connections>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EngineButton">
+                                <rect key="frame" x="204" y="254" width="172.33333333333337" height="44"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="EngineBtnHeight"/>
+                                </constraints>
+                                <state key="normal" title="引擎">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="8"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="toggleEngineTapped:" destination="CarVC" eventType="touchUpInside" id="EngineAction"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="SafeArea"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="ComputerButton" firstAttribute="leading" secondItem="SafeArea" secondAttribute="leading" constant="16" id="ComputerLeading"/>
+                            <constraint firstItem="ComputerButton" firstAttribute="top" secondItem="StatusLabel" secondAttribute="bottom" constant="16" id="ComputerTop"/>
+                            <constraint firstItem="EngineButton" firstAttribute="leading" secondItem="ComputerButton" secondAttribute="trailing" constant="16" id="EngineLeading"/>
+                            <constraint firstItem="EngineButton" firstAttribute="top" secondItem="StatusLabel" secondAttribute="bottom" constant="16" id="EngineTop"/>
+                            <constraint firstItem="SafeArea" firstAttribute="trailing" secondItem="EngineButton" secondAttribute="trailing" constant="16" id="EngineTrailing"/>
+                            <constraint firstItem="ComputerButton" firstAttribute="width" secondItem="EngineButton" secondAttribute="width" id="EqualWidth"/>
+                            <constraint firstItem="StatusLabel" firstAttribute="leading" secondItem="SafeArea" secondAttribute="leading" constant="16" id="StatusLeading"/>
+                            <constraint firstItem="StatusLabel" firstAttribute="top" secondItem="SafeArea" secondAttribute="top" constant="16" id="StatusTop"/>
+                            <constraint firstItem="SafeArea" firstAttribute="trailing" secondItem="StatusLabel" secondAttribute="trailing" constant="16" id="StatusTrailing"/>
+                            <constraint firstItem="FeatureTableView" firstAttribute="bottom" secondItem="MainView" secondAttribute="bottom" id="TableBottom"/>
+                            <constraint firstItem="FeatureTableView" firstAttribute="leading" secondItem="MainView" secondAttribute="leading" id="TableLeading"/>
+                            <constraint firstItem="FeatureTableView" firstAttribute="top" secondItem="ComputerButton" secondAttribute="bottom" constant="16" id="TableTop"/>
+                            <constraint firstItem="FeatureTableView" firstAttribute="trailing" secondItem="MainView" secondAttribute="trailing" id="TableTrailing"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="🚗 車輛控制系統" id="NavItem"/>
+                    <connections>
+                        <outlet property="computerButton" destination="ComputerButton" id="ComputerOutlet"/>
+                        <outlet property="engineButton" destination="EngineButton" id="EngineOutlet"/>
+                        <outlet property="statusLabel" destination="StatusLabel" id="StatusOutlet"/>
+                        <outlet property="tableView" destination="FeatureTableView" id="TableOutlet"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="CarFirstResponder" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="562" y="37"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemGray6Color">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemGroupedBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>
