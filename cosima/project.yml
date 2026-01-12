@@ -1,0 +1,59 @@
+name: CarSystem
+options:
+  bundleIdPrefix: com.cosima
+  deploymentTarget:
+    iOS: "15.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+
+targets:
+  CarSystem:
+    type: application
+    platform: iOS
+    sources:
+      - path: CarSystem
+        excludes:
+          - "**/*Tests*"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cosima.CarSystem
+        INFOPLIST_FILE: CarSystem/Info.plist
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: NO
+    info:
+      path: CarSystem/Info.plist
+      properties:
+        LSRequiresIPhoneOS: true
+        UILaunchStoryboardName: LaunchScreen
+        UIMainStoryboardFile: Main
+        UIRequiredDeviceCapabilities: [armv7]
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+
+  CarSystemTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: CarSystemTests
+    dependencies:
+      - target: CarSystem
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cosima.CarSystemTests
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: YES
