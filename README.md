@@ -39,6 +39,7 @@ CodeMonster/
 | # | 題目名稱 | 學習重點 |
 |---|----------|----------|
 | 1 | [Feature Toggle 車輛系統](CodeMonsters/monster1.md) | Feature Toggle 設計模式、功能相依性管理 |
+| 2 | [彈窗連鎖顯示機制](CodeMonsters/monster2.md) | Chain of Responsibility 設計模式 |
 
 ## 貢獻新題目
 
