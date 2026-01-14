@@ -153,11 +153,11 @@
 1. [ ] 定義 `PopupType` 枚舉
    ```swift
    enum PopupType: String, CaseIterable {
-       case tutorial          // 新手教學（僅新手看，看完即結束）
-       case interstitialAd    // 廣告 A - 插頁廣告（老手未看過時顯示）
-       case newFeature        // 廣告 B - 新功能公告（老手已看過廣告 A 時顯示）
-       case dailyCheckIn      // 每日簽到（老手流程）
-       case predictionResult  // 猜多空（老手流程）
+       case tutorial          // 新手教學（首次顯示後終止鏈，已看過則跳過）
+       case interstitialAd    // 廣告 A - 插頁廣告（未看過時顯示）
+       case newFeature        // 廣告 B - 新功能公告（已看過廣告 A 時顯示）
+       case dailyCheckIn      // 每日簽到（今日未簽到時顯示）
+       case predictionResult  // 猜多空結果（有結果且未看過時顯示）
    }
    ```
 2. [ ] 定義 `UserInfo` 模型（用戶身份與彈窗狀態）
@@ -167,9 +167,9 @@
    ///      生產環境應使用後端 API 提供的真實會員 ID
    struct UserInfo {
        let memberId: String
-       let isNewUser: Bool              // 是否為新手（true = 只看教學，false = 走完整流程）
-       let hasSeenTutorial: Bool        // 已看過新手教學
-       let hasSeenAd: Bool              // 已看運廣告 A（interstitialAd）
+       let isNewUser: Bool              // 是否為新用戶（用於統計，不影響流程）
+       let hasSeenTutorial: Bool        // 已看過新手教學（關鍵：false = 顯示後終止鏈）
+       let hasSeenAd: Bool              // 已看過廣告 A（interstitialAd）
        let hasSeenNewFeature: Bool      // 已看過廣告 B（newFeature）
        let lastCheckInDate: Date?       // 最後簽到日期
        let hasCompletedPrediction: Bool // 今日是否已完成猜多空
@@ -244,6 +244,8 @@
    ```
 4. [ ] 實作 `BasePopupHandler`（包含 next 串接邏輯）
 5. [ ] 實作 5 個具體 Handler
+   - **特別注意**：`TutorialHandler` 如果顯示彈窗（用戶首次看），關閉後返回成功但**不調用 next**（終止鏈）
+   - 其他 Handler 顯示彈窗後，關閉時調用 next 繼續檢查
 6. [ ] 實作 `PopupChainManager`（組裝與啟動）
 7. [ ] 新增測試套件
    - Handler 邏輯測試
@@ -894,26 +896,28 @@ class UserStateSimulator {
 
 ### 表格形式（實際業務流程）
 
-| 用戶類型 | 流程 | 彈窗順序 |
+| 用戶狀態 | 流程 | 彈窗順序 |
 |:--------:|------|----------|
-| **新手** | 只顯示教學，結束後直接回主畫面 | Tutorial → 結束 |
-| **老手** | 完整流程：廣告 → 簽到 → 猜多空 | 1. AdA 或 AdB<br>2. CheckIn（未簽到才顯示）<br>3. Prediction（未猜才顯示） |
+| **首次進入<br>未看過教學** | 顯示教學後終止 | Tutorial → 關閉後結束 |
+| **已看過教學** | 完整責任鏈流程 | 1. AdA 或 AdB<br>2. CheckIn（未簽到才顯示）<br>3. Prediction（未猜才顯示） |
 
-**彈窗判斷邏輯（老手）**：
+**彈窗判斷邏輯**：
 
 | 順序 | 彈窗類型 | 顯示條件 | 備註 |
 |:----:|----------|----------|------|
-| 1 | 廣告 A (interstitialAd) | 老手 && 未看過廣告 A | `hasSeenAd == false` |
-| 1 | 廣告 B (newFeature) | 老手 && 已看過廣告 A | `hasSeenAd == true` |
+| 0 | 新手教學 (tutorial) | 未看過教學 | `hasSeenTutorial == false`<br>**顯示後終止鏈** |
+| 1 | 廣告 A (interstitialAd) | 未看過廣告 A | `hasSeenAd == false` |
+| 1 | 廣告 B (newFeature) | 已看過廣告 A | `hasSeenAd == true` |
 | 2 | 每日簽到 (dailyCheckIn) | 今日尚未簽到 | 檢查 `lastCheckInDate` |
 | 3 | 猜多空 (predictionResult) | 今日尚未完成猜多空 | `hasCompletedPrediction == false` |
 
 **特殊規則**：
-- **新手只看教學**：`isNewUser == true` 的用戶只會看到 Tutorial，點擊結束後直接回主畫面，不經歷其他彈窗
-- **老手廣告 A/B 互斥**：
+- **Tutorial 終止規則**：如果用戶未看過教學（`hasSeenTutorial == false`），顯示 Tutorial 彈窗，用戶關閉後**直接結束責任鏈**，不繼續檢查後續彈窗
+- **已看過教學則繼續**：如果 `hasSeenTutorial == true`，跳過 Tutorial，繼續檢查後續彈窗
+- **廣告 A/B 互斥**：
   - 未看過廣告 A (`hasSeenAd == false`) → 顯示 `interstitialAd`
   - 已看過廣告 A (`hasSeenAd == true`) → 顯示 `newFeature`
-- **任一彈窗顯示後暫停**：待用戶關閉後繼續檢查下一個
+- **任一彈窗顯示後暫停**：待用戶關閉後繼續檢查下一個（Tutorial 除外）
 - **已完成的跳過**：已簽到或已猜多空的直接跳過
 
 ---
