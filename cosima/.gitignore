@@ -85,3 +85,7 @@ iOSInjectionProject/
 *.swp
 *.bak
 *.orig
+
+# Claude Code / Spec-Kit
+.claude/*
+!.claude/commands/
