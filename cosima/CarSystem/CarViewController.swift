@@ -17,15 +17,38 @@ class CarViewController: UIViewController {
     
     // MARK: - Properties
     private let car = Car()
-    
+
     /// Combine 訂閱管理
     private var cancellables = Set<AnyCancellable>()
+
+    // MARK: - Popup Chain (FR-001 ~ FR-012)
+
+    /// 彈窗鏈管理器
+    private lazy var popupChainManager: PopupChainManager = {
+        // ⚠️ 重要：陣列順序即優先順序 (FR-002)
+        // 索引越小越優先
+        let handlers: [PopupHandler] = [
+            TutorialPopupHandler(),       // [0] 最優先 - 新手教學
+            InterstitialAdHandler(),      // [1] 插頁式廣告
+            NewFeaturePopupHandler(),     // [2] 新功能公告
+            DailyCheckInHandler(),        // [3] 每日簽到
+            PredictionResultHandler()     // [4] 猜多空結果
+        ]
+        return PopupChainManager(handlers: handlers)
+    }()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupBindings()
+        setupPopupChainBindings()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // FR-001: 進入主畫面時啟動彈窗檢查流程
+        popupChainManager.startChain(on: self)
     }
     
     private func setupUI() {
@@ -76,6 +99,40 @@ class CarViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    // MARK: - Popup Chain Bindings
+
+    private func setupPopupChainBindings() {
+        // 監聽當前顯示的彈窗類型
+        popupChainManager.$currentPopup
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] popupType in
+                if let type = popupType {
+                    print("📢 正在顯示彈窗: \(type.displayName)")
+                }
+            }
+            .store(in: &cancellables)
+
+        // 監聯彈窗鏈狀態
+        popupChainManager.$isRunning
+            .receive(on: DispatchQueue.main)
+            .sink { isRunning in
+                if !isRunning {
+                    print("✅ 彈窗鏈已結束")
+                }
+            }
+            .store(in: &cancellables)
+
+        // 監聽已顯示的彈窗數量
+        popupChainManager.$displayedCount
+            .receive(on: DispatchQueue.main)
+            .sink { count in
+                if count > 0 {
+                    print("📊 本次已顯示 \(count) 個彈窗")
+                }
+            }
+            .store(in: &cancellables)
+    }
+
     // MARK: - IBActions
     @IBAction func toggleComputerTapped(_ sender: UIButton) {
         car.toggleCentralComputer()

@@ -22,13 +22,13 @@
 
 **Goal**: 建立 PopupChain 模組的基礎結構
 
-- [ ] T001 Create PopupChain folder structure in `CarSystem/PopupChain/`
-- [ ] T002 [P] Create Protocols folder in `CarSystem/PopupChain/Protocols/`
-- [ ] T003 [P] Create Models folder in `CarSystem/PopupChain/Models/`
-- [ ] T004 [P] Create Handlers folder in `CarSystem/PopupChain/Handlers/`
-- [ ] T005 [P] Create Services folder in `CarSystem/PopupChain/Services/`
-- [ ] T006 [P] Create Views folder in `CarSystem/PopupChain/Views/`
-- [ ] T007 Create PopupChainTests folder in `CarSystemTests/PopupChainTests/`
+- [x] T001 Create PopupChain folder structure in `CarSystem/PopupChain/`
+- [x] T002 [P] Create Protocols folder in `CarSystem/PopupChain/Protocols/`
+- [x] T003 [P] Create Models folder in `CarSystem/PopupChain/Models/`
+- [x] T004 [P] Create Handlers folder in `CarSystem/PopupChain/Handlers/`
+- [x] T005 [P] Create Services folder in `CarSystem/PopupChain/Services/`
+- [x] T006 [P] Create Views folder in `CarSystem/PopupChain/Views/`
+- [x] T007 Create PopupChainTests folder in `CarSystemTests/PopupChainTests/`
 
 ---
 
@@ -38,36 +38,36 @@
 
 ### Models
 
-- [ ] T008 [P] Implement PopupType enum in `CarSystem/PopupChain/Models/PopupType.swift`
+- [x] T008 [P] Implement PopupType enum in `CarSystem/PopupChain/Models/PopupType.swift`
   - Cases: tutorial, interstitialAd, newFeature, dailyCheckIn, predictionResult
   - Conform to String, CaseIterable
 
-- [ ] T009 [P] Implement PopupResult enum in `CarSystem/PopupChain/Models/PopupResult.swift`
+- [x] T009 [P] Implement PopupResult enum in `CarSystem/PopupChain/Models/PopupResult.swift`
   - Cases: completed, dismissed, failed(Error)
 
-- [ ] T010 [P] Implement PopupChainError enum in `CarSystem/PopupChain/Models/PopupChainError.swift`
+- [x] T010 [P] Implement PopupChainError enum in `CarSystem/PopupChain/Models/PopupChainError.swift`
   - Cases: maxPopupsReached, popupDisplayFailed, chainInterrupted, storageError
   - Conform to Error, LocalizedError
 
-- [ ] T011 Implement PopupUserState struct in `CarSystem/PopupChain/Models/PopupUserState.swift`
+- [x] T011 Implement PopupUserState struct in `CarSystem/PopupChain/Models/PopupUserState.swift`
   - Properties: hasSeenTutorial, lastCheckInDate, lastAdShownDate, seenFeatureAnnouncements, notifiedPredictionResults
   - Conform to Codable, Equatable
   - Add helper methods: hasCheckedInToday(), hasShownAdToday()
 
 ### Protocols
 
-- [ ] T012 Implement PopupHandler protocol in `CarSystem/PopupChain/Protocols/PopupHandler.swift`
+- [x] T012 Implement PopupHandler protocol in `CarSystem/PopupChain/Protocols/PopupHandler.swift`
   - Property: popupType
   - Methods: shouldDisplay(state:), display(on:completion:), updateState(storage:)
 
 ### Services
 
-- [ ] T013 Implement PopupStateStorage class in `CarSystem/PopupChain/Services/PopupStateStorage.swift`
+- [x] T013 Implement PopupStateStorage class in `CarSystem/PopupChain/Services/PopupStateStorage.swift`
   - UserDefaults persistence layer
   - Methods: load(), save(), markTutorialSeen(), markDailyCheckIn(), markAdShown(), markFeatureSeen(id:), markPredictionNotified(id:)
   - Include PopupStateStorageProtocol for testability
 
-- [ ] T014 Implement PopupChainManager class in `CarSystem/PopupChain/Services/PopupChainManager.swift`
+- [x] T014 Implement PopupChainManager class in `CarSystem/PopupChain/Services/PopupChainManager.swift`
   - ObservableObject with @Published: currentPopup, displayedCount, isRunning
   - Methods: startChain(on:), proceedToNext(), cancelChain()
   - Array order = priority order (no sorting needed)
@@ -89,12 +89,13 @@
 
 ### Implementation
 
-- [ ] T015 [US1] Implement TutorialPopupHandler in `CarSystem/PopupChain/Handlers/TutorialPopupHandler.swift`
+- [x] T015 [US1] Implement TutorialPopupHandler in `CarSystem/PopupChain/Handlers/TutorialPopupHandler.swift`
   - shouldDisplay: return !state.hasSeenTutorial
   - display: Present tutorial UI (UIAlertController or custom view)
   - updateState: storage.markTutorialSeen()
 
-- [ ] T016 [US1] Create tutorial popup UI in `CarSystem/PopupChain/Views/TutorialPopupView.swift` (optional custom view)
+- [x] T016 [US1] Create tutorial popup UI in `CarSystem/PopupChain/Views/TutorialPopupView.swift` (optional custom view)
+  - Using UIAlertController for MVP, custom view can be added later
 
 ---
 
@@ -111,12 +112,13 @@
 
 ### Implementation
 
-- [ ] T017 [US2] Implement DailyCheckInHandler in `CarSystem/PopupChain/Handlers/DailyCheckInHandler.swift`
+- [x] T017 [US2] Implement DailyCheckInHandler in `CarSystem/PopupChain/Handlers/DailyCheckInHandler.swift`
   - shouldDisplay: return !state.hasCheckedInToday()
   - display: Present check-in UI
   - updateState: storage.markDailyCheckIn()
 
-- [ ] T018 [US2] Create check-in popup UI in `CarSystem/PopupChain/Views/CheckInPopupView.swift` (optional custom view)
+- [x] T018 [US2] Create check-in popup UI in `CarSystem/PopupChain/Views/CheckInPopupView.swift` (optional custom view)
+  - Using UIAlertController for MVP, custom view can be added later
 
 ---
 
@@ -133,12 +135,13 @@
 
 ### Implementation
 
-- [ ] T019 [US3] Implement PredictionResultHandler in `CarSystem/PopupChain/Handlers/PredictionResultHandler.swift`
+- [x] T019 [US3] Implement PredictionResultHandler in `CarSystem/PopupChain/Handlers/PredictionResultHandler.swift`
   - shouldDisplay: Check for pending prediction results not in notifiedPredictionResults
   - display: Present result UI with prediction outcome
   - updateState: storage.markPredictionNotified(id:)
 
-- [ ] T020 [US3] Create prediction result popup UI in `CarSystem/PopupChain/Views/PredictionResultPopupView.swift` (optional custom view)
+- [x] T020 [US3] Create prediction result popup UI in `CarSystem/PopupChain/Views/PredictionResultPopupView.swift` (optional custom view)
+  - Using UIAlertController for MVP, custom view can be added later
 
 ---
 
@@ -155,12 +158,13 @@
 
 ### Implementation
 
-- [ ] T021 [US4] Implement NewFeaturePopupHandler in `CarSystem/PopupChain/Handlers/NewFeaturePopupHandler.swift`
+- [x] T021 [US4] Implement NewFeaturePopupHandler in `CarSystem/PopupChain/Handlers/NewFeaturePopupHandler.swift`
   - shouldDisplay: Check for unseen feature announcements
   - display: Present feature announcement UI
   - updateState: storage.markFeatureSeen(id:)
 
-- [ ] T022 [US4] Create new feature popup UI in `CarSystem/PopupChain/Views/NewFeaturePopupView.swift` (optional custom view)
+- [x] T022 [US4] Create new feature popup UI in `CarSystem/PopupChain/Views/NewFeaturePopupView.swift` (optional custom view)
+  - Using UIAlertController for MVP, custom view can be added later
 
 ---
 
@@ -177,12 +181,13 @@
 
 ### Implementation
 
-- [ ] T023 [US5] Implement InterstitialAdHandler in `CarSystem/PopupChain/Handlers/InterstitialAdHandler.swift`
+- [x] T023 [US5] Implement InterstitialAdHandler in `CarSystem/PopupChain/Handlers/InterstitialAdHandler.swift`
   - shouldDisplay: return !state.hasShownAdToday() && hasAvailableAd()
   - display: Present interstitial ad UI
   - updateState: storage.markAdShown()
 
-- [ ] T024 [US5] Create interstitial ad popup UI in `CarSystem/PopupChain/Views/InterstitialAdView.swift` (optional custom view)
+- [x] T024 [US5] Create interstitial ad popup UI in `CarSystem/PopupChain/Views/InterstitialAdView.swift` (optional custom view)
+  - Using UIAlertController for MVP, custom view can be added later
 
 ---
 
@@ -192,36 +197,38 @@
 
 ### Integration
 
-- [ ] T025 Create PopupPresenter utility in `CarSystem/PopupChain/Views/PopupPresenter.swift`
+- [x] T025 Create PopupPresenter utility in `CarSystem/PopupChain/Views/PopupPresenter.swift`
   - Unified popup presentation logic
   - Handle different popup types (Alert, Custom View)
 
-- [ ] T026 Integrate PopupChainManager into CarViewController in `CarSystem/CarViewController.swift`
+- [x] T026 Integrate PopupChainManager into CarViewController in `CarSystem/CarViewController.swift`
   - Initialize handlers array with correct order (FR-002)
   - Call startChain(on:) in viewDidAppear
   - Setup Combine bindings for state observation
 
 ### Edge Cases (FR-010, FR-011)
 
-- [ ] T027 Implement max 3 popups limit logic in `CarSystem/PopupChain/Services/PopupChainManager.swift`
+- [x] T027 Implement max 3 popups limit logic in `CarSystem/PopupChain/Services/PopupChainManager.swift`
   - Track displayedCount
   - Stop chain when limit reached
+  - (Already implemented in T014)
 
-- [ ] T028 Implement error handling and skip logic in `CarSystem/PopupChain/Services/PopupChainManager.swift`
+- [x] T028 Implement error handling and skip logic in `CarSystem/PopupChain/Services/PopupChainManager.swift`
   - On .failed result → proceedToNext() without retry
+  - (Already implemented in T014)
 
 ### Testing
 
-- [ ] T029 [P] Create PopupStateStorageTests in `CarSystemTests/PopupChainTests/PopupStateStorageTests.swift`
+- [x] T029 [P] Create PopupStateStorageTests in `CarSystemTests/PopupChainTests/PopupStateStorageTests.swift`
   - Test load/save cycle
   - Test mark methods
 
-- [ ] T030 [P] Create PopupChainManagerTests in `CarSystemTests/PopupChainTests/PopupChainManagerTests.swift`
+- [x] T030 [P] Create PopupChainManagerTests in `CarSystemTests/PopupChainTests/PopupChainManagerTests.swift`
   - Test priority order (array index)
   - Test max 3 popups limit
   - Test skip on failure
 
-- [ ] T031 [P] Create PopupHandlerTests in `CarSystemTests/PopupChainTests/PopupHandlerTests.swift`
+- [x] T031 [P] Create PopupHandlerTests in `CarSystemTests/PopupChainTests/PopupHandlerTests.swift`
   - Test each handler's shouldDisplay logic
 
 ---
