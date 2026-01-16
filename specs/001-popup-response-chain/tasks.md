@@ -25,7 +25,7 @@ Based on plan.md structure:
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project directory structure per plan.md (PopupChain/, PopupChainTests/)
+- [x] T001 Create project directory structure per plan.md (PopupChain/, PopupChainTests/)
 - [ ] T002 [P] Create PopupChain Xcode project/package with iOS 15.0+ target
 - [ ] T003 [P] Configure XCTest target for PopupChainTests
 
