@@ -44,10 +44,10 @@ This task list implements a simplified Popup Response Chain system with 5 popup 
 **Goal**: Initialize Swift package structure and create directory layout
 
 **Tasks**:
-- [ ] T001 Create Package.swift with Swift 5.9+ configuration in yuta/monster2/
-- [ ] T002 Create directory structure: Sources/{Protocols,Handlers,Models}
-- [ ] T003 Create directory structure: Tests/HandlerTests
-- [ ] T004 Create .gitignore with Swift/Xcode patterns in yuta/monster2/
+- [X] T001 Create Package.swift with Swift 5.9+ configuration in yuta/monster2/
+- [X] T002 Create directory structure: Sources/{Protocols,Handlers,Models}
+- [X] T003 Create directory structure: Tests/HandlerTests
+- [X] T004 Create .gitignore with Swift/Xcode patterns in yuta/monster2/
 
 **Completion Criteria**:
 - ✅ Package.swift compiles successfully
@@ -61,9 +61,9 @@ This task list implements a simplified Popup Response Chain system with 5 popup 
 **Goal**: Implement core protocol, base handler, and data model (blocking prerequisites)
 
 **Tasks**:
-- [ ] T005 Implement PopupHandling protocol in Sources/Protocols/PopupHandling.swift
-- [ ] T006 Implement BasePopupHandler with chain logic in Sources/Handlers/BasePopupHandler.swift
-- [ ] T007 Implement UserContext struct in Sources/Models/UserContext.swift
+- [X] T005 Implement PopupHandling protocol in Sources/Protocols/PopupHandling.swift
+- [X] T006 Implement BasePopupHandler with chain logic in Sources/Handlers/BasePopupHandler.swift
+- [X] T007 Implement UserContext struct in Sources/Models/UserContext.swift
 
 **Completion Criteria**:
 - ✅ PopupHandling protocol defines next, shouldHandle, handle methods
@@ -86,11 +86,11 @@ This task list implements a simplified Popup Response Chain system with 5 popup 
 **User Story**: FR-1 through FR-9 - Core popup chain functionality
 
 **Tasks**:
-- [ ] T008 [P] Implement TutorialHandler in Sources/Handlers/TutorialHandler.swift
-- [ ] T009 [P] Implement InterstitialAdHandler in Sources/Handlers/InterstitialAdHandler.swift
-- [ ] T010 [P] Implement NewFeatureHandler in Sources/Handlers/NewFeatureHandler.swift
-- [ ] T011 [P] Implement DailyCheckInHandler in Sources/Handlers/DailyCheckInHandler.swift
-- [ ] T012 [P] Implement PredictionResultHandler in Sources/Handlers/PredictionResultHandler.swift
+- [X] T008 [P] Implement TutorialHandler in Sources/Handlers/TutorialHandler.swift
+- [X] T009 [P] Implement InterstitialAdHandler in Sources/Handlers/InterstitialAdHandler.swift
+- [X] T010 [P] Implement NewFeatureHandler in Sources/Handlers/NewFeatureHandler.swift
+- [X] T011 [P] Implement DailyCheckInHandler in Sources/Handlers/DailyCheckInHandler.swift
+- [X] T012 [P] Implement PredictionResultHandler in Sources/Handlers/PredictionResultHandler.swift
 
 **Completion Criteria**:
 - ✅ Each handler overrides shouldHandle() with correct logic
@@ -119,9 +119,9 @@ This task list implements a simplified Popup Response Chain system with 5 popup 
 **User Story**: FR-13, FR-14 - Manager responsibilities
 
 **Tasks**:
-- [ ] T013 Implement PopupChainManager with external injection in Sources/PopupChainManager.swift
-- [ ] T014 Add init(handlers:) to assemble chain from array
-- [ ] T015 Add startChain(with:completion:) method
+- [X] T013 Implement PopupChainManager with external injection in Sources/PopupChainManager.swift
+- [X] T014 Add init(handlers:) to assemble chain from array
+- [X] T015 Add startChain(with:completion:) method
 
 **Completion Criteria**:
 - ✅ Manager accepts [PopupHandling] array in initializer
@@ -146,16 +146,16 @@ This task list implements a simplified Popup Response Chain system with 5 popup 
 **User Story**: FR-11 - Handler independent testing
 
 **Tasks**:
-- [ ] T016 [P] Write test: testShouldHandleWhenTutorialNotSeenThenReturnsTrue in Tests/HandlerTests/TutorialHandlerTests.swift
-- [ ] T017 [P] Write test: testShouldHandleWhenTutorialSeenThenReturnsFalse in Tests/HandlerTests/TutorialHandlerTests.swift
-- [ ] T018 [P] Write test: testShouldHandleWhenInterstitialNotSeenThenReturnsTrue in Tests/HandlerTests/InterstitialAdHandlerTests.swift
-- [ ] T019 [P] Write test: testShouldHandleWhenInterstitialSeenThenReturnsFalse in Tests/HandlerTests/InterstitialAdHandlerTests.swift
-- [ ] T020 [P] Write test: testShouldHandleWhenNewFeatureNotSeenThenReturnsTrue in Tests/HandlerTests/NewFeatureHandlerTests.swift
-- [ ] T021 [P] Write test: testShouldHandleWhenNewFeatureSeenThenReturnsFalse in Tests/HandlerTests/NewFeatureHandlerTests.swift
-- [ ] T022 [P] Write test: testShouldHandleWhenNotCheckedInTodayThenReturnsTrue in Tests/HandlerTests/DailyCheckInHandlerTests.swift
-- [ ] T023 [P] Write test: testShouldHandleWhenCheckedInTodayThenReturnsFalse in Tests/HandlerTests/DailyCheckInHandlerTests.swift
-- [ ] T024 [P] Write test: testShouldHandleWhenHasPredictionResultThenReturnsTrue in Tests/HandlerTests/PredictionResultHandlerTests.swift
-- [ ] T025 [P] Write test: testShouldHandleWhenNoPredictionResultThenReturnsFalse in Tests/HandlerTests/PredictionResultHandlerTests.swift
+- [X] T016 [P] Write test: testShouldHandleWhenTutorialNotSeenThenReturnsTrue in Tests/HandlerTests/TutorialHandlerTests.swift
+- [X] T017 [P] Write test: testShouldHandleWhenTutorialSeenThenReturnsFalse in Tests/HandlerTests/TutorialHandlerTests.swift
+- [X] T018 [P] Write test: testShouldHandleWhenInterstitialNotSeenThenReturnsTrue in Tests/HandlerTests/InterstitialAdHandlerTests.swift
+- [X] T019 [P] Write test: testShouldHandleWhenInterstitialSeenThenReturnsFalse in Tests/HandlerTests/InterstitialAdHandlerTests.swift
+- [X] T020 [P] Write test: testShouldHandleWhenNewFeatureNotSeenThenReturnsTrue in Tests/HandlerTests/NewFeatureHandlerTests.swift
+- [X] T021 [P] Write test: testShouldHandleWhenNewFeatureSeenThenReturnsFalse in Tests/HandlerTests/NewFeatureHandlerTests.swift
+- [X] T022 [P] Write test: testShouldHandleWhenNotCheckedInTodayThenReturnsTrue in Tests/HandlerTests/DailyCheckInHandlerTests.swift
+- [X] T023 [P] Write test: testShouldHandleWhenCheckedInTodayThenReturnsFalse in Tests/HandlerTests/DailyCheckInHandlerTests.swift
+- [X] T024 [P] Write test: testShouldHandleWhenHasPredictionResultThenReturnsTrue in Tests/HandlerTests/PredictionResultHandlerTests.swift
+- [X] T025 [P] Write test: testShouldHandleWhenNoPredictionResultThenReturnsFalse in Tests/HandlerTests/PredictionResultHandlerTests.swift
 
 **Completion Criteria**:
 - ✅ Each handler has 2 tests (condition met / not met)
@@ -186,11 +186,11 @@ func testShouldHandleWhenTutorialNotSeenThenReturnsTrue() {
 **User Story**: FR-1 through FR-5 - Chain sequencing
 
 **Tasks**:
-- [ ] T026 Write test: testStartChainWhenAllConditionsMetThenShowsAllPopups in Tests/ChainIntegrationTests.swift
-- [ ] T027 Write test: testStartChainWhenNoConditionsMetThenCompletesImmediately in Tests/ChainIntegrationTests.swift
-- [ ] T028 Write test: testStartChainWhenOnlyMiddleConditionMetThenShowsOnlyThatPopup in Tests/ChainIntegrationTests.swift
-- [ ] T029 Write test: testStartChainWithEmptyHandlersThenCompletesImmediately in Tests/ChainIntegrationTests.swift
-- [ ] T030 Write test: testStartChainWhenFirstHandlerOnlyThenShowsFirstOnly in Tests/ChainIntegrationTests.swift
+- [X] T026 Write test: testStartChainWhenAllConditionsMetThenShowsAllPopups in Tests/ChainIntegrationTests.swift
+- [X] T027 Write test: testStartChainWhenNoConditionsMetThenCompletesImmediately in Tests/ChainIntegrationTests.swift
+- [X] T028 Write test: testStartChainWhenOnlyMiddleConditionMetThenShowsOnlyThatPopup in Tests/ChainIntegrationTests.swift
+- [X] T029 Write test: testStartChainWithEmptyHandlersThenCompletesImmediately in Tests/ChainIntegrationTests.swift
+- [X] T030 Write test: testStartChainWhenFirstHandlerOnlyThenShowsFirstOnly in Tests/ChainIntegrationTests.swift
 
 **Completion Criteria**:
 - ✅ Chain executes handlers in correct order (1→2→3→4→5)
@@ -219,10 +219,10 @@ manager = PopupChainManager(handlers: handlers)
 **Goal**: Document usage and provide examples
 
 **Tasks**:
-- [ ] T031 Update README.md with usage examples
-- [ ] T032 Add example code for handler assembly in README.md
-- [ ] T033 Add console output examples in README.md
-- [ ] T034 Document extensibility pattern (adding 6th handler) in README.md
+- [X] T031 Update README.md with usage examples
+- [X] T032 Add example code for handler assembly in README.md
+- [X] T033 Add console output examples in README.md
+- [X] T034 Document extensibility pattern (adding 6th handler) in README.md
 
 **Completion Criteria**:
 - ✅ README shows complete usage example
@@ -268,9 +268,9 @@ manager.startChain(with: context) {
 **User Story**: FR-10 - Extensibility requirement
 
 **Tasks**:
-- [ ] T035 Create example RatingPromptHandler in Tests/ExtensibilityTests.swift
-- [ ] T036 Write test: testAddingSixthHandlerDoesNotModifyExistingHandlers in Tests/ExtensibilityTests.swift
-- [ ] T037 Write test: testChainWithSixHandlersExecutesInOrder in Tests/ExtensibilityTests.swift
+- [X] T035 Create example RatingPromptHandler in Tests/ExtensibilityTests.swift
+- [X] T036 Write test: testAddingSixthHandlerDoesNotModifyExistingHandlers in Tests/ExtensibilityTests.swift
+- [X] T037 Write test: testChainWithSixHandlersExecutesInOrder in Tests/ExtensibilityTests.swift
 
 **Completion Criteria**:
 - ✅ New handler added without modifying existing handlers
@@ -309,12 +309,12 @@ let handlers: [PopupHandling] = [
 **Goal**: Verify complete system meets all requirements
 
 **Tasks**:
-- [ ] T038 Run all tests with `swift test` and verify 100% pass rate
-- [ ] T039 Verify all handlers print correct popup names
-- [ ] T040 Verify handler order matches specification (1→2→3→4→5)
-- [ ] T041 Verify empty chain completes gracefully
-- [ ] T042 Verify Manager knows no concrete handler types (check imports)
-- [ ] T043 Update plan.md checklist with completion status
+- [X] T038 Run all tests with `swift test` and verify 100% pass rate
+- [X] T039 Verify all handlers print correct popup names
+- [X] T040 Verify handler order matches specification (1→2→3→4→5)
+- [X] T041 Verify empty chain completes gracefully
+- [X] T042 Verify Manager knows no concrete handler types (check imports)
+- [X] T043 Update plan.md checklist with completion status
 
 **Completion Criteria**:
 - ✅ All unit tests pass (10 tests)
@@ -391,29 +391,29 @@ Phase 9 (Validation)
 ## File Checklist
 
 ### Source Files (9 total)
-- [ ] Sources/Protocols/PopupHandling.swift
-- [ ] Sources/Handlers/BasePopupHandler.swift
-- [ ] Sources/Handlers/TutorialHandler.swift
-- [ ] Sources/Handlers/InterstitialAdHandler.swift
-- [ ] Sources/Handlers/NewFeatureHandler.swift
-- [ ] Sources/Handlers/DailyCheckInHandler.swift
-- [ ] Sources/Handlers/PredictionResultHandler.swift
-- [ ] Sources/Models/UserContext.swift
-- [ ] Sources/PopupChainManager.swift
+- [X] Sources/Protocols/PopupHandling.swift
+- [X] Sources/Handlers/BasePopupHandler.swift
+- [X] Sources/Handlers/TutorialHandler.swift
+- [X] Sources/Handlers/InterstitialAdHandler.swift
+- [X] Sources/Handlers/NewFeatureHandler.swift
+- [X] Sources/Handlers/DailyCheckInHandler.swift
+- [X] Sources/Handlers/PredictionResultHandler.swift
+- [X] Sources/Models/UserContext.swift
+- [X] Sources/PopupChainManager.swift
 
 ### Test Files
-- [ ] Tests/HandlerTests/TutorialHandlerTests.swift
-- [ ] Tests/HandlerTests/InterstitialAdHandlerTests.swift
-- [ ] Tests/HandlerTests/NewFeatureHandlerTests.swift
-- [ ] Tests/HandlerTests/DailyCheckInHandlerTests.swift
-- [ ] Tests/HandlerTests/PredictionResultHandlerTests.swift
-- [ ] Tests/ChainIntegrationTests.swift
-- [ ] Tests/ExtensibilityTests.swift
+- [X] Tests/HandlerTests/TutorialHandlerTests.swift
+- [X] Tests/HandlerTests/InterstitialAdHandlerTests.swift
+- [X] Tests/HandlerTests/NewFeatureHandlerTests.swift
+- [X] Tests/HandlerTests/DailyCheckInHandlerTests.swift
+- [X] Tests/HandlerTests/PredictionResultHandlerTests.swift
+- [X] Tests/IntegrationTests/ChainIntegrationTests.swift
+- [X] Tests/ExtensibilityTests/ExtensibilityTests.swift
 
 ### Configuration
-- [ ] Package.swift
-- [ ] .gitignore
-- [ ] README.md (updated)
+- [X] Package.swift
+- [X] .gitignore
+- [X] README.md (updated)
 
 ---
 
