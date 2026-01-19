@@ -16,8 +16,8 @@
 **Target Platform**: iOS 15.0+
 **Project Type**: Mobile (iOS)
 **Performance Goals**: 首個彈窗 <1秒顯示，彈窗切換 <0.5秒
-**Constraints**: 單次最多顯示 3 個彈窗，單機離線模式
-**Scale/Scope**: 5 種彈窗類型，可擴展架構
+**Constraints**: 單機離線模式，各 Handler 內建預設資料
+**Scale/Scope**: 5 種彈窗類型，可擴展架構，無顯示數量上限
 
 ## Constitution Check
 
@@ -81,7 +81,7 @@ CarSystem/
 ├── PopupChain/                    # 新增模組
 │   ├── Protocols/
 │   │   ├── PopupChainItem.swift   # 彈窗項目協議
-│   │   └── PopupHandler.swift     # 彈窗處理器協議
+│   │   └── PopupHandler.swift     # 彈窗處理器協議 (含 stopsChainOnDismiss 屬性)
 │   ├── Models/
 │   │   ├── PopupType.swift        # 彈窗類型枚舉
 │   │   ├── PopupChainError.swift  # 錯誤類型

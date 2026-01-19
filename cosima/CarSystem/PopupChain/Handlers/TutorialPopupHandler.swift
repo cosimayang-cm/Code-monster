@@ -12,11 +12,14 @@ import UIKit
 
 /// 新手教學彈窗處理器
 /// 用戶從未看過新手教學時顯示
+/// 關閉後繼續檢查下一個彈窗（照流程圖）
 final class TutorialPopupHandler: PopupHandler {
 
     // MARK: - PopupHandler
 
     let popupType: PopupType = .tutorial
+
+    // 照流程圖：關閉後繼續檢查下一個彈窗（使用預設值 false）
 
     func shouldDisplay(state: PopupUserState) -> Bool {
         // 只在用戶從未看過新手教學時顯示
@@ -35,7 +38,7 @@ final class TutorialPopupHandler: PopupHandler {
             completion(.completed)
         })
 
-        alert.addAction(UIAlertAction(title: "跳過", style: .cancel) { _ in
+        alert.addAction(UIAlertAction(title: "關閉", style: .cancel) { _ in
             completion(.dismissed)
         })
 

@@ -67,10 +67,9 @@ final class PopupHandlerTests: XCTestCase {
 
     // MARK: - InterstitialAdHandler Tests (FR-012)
 
-    func testInterstitialAdHandler_ShouldDisplay_WhenHasAdAndNotShownToday() {
-        // Given
+    func testInterstitialAdHandler_ShouldDisplay_WhenNotShownToday() {
+        // Given - 單機模式：廣告永遠可用
         let handler = InterstitialAdHandler()
-        handler.hasAvailableAd = true
         var state = PopupUserState()
         state.lastAdShownDate = nil
 
@@ -81,7 +80,6 @@ final class PopupHandlerTests: XCTestCase {
     func testInterstitialAdHandler_ShouldNotDisplay_WhenAlreadyShownToday() {
         // Given
         let handler = InterstitialAdHandler()
-        handler.hasAvailableAd = true
         var state = PopupUserState()
         state.lastAdShownDate = Date() // 今天已顯示
 
@@ -89,14 +87,14 @@ final class PopupHandlerTests: XCTestCase {
         XCTAssertFalse(handler.shouldDisplay(state: state))
     }
 
-    func testInterstitialAdHandler_ShouldNotDisplay_WhenNoAdAvailable() {
-        // Given
+    func testInterstitialAdHandler_ShouldDisplay_WhenShownYesterday() {
+        // Given - 昨天顯示過，今天應該可以再顯示
         let handler = InterstitialAdHandler()
-        handler.hasAvailableAd = false
-        let state = PopupUserState()
+        var state = PopupUserState()
+        state.lastAdShownDate = Calendar.current.date(byAdding: .day, value: -1, to: Date())
 
         // When & Then
-        XCTAssertFalse(handler.shouldDisplay(state: state))
+        XCTAssertTrue(handler.shouldDisplay(state: state))
     }
 
     // MARK: - NewFeaturePopupHandler Tests
@@ -126,12 +124,22 @@ final class PopupHandlerTests: XCTestCase {
         XCTAssertFalse(handler.shouldDisplay(state: state))
     }
 
+    func testNewFeatureHandler_DefaultHasAnnouncements() {
+        // Given - 單機模式預設有公告資料
+        let handler = NewFeaturePopupHandler()
+        let state = PopupUserState()
+
+        // When & Then - 應該有預設的公告資料
+        XCTAssertFalse(handler.announcements.isEmpty)
+        XCTAssertTrue(handler.shouldDisplay(state: state))
+    }
+
     // MARK: - PredictionResultHandler Tests
 
     func testPredictionResultHandler_ShouldDisplay_WhenHasPendingResults() {
         // Given
         let handler = PredictionResultHandler()
-        handler.pendingResults = [(id: "pred_001", isCorrect: true)]
+        handler.pendingResults = [PredictionResult(id: "pred_001", isCorrect: true)]
         let state = PopupUserState()
 
         // When & Then
@@ -141,7 +149,7 @@ final class PopupHandlerTests: XCTestCase {
     func testPredictionResultHandler_ShouldNotDisplay_WhenAllResultsNotified() {
         // Given
         let handler = PredictionResultHandler()
-        handler.pendingResults = [(id: "pred_001", isCorrect: true)]
+        handler.pendingResults = [PredictionResult(id: "pred_001", isCorrect: true)]
         var state = PopupUserState()
         state.notifiedPredictionResults = ["pred_001"]
 
@@ -157,6 +165,16 @@ final class PopupHandlerTests: XCTestCase {
 
         // When & Then
         XCTAssertFalse(handler.shouldDisplay(state: state))
+    }
+
+    func testPredictionResultHandler_DefaultHasDemoResult() {
+        // Given - 單機模式預設有示範資料
+        let handler = PredictionResultHandler()
+        let state = PopupUserState()
+
+        // When & Then - 應該有預設的示範資料
+        XCTAssertFalse(handler.pendingResults.isEmpty)
+        XCTAssertTrue(handler.shouldDisplay(state: state))
     }
 
     // MARK: - PopupType Tests

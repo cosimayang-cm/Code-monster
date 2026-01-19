@@ -19,12 +19,20 @@ struct FeatureAnnouncement {
 
 /// 新功能公告彈窗處理器
 /// 有未讀的新功能公告時顯示
+/// 單機模式：內建當前版本的功能公告
 final class NewFeaturePopupHandler: PopupHandler {
 
     // MARK: - Properties
 
-    /// 待公告的新功能（由外部設定）
-    var announcements: [FeatureAnnouncement] = []
+    /// 內建的新功能公告（單機模式）
+    /// 每次 App 更新時更新此列表
+    var announcements: [FeatureAnnouncement] = [
+        FeatureAnnouncement(
+            id: "v1.0.0_popup_chain",
+            title: "彈窗連鎖顯示機制",
+            description: "新增智慧彈窗管理系統，依優先順序為您呈現重要訊息，不再錯過任何通知！"
+        )
+    ]
 
     /// 當前顯示的公告
     private var currentAnnouncement: FeatureAnnouncement?
@@ -58,7 +66,7 @@ final class NewFeaturePopupHandler: PopupHandler {
             completion(.completed)
         })
 
-        alert.addAction(UIAlertAction(title: "知道了", style: .cancel) { _ in
+        alert.addAction(UIAlertAction(title: "關閉", style: .cancel) { _ in
             completion(.dismissed)
         })
 

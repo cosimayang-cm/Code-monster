@@ -47,9 +47,9 @@ final class PopupChainManagerTests: XCTestCase {
         XCTAssertEqual(sut.currentPopup, .tutorial)
     }
 
-    // MARK: - Max Popups Limit Tests (FR-010)
+    // MARK: - Display All Popups Tests
 
-    func testStartChain_StopsAfterThreePopups() {
+    func testStartChain_DisplaysAllPopups() {
         // Given - 5 個都要顯示的 handler
         let handlers = [
             MockPopupHandler(type: .tutorial, shouldShow: true),
@@ -74,14 +74,16 @@ final class PopupChainManagerTests: XCTestCase {
         let viewController = UIViewController()
         sut.startChain(on: viewController)
 
-        // Simulate completing 3 popups
+        // Simulate completing all 5 popups
         handlers[0].simulateCompletion?(.completed)
         handlers[1].simulateCompletion?(.completed)
         handlers[2].simulateCompletion?(.completed)
+        handlers[3].simulateCompletion?(.completed)
+        handlers[4].simulateCompletion?(.completed)
 
-        // Then - 應該只顯示 3 個
+        // Then - 應該顯示全部 5 個（無上限限制）
         wait(for: [expectation], timeout: 1.0)
-        XCTAssertEqual(sut.displayedCount, 3)
+        XCTAssertEqual(sut.displayedCount, 5)
     }
 
     // MARK: - Skip on Failure Tests (FR-011)

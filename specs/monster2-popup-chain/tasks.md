@@ -58,6 +58,7 @@
 
 - [x] T012 Implement PopupHandler protocol in `CarSystem/PopupChain/Protocols/PopupHandler.swift`
   - Property: popupType
+  - Property: stopsChainOnDismiss (預設 false，用於控制 dismiss 後是否終止彈窗鏈)
   - Methods: shouldDisplay(state:), display(on:completion:), updateState(storage:)
 
 ### Services
@@ -71,7 +72,7 @@
   - ObservableObject with @Published: currentPopup, displayedCount, isRunning
   - Methods: startChain(on:), proceedToNext(), cancelChain()
   - Array order = priority order (no sorting needed)
-  - Enforce max 3 popups per session (FR-010)
+  - ~~Enforce max 3 popups per session (FR-010)~~ **[已移除]** 無數量上限
   - Skip failed popups without retry (FR-011)
 
 ---
@@ -175,15 +176,15 @@
 **Independent Test**: 設定廣告活動並驗證在符合條件時正確顯示廣告彈窗
 
 **Acceptance Criteria**:
-- 有廣告且今日未看過 → 顯示廣告 (FR-012)
+- 今日未看過 → 顯示廣告 (FR-012) *(單機模式：廣告永遠可用)*
 - 關閉後 → 記錄已曝光及當日已顯示
-- 今日已看過或無廣告 → 跳過
+- 今日已看過 → 跳過
 
 ### Implementation
 
 - [x] T023 [US5] Implement InterstitialAdHandler in `CarSystem/PopupChain/Handlers/InterstitialAdHandler.swift`
-  - shouldDisplay: return !state.hasShownAdToday() && hasAvailableAd()
-  - display: Present interstitial ad UI
+  - shouldDisplay: return !state.hasShownAdToday() *(單機模式：廣告永遠可用)*
+  - display: Present interstitial ad UI (內建預設廣告內容)
   - updateState: storage.markAdShown()
 
 - [x] T024 [US5] Create interstitial ad popup UI in `CarSystem/PopupChain/Views/InterstitialAdView.swift` (optional custom view)
@@ -206,12 +207,12 @@
   - Call startChain(on:) in viewDidAppear
   - Setup Combine bindings for state observation
 
-### Edge Cases (FR-010, FR-011)
+### Edge Cases (FR-011)
 
-- [x] T027 Implement max 3 popups limit logic in `CarSystem/PopupChain/Services/PopupChainManager.swift`
-  - Track displayedCount
-  - Stop chain when limit reached
-  - (Already implemented in T014)
+- [x] T027 ~~Implement max 3 popups limit logic~~ **[已移除]** 無數量上限
+  - ~~Track displayedCount~~
+  - ~~Stop chain when limit reached~~
+  - 已從 PopupChainManager 移除此限制
 
 - [x] T028 Implement error handling and skip logic in `CarSystem/PopupChain/Services/PopupChainManager.swift`
   - On .failed result → proceedToNext() without retry
@@ -225,7 +226,7 @@
 
 - [x] T030 [P] Create PopupChainManagerTests in `CarSystemTests/PopupChainTests/PopupChainManagerTests.swift`
   - Test priority order (array index)
-  - Test max 3 popups limit
+  - ~~Test max 3 popups limit~~ **[已更新]** Test displays all popups (無上限)
   - Test skip on failure
 
 - [x] T031 [P] Create PopupHandlerTests in `CarSystemTests/PopupChainTests/PopupHandlerTests.swift`

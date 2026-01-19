@@ -10,14 +10,23 @@
 
 import UIKit
 
+/// 猜多空結果資料結構
+struct PredictionResult {
+    let id: String
+    let isCorrect: Bool
+}
+
 /// 猜多空結果彈窗處理器
 /// 用戶有待顯示的預測結果時顯示
+/// 單機模式：內建示範用的預測結果
 final class PredictionResultHandler: PopupHandler {
 
     // MARK: - Properties
 
-    /// 待通知的預測結果（由外部設定）
-    var pendingResults: [(id: String, isCorrect: Bool)] = []
+    /// 待通知的預測結果（單機模式內建示範資料）
+    var pendingResults: [PredictionResult] = [
+        PredictionResult(id: "demo_prediction_001", isCorrect: true)
+    ]
 
     // MARK: - PopupHandler
 
@@ -32,7 +41,7 @@ final class PredictionResultHandler: PopupHandler {
 
     func display(on viewController: UIViewController, completion: @escaping (PopupResult) -> Void) {
         // 找出第一個未通知的結果
-        guard let result = pendingResults.first else {
+        guard let result = pendingResults.first(where: { !PopupStateStorage().load().hasNotifiedPrediction(id: $0.id) }) else {
             completion(.dismissed)
             return
         }
@@ -58,8 +67,9 @@ final class PredictionResultHandler: PopupHandler {
     }
 
     func updateState(storage: PopupStateStorage) {
-        // 標記第一個結果為已通知
-        if let result = pendingResults.first {
+        // 標記第一個未通知的結果為已通知
+        let state = storage.load()
+        if let result = pendingResults.first(where: { !state.hasNotifiedPrediction(id: $0.id) }) {
             storage.markPredictionNotified(id: result.id)
         }
     }

@@ -37,11 +37,6 @@ final class PopupChainManager: ObservableObject, PopupChainManagerProtocol {
     private let stateStorage: PopupStateStorageProtocol
     private weak var presentingViewController: UIViewController?
 
-    // MARK: - Constants
-
-    /// 單次進入主畫面最多顯示 3 個彈窗 (FR-010)
-    private let maxPopupsPerSession = 3
-
     // MARK: - State
 
     private var currentHandlerIndex: Int = 0
@@ -94,12 +89,6 @@ final class PopupChainManager: ObservableObject, PopupChainManagerProtocol {
     // MARK: - Private Methods
 
     private func checkAndDisplayNext() {
-        // FR-010: 檢查是否達到上限
-        guard displayedCount < maxPopupsPerSession else {
-            finishChain()
-            return
-        }
-
         // FR-007: 檢查是否所有彈窗都已處理
         guard currentHandlerIndex < handlers.count else {
             finishChain()
@@ -130,13 +119,27 @@ final class PopupChainManager: ObservableObject, PopupChainManagerProtocol {
             guard let self = self else { return }
 
             switch result {
-            case .completed, .dismissed:
-                // 更新狀態並繼續
+            case .completed:
+                // 更新狀態並繼續下一個彈窗
                 if let storage = self.stateStorage as? PopupStateStorage {
                     handler.updateState(storage: storage)
                 }
                 self.displayedCount += 1
                 self.proceedToNext()
+
+            case .dismissed:
+                // 更新狀態
+                if let storage = self.stateStorage as? PopupStateStorage {
+                    handler.updateState(storage: storage)
+                }
+                self.displayedCount += 1
+
+                // 檢查是否應終止彈窗鏈（例如：新手教學被關閉時不再顯示其他彈窗）
+                if handler.stopsChainOnDismiss {
+                    self.finishChain()
+                } else {
+                    self.proceedToNext()
+                }
 
             case .failed:
                 // FR-011: 顯示失敗直接跳過，不重試

@@ -35,7 +35,7 @@ final class DailyCheckInHandler: PopupHandler {
             completion(.completed)
         })
 
-        alert.addAction(UIAlertAction(title: "稍後再說", style: .cancel) { _ in
+        alert.addAction(UIAlertAction(title: "關閉", style: .cancel) { _ in
             completion(.dismissed)
         })
 

@@ -12,24 +12,23 @@ import UIKit
 
 /// 插頁式廣告彈窗處理器
 /// 每日最多顯示 1 次 (FR-012)
+/// 單機模式：不依賴外部廣告 SDK，直接顯示內建廣告
 final class InterstitialAdHandler: PopupHandler {
 
     // MARK: - Properties
 
-    /// 是否有可用的廣告（由外部設定，例如廣告 SDK）
-    var hasAvailableAd: Bool = false
-
-    /// 廣告內容（簡化版，實際應用可能使用廣告 SDK）
+    /// 廣告內容（單機模式使用內建廣告）
     var adTitle: String = "特別優惠"
-    var adMessage: String = "限時優惠活動進行中！"
+    var adMessage: String = "限時優惠活動進行中！點擊查看更多精彩內容。"
 
     // MARK: - PopupHandler
 
     let popupType: PopupType = .interstitialAd
 
     func shouldDisplay(state: PopupUserState) -> Bool {
-        // FR-012: 每日最多顯示 1 次，且必須有可用廣告
-        return hasAvailableAd && !state.hasShownAdToday()
+        // FR-012: 每日最多顯示 1 次
+        // 單機模式：廣告永遠可用，只檢查今日是否已顯示
+        return !state.hasShownAdToday()
     }
 
     func display(on viewController: UIViewController, completion: @escaping (PopupResult) -> Void) {
