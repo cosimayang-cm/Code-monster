@@ -17,21 +17,23 @@ class PopupDebugViewController: UIViewController {
     private var currentMemberId: String {
         switch userSegment.selectedSegmentIndex {
         case 0: return "new-user"
-        case 1: return "returning-user"
-        case 2: return "experienced-user"
-        case 3: return "checked-in-user"
-        case 4: return "all-completed-user"
+        case 1: return "experienced-user"
         default: return "new-user"
         }
     }
     
     // UI Elements
-    private let titleLabel = UILabel()
     private let startChainButton = UIButton(type: .system)
     private let changeUserButton = UIButton(type: .system)
     private let userInfoLabel = UILabel()
     private let stateLabel = UILabel()
-    private let userSegment = UISegmentedControl(items: ["新用戶", "回訪用戶", "老用戶", "已簽到", "全完成"])
+    private let userSegment = UISegmentedControl(items: ["新用戶", "老用戶"])
+    
+    // State switches
+    private let tutorialSwitch = UISwitch()
+    private let adSwitch = UISwitch()
+    private let newFeatureSwitch = UISwitch()
+    private let dailyCheckInSwitch = UISwitch()
     private let predictionResultSwitch = UISwitch()
     
     override func viewDidLoad() {
@@ -51,13 +53,7 @@ class PopupDebugViewController: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = .systemBackground
-        
-        // Title
-        titleLabel.text = "彈窗系統測試"
-        titleLabel.font = .systemFont(ofSize: 24, weight: .bold)
-        titleLabel.textAlignment = .center
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(titleLabel)
+        title = "彈窗系統測試"
         
         // User Segment
         userSegment.selectedSegmentIndex = 0
@@ -65,21 +61,38 @@ class PopupDebugViewController: UIViewController {
         userSegment.addTarget(self, action: #selector(userTypeChanged), for: .valueChanged)
         view.addSubview(userSegment)
         
-        // Prediction Result Switch
-        let predictionSwitchContainer = UIStackView()
-        predictionSwitchContainer.axis = .horizontal
-        predictionSwitchContainer.spacing = 10
-        predictionSwitchContainer.translatesAutoresizingMaskIntoConstraints = false
+        // State Switches Container
+        let switchesStack = UIStackView()
+        switchesStack.axis = .vertical
+        switchesStack.spacing = 12
+        switchesStack.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(switchesStack)
         
-        let predictionLabel = UILabel()
-        predictionLabel.text = "有預測結果"
-        predictionLabel.font = .systemFont(ofSize: 14)
+        // Helper function to create switch row
+        func createSwitchRow(label: String, switchControl: UISwitch) -> UIStackView {
+            let row = UIStackView()
+            row.axis = .horizontal
+            row.spacing = 10
+            row.distribution = .fillProportionally
+            
+            let titleLabel = UILabel()
+            titleLabel.text = label
+            titleLabel.font = .systemFont(ofSize: 14)
+            titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+            
+            switchControl.addTarget(self, action: #selector(switchChanged), for: .valueChanged)
+            switchControl.setContentHuggingPriority(.required, for: .horizontal)
+            
+            row.addArrangedSubview(titleLabel)
+            row.addArrangedSubview(switchControl)
+            return row
+        }
         
-        predictionResultSwitch.addTarget(self, action: #selector(predictionSwitchChanged), for: .valueChanged)
-        
-        predictionSwitchContainer.addArrangedSubview(predictionLabel)
-        predictionSwitchContainer.addArrangedSubview(predictionResultSwitch)
-        view.addSubview(predictionSwitchContainer)
+        switchesStack.addArrangedSubview(createSwitchRow(label: "看過新手教學", switchControl: tutorialSwitch))
+        switchesStack.addArrangedSubview(createSwitchRow(label: "看過廣告", switchControl: adSwitch))
+        switchesStack.addArrangedSubview(createSwitchRow(label: "看過新功能", switchControl: newFeatureSwitch))
+        switchesStack.addArrangedSubview(createSwitchRow(label: "今天已簽到", switchControl: dailyCheckInSwitch))
+        switchesStack.addArrangedSubview(createSwitchRow(label: "有預測結果", switchControl: predictionResultSwitch))
         
         // Start Chain Button
         startChainButton.setTitle("啟動彈窗鏈", for: .normal)
@@ -120,17 +133,15 @@ class PopupDebugViewController: UIViewController {
         
         // Layout
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
-            userSegment.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30),
+            userSegment.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             userSegment.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             userSegment.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            predictionSwitchContainer.topAnchor.constraint(equalTo: userSegment.bottomAnchor, constant: 20),
-            predictionSwitchContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            switchesStack.topAnchor.constraint(equalTo: userSegment.bottomAnchor, constant: 20),
+            switchesStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            switchesStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            startChainButton.topAnchor.constraint(equalTo: predictionSwitchContainer.bottomAnchor, constant: 30),
+            startChainButton.topAnchor.constraint(equalTo: switchesStack.bottomAnchor, constant: 30),
             startChainButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             startChainButton.widthAnchor.constraint(equalToConstant: 200),
             startChainButton.heightAnchor.constraint(equalToConstant: 50),
@@ -171,36 +182,18 @@ class PopupDebugViewController: UIViewController {
     }
     
     private func getCurrentUserInfo() -> UserInfo {
-        // 從 Repository 讀取實際狀態，模擬重新登入後 Server 返回的 UserInfo
+        // 根據開關狀態動態生成 UserInfo
         let memberId = currentMemberId
         
-        // 讀取 Repository 中的狀態
-        let tutorialState = repository.getState(for: .tutorial, memberId: memberId)
-        let adState = repository.getState(for: .interstitialAd, memberId: memberId)
-        let featureState = repository.getState(for: .newFeature, memberId: memberId)
-        let checkInState = repository.getState(for: .dailyCheckIn, memberId: memberId)
-        let predictionState = repository.getState(for: .predictionResult, memberId: memberId)
-        
-        let hasSeenTutorial = if case .success(let state) = tutorialState { state.hasShown } else { false }
-        let hasSeenAd = if case .success(let state) = adState { state.hasShown } else { false }
-        let hasSeenNewFeature = if case .success(let state) = featureState { state.hasShown } else { false }
-        
-        let lastCheckInDate: Date? = if case .success(let state) = checkInState, state.hasShown {
-            state.lastShownDate
-        } else {
-            nil
-        }
-        
-        // 使用開關狀態而非 repository（因為預測結果是外部數據，不是彈窗執行狀態）
-        let hasPredictionResult = predictionResultSwitch.isOn
+        let lastCheckInDate: Date? = dailyCheckInSwitch.isOn ? Date() : nil
         
         return UserInfo(
             memberId: memberId,
-            hasSeenTutorial: hasSeenTutorial,
-            hasSeenAd: hasSeenAd,
-            hasSeenNewFeature: hasSeenNewFeature,
+            hasSeenTutorial: tutorialSwitch.isOn,
+            hasSeenAd: adSwitch.isOn,
+            hasSeenNewFeature: newFeatureSwitch.isOn,
             lastCheckInDate: lastCheckInDate,
-            hasPredictionResult: hasPredictionResult
+            hasPredictionResult: predictionResultSwitch.isOn
         )
     }
     
@@ -211,87 +204,93 @@ class PopupDebugViewController: UIViewController {
     }
     
     @objc private func resetStateTapped() {
-        // 清空 repository
+        // 重置為當前選擇的用戶類型
         repository.resetUser(memberId: currentMemberId)
         
-        // 根據用戶類型恢復初始設定
-        let baseInfo: UserInfo
-        switch userSegment.selectedSegmentIndex {
-        case 0: baseInfo = .newUser
-        case 1: baseInfo = .returningUser
-        case 2: baseInfo = .experiencedUser
-        case 3: baseInfo = .checkedInUser
-        case 4: baseInfo = .allCompletedUser
-        default: baseInfo = .newUser
-        }
-        
-        // 預填該用戶類型的初始狀態
-        if baseInfo.hasSeenTutorial {
+        // 設置開關為預設值
+        if userSegment.selectedSegmentIndex == 0 {
+            // 新用戶：全部關閉
+            tutorialSwitch.isOn = false
+            adSwitch.isOn = false
+            newFeatureSwitch.isOn = false
+            dailyCheckInSwitch.isOn = false
+            predictionResultSwitch.isOn = false
+        } else {
+            // 老用戶：Tutorial 和 Ad 開啟
+            tutorialSwitch.isOn = true
+            adSwitch.isOn = true
+            newFeatureSwitch.isOn = false
+            dailyCheckInSwitch.isOn = false
+            predictionResultSwitch.isOn = false
+            
+            // 預填 Repository
             _ = repository.markAsShown(type: .tutorial, memberId: currentMemberId)
-        }
-        if baseInfo.hasSeenAd {
             _ = repository.markAsShown(type: .interstitialAd, memberId: currentMemberId)
         }
-        if baseInfo.hasSeenNewFeature {
-            _ = repository.markAsShown(type: .newFeature, memberId: currentMemberId)
-        }
-        if let lastCheckIn = baseInfo.lastCheckInDate, Calendar.current.isDateInToday(lastCheckIn) {
-            _ = repository.markAsShown(type: .dailyCheckIn, memberId: currentMemberId)
-        }
-        if baseInfo.hasPredictionResult {
-            _ = repository.markAsShown(type: .predictionResult, memberId: currentMemberId)
-        }
         
-        // 重建管理器以使用新的 UserInfo
+        // 重建管理器
         createChainManager()
         updateStateDisplay()
         print("🔄 已重置為當前用戶類型的初始狀態")
     }
     
-    @objc private func changeUserTapped() {
-        createChainManager()
+    @objc private func changeUserTapped() {        // 從 Repository 讀取狀態，更新開關（模擬重新登入後 Server 返回的 UserInfo）
+        let memberId = currentMemberId
+        
+        let tutorialState = repository.getState(for: .tutorial, memberId: memberId)
+        let adState = repository.getState(for: .interstitialAd, memberId: memberId)
+        let featureState = repository.getState(for: .newFeature, memberId: memberId)
+        let checkInState = repository.getState(for: .dailyCheckIn, memberId: memberId)
+        
+        tutorialSwitch.isOn = if case .success(let state) = tutorialState { state.hasShown } else { false }
+        adSwitch.isOn = if case .success(let state) = adState { state.hasShown } else { false }
+        newFeatureSwitch.isOn = if case .success(let state) = featureState { state.hasShown } else { false }
+        
+        // 檢查是否今天簽到
+        if case .success(let state) = checkInState, 
+           let lastShown = state.lastShownDate,
+           Calendar.current.isDateInToday(lastShown) {
+            dailyCheckInSwitch.isOn = true
+        } else {
+            dailyCheckInSwitch.isOn = false
+        }
+        
+        // 預測結果保持不變（外部數據，不從 Repository 讀取）
+                createChainManager()
         updateStateDisplay()
         print("� 模擬重新登入")
     }
     
     @objc private func userTypeChanged() {
-        // 切換用戶類型時，根據預設值設置開關狀態並預填 repository
-        let baseInfo: UserInfo
-        switch userSegment.selectedSegmentIndex {
-        case 0: baseInfo = .newUser
-        case 1: baseInfo = .returningUser
-        case 2: baseInfo = .experiencedUser
-        case 3: baseInfo = .checkedInUser
-        case 4: baseInfo = .allCompletedUser
-        default: baseInfo = .newUser
-        }
-        
-        predictionResultSwitch.isOn = baseInfo.hasPredictionResult
-        
-        // 自動重置並預填該用戶類型的初始狀態
+        // 切換用戶類型時，自動設置開關為該類型的預設值
         repository.resetUser(memberId: currentMemberId)
         
-        if baseInfo.hasSeenTutorial {
+        if userSegment.selectedSegmentIndex == 0 {
+            // 新用戶：全部關閉
+            tutorialSwitch.isOn = false
+            adSwitch.isOn = false
+            newFeatureSwitch.isOn = false
+            dailyCheckInSwitch.isOn = false
+            predictionResultSwitch.isOn = false
+        } else {
+            // 老用戶：Tutorial 和 Ad 開啟
+            tutorialSwitch.isOn = true
+            adSwitch.isOn = true
+            newFeatureSwitch.isOn = false
+            dailyCheckInSwitch.isOn = false
+            predictionResultSwitch.isOn = false
+            
+            // 預填 Repository（模擬老用戶已有的記錄）
             _ = repository.markAsShown(type: .tutorial, memberId: currentMemberId)
-        }
-        if baseInfo.hasSeenAd {
             _ = repository.markAsShown(type: .interstitialAd, memberId: currentMemberId)
-        }
-        if baseInfo.hasSeenNewFeature {
-            _ = repository.markAsShown(type: .newFeature, memberId: currentMemberId)
-        }
-        if let lastCheckIn = baseInfo.lastCheckInDate, Calendar.current.isDateInToday(lastCheckIn) {
-            _ = repository.markAsShown(type: .dailyCheckIn, memberId: currentMemberId)
-        }
-        if baseInfo.hasPredictionResult {
-            _ = repository.markAsShown(type: .predictionResult, memberId: currentMemberId)
         }
         
         createChainManager()
         updateStateDisplay()
     }
     
-    @objc private func predictionSwitchChanged() {
+    @objc private func switchChanged() {
+        // 任何開關變化都重建 ChainManager
         createChainManager()
         updateStateDisplay()
     }
