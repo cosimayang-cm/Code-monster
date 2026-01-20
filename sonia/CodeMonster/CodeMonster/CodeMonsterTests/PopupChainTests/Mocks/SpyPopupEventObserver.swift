@@ -5,12 +5,14 @@ import XCTest
 public class SpyPopupEventObserver: PopupEventObserver {
     public var receivedEvents: [PopupEvent] = []
     public var eventTimestamps: [Date] = []
+    public var onEventReceived: ((PopupEvent) -> Void)?
 
     public init() {}
 
     public func popupChain(didPublish event: PopupEvent) {
         receivedEvents.append(event)
         eventTimestamps.append(Date())
+        onEventReceived?(event)
     }
 
     // MARK: - Test Helpers
