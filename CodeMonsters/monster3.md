@@ -191,54 +191,24 @@
 
 ---
 
-## 使用範例
+## 使用範例 (可以自行增加/修改)
 
-```swift
-// 文章編輯器範例
-let document = TextDocument()
-let history = CommandHistory()
+### 文章編輯器範例
 
-// 插入文字
-let insertCmd = InsertTextCommand(document: document, text: "Hello", position: 0)
-history.execute(insertCmd)
-// document.content == "Hello"
+1. 建立一個空的 `TextDocument` 與 `CommandHistory`
+2. 透過 `InsertTextCommand` 在位置 0 插入 "Hello"，執行後文件內容為 "Hello"
+3. 再透過 `InsertTextCommand` 在位置 5 插入 " World"，執行後文件內容為 "Hello World"
+4. 呼叫 `history.undo()`，文件內容回復為 "Hello"
+5. 呼叫 `history.redo()`，文件內容再次變為 "Hello World"
 
-// 再插入文字
-let insertCmd2 = InsertTextCommand(document: document, text: " World", position: 5)
-history.execute(insertCmd2)
-// document.content == "Hello World"
+### 畫布編輯器範例
 
-// Undo
-history.undo()
-// document.content == "Hello"
-
-// Redo
-history.redo()
-// document.content == "Hello World"
-```
-
-```swift
-// 畫布編輯器範例
-let canvas = Canvas()
-let history = CommandHistory()
-
-// 新增圓形
-let circle = Circle(center: Point(x: 100, y: 100), radius: 50)
-let addCmd = AddShapeCommand(canvas: canvas, shape: circle)
-history.execute(addCmd)
-
-// 移動圓形
-let moveCmd = MoveShapeCommand(canvas: canvas, shapeId: circle.id, delta: Point(x: 20, y: 30))
-history.execute(moveCmd)
-
-// Undo 移動
-history.undo()
-// circle 回到原位 (100, 100)
-
-// Undo 新增
-history.undo()
-// canvas 上沒有圓形了
-```
+1. 建立一個空的 `Canvas` 與 `CommandHistory`
+2. 建立一個圓心在 (100, 100)、半徑 50 的圓形
+3. 透過 `AddShapeCommand` 將圓形加入畫布
+4. 透過 `MoveShapeCommand` 將圓形移動 (20, 30)
+5. 呼叫 `history.undo()`，圓形回到原位 (100, 100)
+6. 再呼叫 `history.undo()`，畫布上的圓形被移除
 
 ---
 
