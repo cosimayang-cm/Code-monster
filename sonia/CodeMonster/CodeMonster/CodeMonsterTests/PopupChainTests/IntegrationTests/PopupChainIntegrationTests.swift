@@ -227,4 +227,111 @@ class PopupChainIntegrationTests: XCTestCase {
         let checkInState = mockRepository.states[user.memberId]?[.dailyCheckIn]
         XCTAssertEqual(checkInState?.showCount, 2, "Check-in count should increment on daily reset")
     }
+    
+    // MARK: - Test: State Persistence (User Story 3)
+    
+    func testStatePersistenceWithUserDefaults() {
+        // Given: UserDefaults-backed repository
+        let suiteName = "com.codemonster.popupchain.persistence.test"
+        let testDefaults = UserDefaults(suiteName: suiteName)!
+        testDefaults.removePersistentDomain(forName: suiteName)
+        
+        let persistentRepository = UserDefaultsPopupStateRepository(defaults: testDefaults)
+        let user = UserInfo.returningUser
+        
+        // When: First session - user sees tutorial
+        let firstManager = PopupChainManager(
+            userInfo: user,
+            stateRepository: persistentRepository,
+            presenter: mockPresenter,
+            logger: mockLogger,
+            popupTransitionDelay: 0
+        )
+        firstManager.startPopupChain()
+        
+        // Wait for async write
+        Thread.sleep(forTimeInterval: 0.2)
+        
+        // Then: Create new manager instance (simulating app restart)
+        let secondMockPresenter = MockPopupPresenter()
+        let secondManager = PopupChainManager(
+            userInfo: user,
+            stateRepository: persistentRepository,
+            presenter: secondMockPresenter,
+            logger: mockLogger,
+            popupTransitionDelay: 0
+        )
+        
+        secondManager.startPopupChain()
+        
+        // Verify tutorial was not shown again (state persisted)
+        let tutorialResult = persistentRepository.getState(for: .tutorial, memberId: user.memberId)
+        guard case .success(let tutorialState) = tutorialResult else {
+            XCTFail("Should retrieve tutorial state")
+            return
+        }
+        
+        XCTAssertTrue(tutorialState.hasShown, "Tutorial state should persist across sessions")
+        XCTAssertGreaterThan(tutorialState.showCount, 0, "Show count should be persisted")
+        
+        // Cleanup
+        testDefaults.removePersistentDomain(forName: suiteName)
+    }
+    
+    func testMultiAccountStateIsolation() {
+        // Given: UserDefaults-backed repository with two users
+        let suiteName = "com.codemonster.popupchain.multiuser.test"
+        let testDefaults = UserDefaults(suiteName: suiteName)!
+        testDefaults.removePersistentDomain(forName: suiteName)
+        
+        let persistentRepository = UserDefaultsPopupStateRepository(defaults: testDefaults)
+        
+        let user1 = UserInfo(memberId: "user1", hasSeenTutorial: false, hasSeenAd: false, hasSeenNewFeature: false, hasPredictionResult: false)
+        let user2 = UserInfo(memberId: "user2", hasSeenTutorial: false, hasSeenAd: false, hasSeenNewFeature: false, hasPredictionResult: false)
+        
+        let presenter1 = MockPopupPresenter()
+        let presenter2 = MockPopupPresenter()
+        
+        // When: User1 sees tutorial
+        let manager1 = PopupChainManager(
+            userInfo: user1,
+            stateRepository: persistentRepository,
+            presenter: presenter1,
+            logger: mockLogger,
+            popupTransitionDelay: 0
+        )
+        manager1.startPopupChain()
+        
+        Thread.sleep(forTimeInterval: 0.2)
+        
+        // And: User2 starts session
+        let manager2 = PopupChainManager(
+            userInfo: user2,
+            stateRepository: persistentRepository,
+            presenter: presenter2,
+            logger: mockLogger,
+            popupTransitionDelay: 0
+        )
+        manager2.startPopupChain()
+        
+        Thread.sleep(forTimeInterval: 0.2)
+        
+        // Then: User1's state should be independent from User2's state
+        let user1TutorialResult = persistentRepository.getState(for: .tutorial, memberId: user1.memberId)
+        let user2TutorialResult = persistentRepository.getState(for: .tutorial, memberId: user2.memberId)
+        
+        guard case .success(let user1State) = user1TutorialResult,
+              case .success(let user2State) = user2TutorialResult else {
+            XCTFail("Should retrieve states")
+            return
+        }
+        
+        XCTAssertTrue(user1State.hasShown, "User1 should have seen tutorial")
+        XCTAssertTrue(user2State.hasShown, "User2 should also have seen tutorial")
+        XCTAssertEqual(user1State.showCount, 1)
+        XCTAssertEqual(user2State.showCount, 1)
+        
+        // Cleanup
+        testDefaults.removePersistentDomain(forName: suiteName)
+    }
 }
