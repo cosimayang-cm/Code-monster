@@ -1,0 +1,43 @@
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+xcuserdata/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+*.xcodeproj
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDE
+.idea/
+*.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+
+# Build artifacts
+DerivedData/
+build/
+*.o
+*.a
+*.dylib
+
+# Code coverage
+*.gcno
+*.gcda
+*.gcov
+
+# Temporary files
+*.swp
+*.swo
+*~
