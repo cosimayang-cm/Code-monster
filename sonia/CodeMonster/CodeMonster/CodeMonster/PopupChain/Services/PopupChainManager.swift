@@ -23,7 +23,8 @@ public class PopupChainManager {
         stateRepository: PopupStateRepository,
         presenter: PopupPresenter?,
         logger: Logger,
-        popupTransitionDelay: TimeInterval = 0.4
+        popupTransitionDelay: TimeInterval = 0.4,
+        handlers: [PopupHandler]? = nil
     ) {
         self.context = PopupContext(
             userInfo: userInfo,
@@ -33,10 +34,23 @@ public class PopupChainManager {
             popupTransitionDelay: popupTransitionDelay
         )
         
-        buildHandlerChain()
+        let handlersToBuild = handlers ?? PopupChainManager.defaultHandlers()
+        buildHandlerChain(from: handlersToBuild)
     }
     
     // MARK: - Public API
+    
+    /// Provides the default chain of handlers.
+    /// - Returns: An array of `PopupHandler` instances in default order.
+    public static func defaultHandlers() -> [PopupHandler] {
+        return [
+            TutorialPopupHandler(),
+            InterstitialAdPopupHandler(),
+            NewFeaturePopupHandler(),
+            DailyCheckInPopupHandler(),
+            PredictionResultPopupHandler()
+        ]
+    }
     
     /// Starts the popup chain from the first handler
     /// Only triggers once per session
@@ -88,26 +102,22 @@ public class PopupChainManager {
     
     // MARK: - Private Methods
     
-    private func buildHandlerChain() {
-        // Build full chain in priority order:
-        // Tutorial (1) → InterstitialAd (2) → NewFeature (3) → DailyCheckIn (4) → PredictionResult (5)
+    private func buildHandlerChain(from handlers: [PopupHandler]) {
+        allHandlers = handlers
+        handlerChain = nil
         
-        let tutorialHandler = TutorialPopupHandler()
-        let adHandler = InterstitialAdPopupHandler()
-        let featureHandler = NewFeaturePopupHandler()
-        let checkInHandler = DailyCheckInPopupHandler()
-        let predictionHandler = PredictionResultPopupHandler()
+        guard !handlers.isEmpty else {
+            context.logger.log("Handler chain is empty.", level: .debug)
+            return
+        }
         
-        // Link handlers in chain
-        tutorialHandler.next = adHandler
-        adHandler.next = featureHandler
-        featureHandler.next = checkInHandler
-        checkInHandler.next = predictionHandler
+        // Link handlers in chain based on array order
+        for i in 0..<(handlers.count - 1) {
+            handlers[i].next = handlers[i + 1]
+        }
         
-        handlerChain = tutorialHandler
-        
-        // Store all handlers in an array to maintain strong references
-        allHandlers = [tutorialHandler, adHandler, featureHandler, checkInHandler, predictionHandler]
+        // Set the head of the chain
+        handlerChain = handlers.first
         
         context.logger.log("Handler chain built with \(allHandlers.count) handler(s)", level: .debug)
     }
