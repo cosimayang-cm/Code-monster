@@ -43,7 +43,8 @@ class TutorialPopupHandlerTests: XCTestCase {
             userInfo: newUser,
             stateRepository: mockRepository,
             presenter: mockPresenter,
-            logger: mockLogger
+            logger: mockLogger,
+            popupTransitionDelay: 0
         )
         
         // When: Handle is called
@@ -65,24 +66,28 @@ class TutorialPopupHandlerTests: XCTestCase {
     // MARK: - Test: Returning User Skips Tutorial
     
     func testReturningUserSkipsTutorial() {
-        // Given: User who has already seen tutorial
+        // Given: User who has already seen tutorial and a next handler
         let returningUser = UserInfo.returningUser
         mockRepository.setState(
             PopupState(type: .tutorial, hasShown: true, lastShownDate: Date(), showCount: 1),
             for: returningUser.memberId
         )
         
+        let nextHandler = MockPopupHandler(popupType: .interstitialAd)
+        sut.next = nextHandler
+        
         context = PopupContext(
             userInfo: returningUser,
             stateRepository: mockRepository,
             presenter: mockPresenter,
-            logger: mockLogger
+            logger: mockLogger,
+            popupTransitionDelay: 0
         )
         
         // When: Handle is called
         let result = sut.handle(context: context)
         
-        // Then: Tutorial should be skipped
+        // Then: Tutorial should be skipped and next handler called
         switch result {
         case .success(.skipped):
             XCTAssertTrue(true, "Tutorial skipped correctly")
@@ -92,6 +97,9 @@ class TutorialPopupHandlerTests: XCTestCase {
         
         // And: Presenter should not be called
         XCTAssertEqual(mockPresenter.presentCalls.count, 0)
+        
+        // And: Next handler should be invoked
+        XCTAssertTrue(nextHandler.handleWasCalled)
     }
     
     // MARK: - Test: Chain Terminates After Tutorial
@@ -106,7 +114,8 @@ class TutorialPopupHandlerTests: XCTestCase {
             userInfo: newUser,
             stateRepository: mockRepository,
             presenter: mockPresenter,
-            logger: mockLogger
+            logger: mockLogger,
+            popupTransitionDelay: 0
         )
         
         // When: Handle is called
@@ -127,21 +136,25 @@ class TutorialPopupHandlerTests: XCTestCase {
     // MARK: - Test: Repository Read Failure Handling
     
     func testRepositoryReadFailureSkipsPopup() {
-        // Given: Repository that fails to read
+        // Given: Repository that fails to read and a next handler
         mockRepository.shouldFailRead = true
         let user = UserInfo.newUser
+        
+        let nextHandler = MockPopupHandler(popupType: .interstitialAd)
+        sut.next = nextHandler
         
         context = PopupContext(
             userInfo: user,
             stateRepository: mockRepository,
             presenter: mockPresenter,
-            logger: mockLogger
+            logger: mockLogger,
+            popupTransitionDelay: 0
         )
         
         // When: Handle is called
         let result = sut.handle(context: context)
         
-        // Then: Popup should be skipped
+        // Then: Popup should be skipped and next handler called
         switch result {
         case .success(.skipped):
             XCTAssertTrue(true, "Skipped on read failure")
@@ -151,6 +164,9 @@ class TutorialPopupHandlerTests: XCTestCase {
         
         // And: Error should be logged
         XCTAssertTrue(mockLogger.hasLogged("Failed to read state", level: .warning))
+        
+        // And: Next handler should be invoked
+        XCTAssertTrue(nextHandler.handleWasCalled)
     }
     
     // MARK: - Test: No Presenter Available
@@ -162,7 +178,8 @@ class TutorialPopupHandlerTests: XCTestCase {
             userInfo: newUser,
             stateRepository: mockRepository,
             presenter: nil,  // No presenter
-            logger: mockLogger
+            logger: mockLogger,
+            popupTransitionDelay: 0
         )
         
         // When: Handle is called
@@ -176,8 +193,8 @@ class TutorialPopupHandlerTests: XCTestCase {
             XCTFail("Expected chain termination, got \(result)")
         }
         
-        // And: Warning should be logged
-        XCTAssertTrue(mockLogger.hasLogged("No presenter", level: .warning))
+        // And: State should still be marked as shown
+        XCTAssertEqual(mockRepository.markAsShownCalls.count, 1)
     }
 }
 

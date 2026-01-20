@@ -1,3 +1,10 @@
+//
+//  PopupStateRepository.swift
+//  CodeMonster
+//
+//  Created by Sonia Wu on 2026/1/20.
+//
+
 import Foundation
 
 /// Manages persistence of popup states per user.

@@ -1,3 +1,10 @@
+//
+//  PopupHandler.swift
+//  CodeMonster
+//
+//  Created by Sonia Wu on 2026/1/20.
+//
+
 import Foundation
 
 /// Defines a handler in the popup chain of responsibility.

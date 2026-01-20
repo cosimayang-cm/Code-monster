@@ -1,3 +1,10 @@
+//
+//  PopupChainManager.swift
+//  CodeMonster
+//
+//  Created by Sonia Wu on 2026/1/20.
+//
+
 import Foundation
 import UIKit
 
@@ -6,6 +13,7 @@ public class PopupChainManager {
     
     private let context: PopupContext
     private var handlerChain: PopupHandler?
+    private var allHandlers: [PopupHandler] = [] // Holds strong reference to all handlers
     private var hasTriggered = false
     
     // MARK: - Initialization
@@ -14,13 +22,15 @@ public class PopupChainManager {
         userInfo: UserInfo,
         stateRepository: PopupStateRepository,
         presenter: PopupPresenter?,
-        logger: Logger
+        logger: Logger,
+        popupTransitionDelay: TimeInterval = 0.4
     ) {
         self.context = PopupContext(
             userInfo: userInfo,
             stateRepository: stateRepository,
             presenter: presenter,
-            logger: logger
+            logger: logger,
+            popupTransitionDelay: popupTransitionDelay
         )
         
         buildHandlerChain()
@@ -79,14 +89,26 @@ public class PopupChainManager {
     // MARK: - Private Methods
     
     private func buildHandlerChain() {
-        // Phase 3 (US1): Only tutorial handler
-        // Phase 4 (US2): Will add full chain
+        // Build full chain in priority order:
+        // Tutorial (1) → InterstitialAd (2) → NewFeature (3) → DailyCheckIn (4) → PredictionResult (5)
         
         let tutorialHandler = TutorialPopupHandler()
+        let adHandler = InterstitialAdPopupHandler()
+        let featureHandler = NewFeaturePopupHandler()
+        let checkInHandler = DailyCheckInPopupHandler()
+        let predictionHandler = PredictionResultPopupHandler()
         
-        // For Phase 3, we only have tutorial handler
+        // Link handlers in chain
+        tutorialHandler.next = adHandler
+        adHandler.next = featureHandler
+        featureHandler.next = checkInHandler
+        checkInHandler.next = predictionHandler
+        
         handlerChain = tutorialHandler
         
-        context.logger.log("Handler chain built with \(1) handler(s)", level: .debug)
+        // Store all handlers in an array to maintain strong references
+        allHandlers = [tutorialHandler, adHandler, featureHandler, checkInHandler, predictionHandler]
+        
+        context.logger.log("Handler chain built with \(allHandlers.count) handler(s)", level: .debug)
     }
 }

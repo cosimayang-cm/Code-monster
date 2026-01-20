@@ -1,3 +1,10 @@
+//
+//  InMemoryPopupStateRepository.swift
+//  CodeMonster
+//
+//  Created by Sonia Wu on 2026/1/20.
+//
+
 import Foundation
 
 /// In-memory implementation of PopupStateRepository for testing and development

@@ -33,7 +33,7 @@ class PopupChainIntegrationTests: XCTestCase {
             userInfo: newUser,
             stateRepository: mockRepository,
             presenter: mockPresenter,
-            logger: mockLogger
+            logger: mockLogger, popupTransitionDelay: 0
         )
         
         // When: Chain is started
@@ -68,7 +68,7 @@ class PopupChainIntegrationTests: XCTestCase {
             userInfo: returningUser,
             stateRepository: mockRepository,
             presenter: mockPresenter,
-            logger: mockLogger
+            logger: mockLogger, popupTransitionDelay: 0
         )
         
         // When: Chain is started
@@ -90,7 +90,7 @@ class PopupChainIntegrationTests: XCTestCase {
             userInfo: newUser,
             stateRepository: mockRepository,
             presenter: mockPresenter,
-            logger: mockLogger
+            logger: mockLogger, popupTransitionDelay: 0
         )
         
         // When: Chain is started first time
@@ -115,7 +115,7 @@ class PopupChainIntegrationTests: XCTestCase {
             userInfo: newUser,
             stateRepository: mockRepository,
             presenter: mockPresenter,
-            logger: mockLogger
+            logger: mockLogger, popupTransitionDelay: 0
         )
         chainManager.startPopupChain()
         
@@ -133,5 +133,98 @@ class PopupChainIntegrationTests: XCTestCase {
         
         // Then: Chain should trigger
         XCTAssertTrue(chainManager.hasTriggeredThisSession)
+    }
+    
+    // MARK: - Test: Returning User Full Chain (User Story 2)
+    
+    func testReturningUserSeesFullChain() {
+        // Given: Returning user with ad not seen
+        let returningUser = UserInfo.returningUser
+        mockRepository.setState(
+            PopupState(type: .tutorial, hasShown: true, lastShownDate: Date(), showCount: 1),
+            for: returningUser.memberId
+        )
+        
+        chainManager = PopupChainManager(
+            userInfo: returningUser,
+            stateRepository: mockRepository,
+            presenter: mockPresenter,
+            logger: mockLogger, popupTransitionDelay: 0
+        )
+        
+        // When: Chain is started (synchronous execution in tests)
+        chainManager.startPopupChain()
+        
+        // Then: Tutorial should be skipped (already shown)
+        let tutorialState = mockRepository.states[returningUser.memberId]?[.tutorial]
+        XCTAssertEqual(tutorialState?.hasShown, true)
+        
+        // And: Ad should be marked as shown (next in chain)
+        let adState = mockRepository.states[returningUser.memberId]?[.interstitialAd]
+        XCTAssertEqual(adState?.hasShown, true, "Ad should be shown for returning user")
+    }
+    
+    // MARK: - Test: Ad/Feature Exclusivity
+    
+    func testAdAndFeatureExclusivity() {
+        // Given: User who has seen ad
+        let experiencedUser = UserInfo.experiencedUser
+        mockRepository.setState(
+            PopupState(type: .tutorial, hasShown: true, lastShownDate: Date(), showCount: 1),
+            for: experiencedUser.memberId
+        )
+        mockRepository.setState(
+            PopupState(type: .interstitialAd, hasShown: true, lastShownDate: Date(), showCount: 1),
+            for: experiencedUser.memberId
+        )
+        
+        chainManager = PopupChainManager(
+            userInfo: experiencedUser,
+            stateRepository: mockRepository,
+            presenter: mockPresenter,
+            logger: mockLogger, popupTransitionDelay: 0
+        )
+        
+        // When: Chain is started (synchronous execution in tests)
+        chainManager.startPopupChain()
+        
+        // Then: New feature should be skipped (ad exclusivity)
+        let featureState = mockRepository.states[experiencedUser.memberId]?[.newFeature]
+        // Feature not shown due to ad exclusivity - either nil or hasShown is false
+        XCTAssertTrue(featureState == nil || featureState?.hasShown == false, "Feature should be skipped due to ad exclusivity")
+        
+        // And: Daily check-in should be shown (next in chain)
+        let checkInState = mockRepository.states[experiencedUser.memberId]?[.dailyCheckIn]
+        XCTAssertEqual(checkInState?.hasShown, true, "Daily check-in should be shown")
+    }
+    
+    // MARK: - Test: Daily Reset Logic
+    
+    func testDailyCheckInResets() {
+        // Given: User who checked in yesterday
+        let user = UserInfo.returningUser
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        mockRepository.setState(
+            PopupState(type: .tutorial, hasShown: true, lastShownDate: Date(), showCount: 1),
+            for: user.memberId
+        )
+        mockRepository.setState(
+            PopupState(type: .dailyCheckIn, hasShown: true, lastShownDate: yesterday, showCount: 1),
+            for: user.memberId
+        )
+        
+        chainManager = PopupChainManager(
+            userInfo: user,
+            stateRepository: mockRepository,
+            presenter: mockPresenter,
+            logger: mockLogger, popupTransitionDelay: 0
+        )
+        
+        // When: Chain is started today (synchronous execution in tests)
+        chainManager.startPopupChain()
+        
+        // Then: Daily check-in should be shown again (daily reset)
+        let checkInState = mockRepository.states[user.memberId]?[.dailyCheckIn]
+        XCTAssertEqual(checkInState?.showCount, 2, "Check-in count should increment on daily reset")
     }
 }

@@ -9,6 +9,7 @@ public class MockPopupPresenter: PopupPresenter {
     public var presentCalls: [(type: PopupType, viewController: UIViewController)] = []
     public var shouldFailPresent = false
     public var presentationDelay: TimeInterval = 0
+    public var autoSimulateUserDismissal = true  // Auto-dismiss popups in tests
 
     private var completionHandlers: [PopupType: () -> Void] = [:]
 
@@ -36,10 +37,16 @@ public class MockPopupPresenter: PopupPresenter {
         presentedPopups.append(type)
         completionHandlers[type] = completion
 
-        // Auto-dismiss after delay for testing
-        if presentationDelay > 0 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + presentationDelay) { [weak self] in
-                self?.simulateUserDismissal(type: type)
+        // Auto-dismiss for testing to simulate user behavior
+        if autoSimulateUserDismissal {
+            if presentationDelay > 0 {
+                // Use async for non-zero delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + presentationDelay) { [weak self] in
+                    self?.simulateUserDismissal(type: type)
+                }
+            } else {
+                // Immediate synchronous dismissal for testing (no delay)
+                simulateUserDismissal(type: type)
             }
         }
     }

@@ -1,9 +1,18 @@
+//
+//  BasePopupHandler.swift
+//  CodeMonster
+//
+//  Created by Sonia Wu on 2026/1/20.
+//
+
 import Foundation
+import UIKit
 
 /// Base class for all popup handlers implementing Chain of Responsibility pattern
 open class BasePopupHandler: PopupHandler {
     public weak var next: PopupHandler?
     public let popupType: PopupType
+    private var context: PopupContext?
 
     public init(popupType: PopupType) {
         self.popupType = popupType
@@ -15,14 +24,31 @@ open class BasePopupHandler: PopupHandler {
     open func handle(context: PopupContext) -> Result<PopupHandleResult, PopupError> {
         fatalError("Subclasses must implement handle(context:)")
     }
+    
+    // MARK: - Protected Methods
+    
+    /// Sets the execution context. Called by subclasses at the beginning of handle().
+    /// - Parameter context: The execution context
+    internal func setContext(_ context: PopupContext) {
+        self.context = context
+    }
 
     /// Default implementation continues to next handler
-    public func onPopupDismissed(context: PopupContext) {
+    public func onPopupDismissed() {
+        guard let context = context else { return }
+        
         context.logger.log("Popup dismissed: \(popupType.displayName)", level: .info)
 
         // Continue to next handler
         if let next = next {
-            handleNext(context: context, handler: next)
+            let delay = context.popupTransitionDelay
+            if delay > 0 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                    _ = next.handle(context: context)
+                }
+            } else {
+                _ = next.handle(context: context)
+            }
         } else {
             // Chain completed
             context.logger.log("Popup chain completed", level: .info)
@@ -32,10 +58,10 @@ open class BasePopupHandler: PopupHandler {
     // MARK: - Protected Helper Methods
 
     /// Checks if popup should be shown based on state
-    /// - Parameters:
-    ///   - context: The execution context
     /// - Returns: True if should show, false otherwise
-    internal func shouldShow(context: PopupContext) -> Bool {
+    internal func shouldShow() -> Bool {
+        guard let context = context else { return false }
+        
         let stateResult = context.stateRepository.getState(
             for: popupType,
             memberId: context.userInfo.memberId
@@ -66,22 +92,14 @@ open class BasePopupHandler: PopupHandler {
         }
     }
 
-    /// Presents the popup and handles the result
-    /// - Parameters:
-    ///   - context: The execution context
-    ///   - completion: Called after popup is dismissed
-    internal func presentPopup(
-        context: PopupContext,
-        completion: @escaping () -> Void
-    ) {
-        guard let presenter = context.presenter else {
-            context.logger.log(
-                "No presenter available for \(popupType.rawValue)",
-                level: .warning
-            )
-            completion()
-            return
+    /// Presents the popup, marks it as shown, and continues the chain on dismissal.
+    /// - Returns: A result indicating the popup was shown.
+    internal func showAndContinue() -> Result<PopupHandleResult, PopupError> {
+        guard let context = context else { 
+            return .success(.chainTerminated)
         }
+        
+        context.logger.log("Will show popup and continue chain: \(popupType.displayName)", level: .info)
 
         // Mark as shown before presenting
         let markResult = context.stateRepository.markAsShown(
@@ -94,60 +112,76 @@ open class BasePopupHandler: PopupHandler {
                 "Failed to mark \(popupType.rawValue) as shown: \(error.localizedDescription)",
                 level: .error
             )
+            // Optionally, return an error to halt the chain
+            // return .failure(.stateUpdateFailed(error))
         }
 
-        // Present popup - this will be implemented by UI layer
-        context.logger.log("Presenting popup: \(popupType.displayName)", level: .debug)
-        completion()
+        // Present popup via presenter
+        if let presenter = context.presenter {
+            // In a real app, this would get the top view controller
+            presenter.present(type: popupType, from: UIViewController()) { [weak self] in
+                // When popup is dismissed, continue the chain
+                self?.onPopupDismissed()
+            }
+        } else {
+            // No presenter, so continue chain immediately (for testing)
+            onPopupDismissed()
+        }
+
+        return .success(.shown(popupType))
     }
 
-    /// Continues to next handler in the chain
-    /// - Parameters:
-    ///   - context: The execution context
-    ///   - handler: The next handler
-    internal func handleNext(context: PopupContext, handler: PopupHandler) {
-        let result = handler.handle(context: context)
-
-        switch result {
-        case .success(.shown):
-            // Next handler showed a popup, wait for dismissal
+    /// Presents the popup, marks it as shown, and terminates the chain on dismissal.
+    /// - Returns: A result indicating the chain should terminate.
+    internal func showAndTerminate() -> Result<PopupHandleResult, PopupError> {
+        guard let context = context else { 
+            return .success(.chainTerminated)
+        }
+        
+        context.logger.log("Will show popup and terminate chain: \(popupType.displayName)", level: .info)
+        
+        // Mark as shown before presenting
+        let markResult = context.stateRepository.markAsShown(
+            type: popupType,
+            memberId: context.userInfo.memberId
+        )
+        
+        if case .failure(let error) = markResult {
             context.logger.log(
-                "Next handler showed popup: \(handler.popupType.displayName)",
-                level: .debug
-            )
-
-        case .success(.skipped):
-            // Next handler skipped, chain will continue automatically
-            context.logger.log(
-                "Next handler skipped: \(handler.popupType.displayName)",
-                level: .debug
-            )
-
-        case .success(.chainTerminated):
-            // Chain terminated
-            context.logger.log("Chain terminated by handler", level: .info)
-
-        case .failure(let error):
-            // Error in next handler, but continue chain
-            context.logger.log(
-                "Error in next handler: \(error.localizedDescription)",
+                "Failed to mark \(popupType.rawValue) as shown: \(error.localizedDescription)",
                 level: .error
             )
         }
+        
+        // Present popup via presenter
+        if let presenter = context.presenter {
+            presenter.present(type: popupType, from: UIViewController()) { [weak self] in
+                // When popup is dismissed, log termination
+                guard let self = self, let context = self.context else { return }
+                context.logger.log("Terminating chain after \(self.popupType.displayName) was dismissed.", level: .info)
+            }
+        }
+        
+        return .success(.chainTerminated)
     }
 
-    /// Skips this popup and continues to next handler
-    /// - Parameter context: The execution context
-    /// - Returns: Skipped result
-    internal func skip(context: PopupContext) -> Result<PopupHandleResult, PopupError> {
+    /// Skips this popup and continues to next handler, returning the result of the subsequent handler.
+    /// - Returns: The result from the next handler in the chain, or `.chainTerminated` if it's the end.
+    internal func skip() -> Result<PopupHandleResult, PopupError> {
+        guard let context = context else { 
+            return .success(.chainTerminated)
+        }
+        
         context.logger.log("Skipping popup: \(popupType.displayName)", level: .debug)
 
-        // Continue to next handler immediately
+        // Continue to the next handler and return its result directly.
         if let next = next {
-            handleNext(context: context, handler: next)
+            return next.handle(context: context)
+        } else {
+            // This is the end of the chain.
+            context.logger.log("Chain terminated at the end.", level: .info)
+            return .success(.chainTerminated)
         }
-
-        return .success(.skipped)
     }
 }
 

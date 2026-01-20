@@ -1,3 +1,10 @@
+//
+//  PopupEvent.swift
+//  CodeMonster
+//
+//  Created by Sonia Wu on 2026/1/20.
+//
+
 import Foundation
 
 /// Popup lifecycle events
