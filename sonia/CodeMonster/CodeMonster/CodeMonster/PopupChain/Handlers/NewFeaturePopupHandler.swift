@@ -20,14 +20,12 @@ public class NewFeaturePopupHandler: BasePopupHandler {
         setContext(context)
         context.logger.log("Checking new feature popup condition", level: .debug)
         
-        // Check ad exclusivity - if ad was shown, skip new feature
-        let adStateResult = context.stateRepository.getState(
-            for: .interstitialAd,
-            memberId: context.userInfo.memberId
-        )
-        
-        if case .success(let adState) = adStateResult, adState.hasShown {
-            context.logger.log("Skipping new feature - ad already shown (exclusivity)", level: .debug)
+        // Check ad exclusivity - NewFeature only shows if ad has ALREADY been shown (before this session)
+        // Per FR-004: "Ad shown if hasSeenAd == false, otherwise New Feature shown if hasSeenNewFeature == false"
+        // Use UserInfo.hasSeenAd (session start state) not repository state (changes during chain execution)
+        if !context.userInfo.hasSeenAd {
+            // Ad hasn't been shown before, so ad has priority this session
+            context.logger.log("Skipping new feature - ad not shown yet (ad has priority)", level: .debug)
             return skip()
         }
         

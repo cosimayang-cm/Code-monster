@@ -33,11 +33,16 @@ class NewFeaturePopupHandlerTests: XCTestCase {
         XCTAssertEqual(sut.popupType, .newFeature)
     }
     
-    // MARK: - Test: Shows When Not Seen
+    // MARK: - Test: Shows When Ad Already Seen
     
-    func testShowsWhenNotSeen() {
-        // Given: User who hasn't seen new feature
-        let user = UserInfo.experiencedUser
+    func testShowsWhenAdAlreadySeen() {
+        // Given: User who HAS seen ad (so new feature can show)
+        let user = UserInfo.experiencedUser  // hasSeenTutorial=true, hasSeenAd=true
+        mockRepository.setState(
+            PopupState(type: .interstitialAd, hasShown: true, lastShownDate: Date(), showCount: 1),
+            for: user.memberId
+        )
+        
         context = PopupContext(
             userInfo: user,
             stateRepository: mockRepository,
@@ -49,12 +54,12 @@ class NewFeaturePopupHandlerTests: XCTestCase {
         // When: Handle is called
         let result = sut.handle(context: context)
         
-        // Then: Should be shown
+        // Then: Should be shown (因為 Ad 已經看過，NewFeature 可以顯示)
         switch result {
         case .success(.shown(.newFeature)):
             XCTAssertTrue(true)
         default:
-            XCTFail("Expected new feature to be shown, got \(result)")
+            XCTFail("Expected new feature to be shown when ad already seen, got \(result)")
         }
     }
     
@@ -94,15 +99,12 @@ class NewFeaturePopupHandlerTests: XCTestCase {
         XCTAssertTrue(nextHandler.handleWasCalled)
     }
     
-    // MARK: - Test: Ad Exclusivity - Skips When Ad Shown
+    // MARK: - Test: Ad Exclusivity - Skips When Ad NOT Shown Yet
     
-    func testSkipsWhenAdAlreadyShown() {
-        // Given: User who has seen ad (ad and new feature are mutually exclusive) and a next handler
-        let user = UserInfo.experiencedUser
-        mockRepository.setState(
-            PopupState(type: .interstitialAd, hasShown: true, lastShownDate: Date(), showCount: 1),
-            for: user.memberId
-        )
+    func testSkipsWhenAdNotShownYet() {
+        // Given: User who has NOT seen ad yet (ad has priority over new feature)
+        let user = UserInfo.returningUser  // hasSeenTutorial=true, hasSeenAd=false
+        // Don't set any ad state, meaning ad hasn't been shown yet
         
         let nextHandler = MockPopupHandler(popupType: .dailyCheckIn)
         sut.next = nextHandler
@@ -118,12 +120,12 @@ class NewFeaturePopupHandlerTests: XCTestCase {
         // When: Handle is called
         let result = sut.handle(context: context)
         
-        // Then: Should skip (ad exclusivity) and continue
+        // Then: Should skip (ad has priority) and continue
         switch result {
         case .success(.skipped):
             XCTAssertTrue(true)
         default:
-            XCTFail("Expected skip due to ad exclusivity, got \(result)")
+            XCTFail("Expected skip because ad not shown yet (ad has priority), got \(result)")
         }
         
         // And: Next handler should be called

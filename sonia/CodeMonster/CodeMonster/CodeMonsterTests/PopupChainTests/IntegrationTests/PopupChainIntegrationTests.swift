@@ -164,38 +164,67 @@ class PopupChainIntegrationTests: XCTestCase {
         XCTAssertEqual(adState?.hasShown, true, "Ad should be shown for returning user")
     }
     
-    // MARK: - Test: Ad/Feature Exclusivity
+    // MARK: - Test: Ad/Feature Exclusivity - Ad shown first
     
     func testAdAndFeatureExclusivity() {
-        // Given: User who has seen ad
-        let experiencedUser = UserInfo.experiencedUser
+        // Given: User who has NOT seen ad yet (ad should show, not feature)
+        let returningUser = UserInfo.returningUser  // hasSeenAd=false
         mockRepository.setState(
             PopupState(type: .tutorial, hasShown: true, lastShownDate: Date(), showCount: 1),
-            for: experiencedUser.memberId
+            for: returningUser.memberId
         )
-        mockRepository.setState(
-            PopupState(type: .interstitialAd, hasShown: true, lastShownDate: Date(), showCount: 1),
-            for: experiencedUser.memberId
-        )
+        // Don't set ad state - meaning ad hasn't been shown yet
         
         chainManager = PopupChainManager(
-            userInfo: experiencedUser,
+            userInfo: returningUser,
             stateRepository: mockRepository,
             presenter: mockPresenter,
             logger: mockLogger, popupTransitionDelay: 0
         )
         
-        // When: Chain is started (synchronous execution in tests)
+        // When: Chain is started
         chainManager.startPopupChain()
         
-        // Then: New feature should be skipped (ad exclusivity)
-        let featureState = mockRepository.states[experiencedUser.memberId]?[.newFeature]
-        // Feature not shown due to ad exclusivity - either nil or hasShown is false
-        XCTAssertTrue(featureState == nil || featureState?.hasShown == false, "Feature should be skipped due to ad exclusivity")
+        // Then: Ad should be shown (ad has priority)
+        let adState = mockRepository.states[returningUser.memberId]?[.interstitialAd]
+        XCTAssertEqual(adState?.hasShown, true, "Ad should be shown when not seen yet")
         
-        // And: Daily check-in should be shown (next in chain)
-        let checkInState = mockRepository.states[experiencedUser.memberId]?[.dailyCheckIn]
-        XCTAssertEqual(checkInState?.hasShown, true, "Daily check-in should be shown")
+        // And: New feature should be skipped (ad has priority)
+        let featureState = mockRepository.states[returningUser.memberId]?[.newFeature]
+        XCTAssertTrue(featureState == nil || featureState?.hasShown == false, "Feature should be skipped when ad shown")
+    }
+    
+    // MARK: - Test: Feature Shown When Ad Already Seen
+    
+    func testNewFeatureShownWhenAdAlreadySeen() {
+        // Given: User who has ALREADY seen ad (互斥關係：Ad已看過，NewFeature應該顯示)
+        let user = UserInfo(memberId: "test-user", hasSeenTutorial: true, hasSeenAd: true, hasSeenNewFeature: false)
+        mockRepository.setState(
+            PopupState(type: .tutorial, hasShown: true, lastShownDate: Date(), showCount: 1),
+            for: user.memberId
+        )
+        mockRepository.setState(
+            PopupState(type: .interstitialAd, hasShown: true, lastShownDate: Date(), showCount: 1),
+            for: user.memberId
+        )
+        
+        chainManager = PopupChainManager(
+            userInfo: user,
+            stateRepository: mockRepository,
+            presenter: mockPresenter,
+            logger: mockLogger, popupTransitionDelay: 0
+        )
+        
+        // When: Chain is started
+        chainManager.startPopupChain()
+        
+        // Then: NewFeature should be shown (因為 Ad 已經看過)
+        let featureState = mockRepository.states[user.memberId]?[.newFeature]
+        XCTAssertEqual(featureState?.hasShown, true, "NewFeature should be shown when ad already seen")
+        
+        // And: Ad should NOT be shown again (已經看過)
+        let adState = mockRepository.states[user.memberId]?[.interstitialAd]
+        XCTAssertEqual(adState?.showCount, 1, "Ad should not be shown again (already seen once)")
     }
     
     // MARK: - Test: Daily Reset Logic
