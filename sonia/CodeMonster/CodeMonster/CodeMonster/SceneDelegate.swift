@@ -18,9 +18,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // 創建 window
         let window = UIWindow(windowScene: windowScene)
         
-        // 設置根 ViewController（純代碼，不使用 Storyboard）
-        let viewController = ViewController()
-        window.rootViewController = viewController
+        // 設置根 ViewController - 使用 PopupDebugViewController 測試彈窗系統
+        let viewController = PopupDebugViewController()
+        let navigationController = UINavigationController(rootViewController: viewController)
+        window.rootViewController = navigationController
         
         // 顯示 window
         window.makeKeyAndVisible()

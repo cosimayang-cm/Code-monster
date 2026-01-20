@@ -19,7 +19,13 @@ public class TutorialPopupHandler: BasePopupHandler {
         setContext(context)
         context.logger.log("Checking tutorial popup condition", level: .debug)
         
-        // Check if user has already seen tutorial
+        // Check UserInfo first - if already seen in this session, skip
+        if context.userInfo.hasSeenTutorial {
+            context.logger.log("Tutorial already seen (UserInfo), skipping", level: .debug)
+            return skip()
+        }
+        
+        // Check if user has already seen tutorial in repository
         guard shouldShow() else {
             return skip()
         }

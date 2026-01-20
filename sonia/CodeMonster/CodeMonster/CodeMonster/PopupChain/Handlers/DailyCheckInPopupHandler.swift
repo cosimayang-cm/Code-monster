@@ -20,7 +20,14 @@ public class DailyCheckInPopupHandler: BasePopupHandler {
         setContext(context)
         context.logger.log("Checking daily check-in popup condition", level: .debug)
         
-        // Check if user has already checked in today
+        // Check UserInfo - if checked in today, skip
+        if let lastCheckIn = context.userInfo.lastCheckInDate,
+           Calendar.current.isDateInToday(lastCheckIn) {
+            context.logger.log("Already checked in today (UserInfo), skipping", level: .debug)
+            return skip()
+        }
+        
+        // Check if user has already checked in today in repository
         guard shouldShow() else {
             return skip()
         }

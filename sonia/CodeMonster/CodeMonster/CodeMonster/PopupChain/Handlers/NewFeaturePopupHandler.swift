@@ -20,6 +20,12 @@ public class NewFeaturePopupHandler: BasePopupHandler {
         setContext(context)
         context.logger.log("Checking new feature popup condition", level: .debug)
         
+        // Check UserInfo first - if already seen, skip
+        if context.userInfo.hasSeenNewFeature {
+            context.logger.log("New feature already seen (UserInfo), skipping", level: .debug)
+            return skip()
+        }
+        
         // Check ad exclusivity - NewFeature only shows if ad has ALREADY been shown (before this session)
         // Per FR-004: "Ad shown if hasSeenAd == false, otherwise New Feature shown if hasSeenNewFeature == false"
         // Use UserInfo.hasSeenAd (session start state) not repository state (changes during chain execution)
@@ -29,7 +35,7 @@ public class NewFeaturePopupHandler: BasePopupHandler {
             return skip()
         }
         
-        // Check if user has already seen new feature
+        // Check if user has already seen new feature in repository
         guard super.shouldShow() else {
             return skip()
         }

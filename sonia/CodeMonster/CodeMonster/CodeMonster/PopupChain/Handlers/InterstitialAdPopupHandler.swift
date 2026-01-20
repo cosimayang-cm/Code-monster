@@ -19,7 +19,13 @@ public class InterstitialAdPopupHandler: BasePopupHandler {
         setContext(context)
         context.logger.log("Checking interstitial ad popup condition", level: .debug)
         
-        // Check if user has already seen ad
+        // Check UserInfo first
+        if context.userInfo.hasSeenAd {
+            context.logger.log("Ad already seen (UserInfo), skipping", level: .debug)
+            return skip()
+        }
+        
+        // Check if user has already seen ad in repository
         guard shouldShow() else {
             return skip()
         }
