@@ -1,17 +1,7 @@
 import Foundation
 
-/// Reset policies for popup states
-enum ResetPolicy {
-    /// Never resets (shown only once per user)
-    case permanent
-    /// Resets daily (can show once per calendar day)
-    case daily
-    /// Resets when new result is available
-    case onNewResult
-}
-
-/// Popup types in priority order
-enum PopupType: String, CaseIterable, Codable {
+/// Popup types in priority order.
+public enum PopupType: String, CaseIterable, Codable {
     case tutorial = "tutorial"
     case interstitialAd = "interstitialAd"
     case newFeature = "newFeature"
@@ -19,7 +9,7 @@ enum PopupType: String, CaseIterable, Codable {
     case predictionResult = "predictionResult"
 
     /// Priority order (1 = highest)
-    var priority: Int {
+    public var priority: Int {
         switch self {
         case .tutorial: return 1
         case .interstitialAd: return 2
@@ -30,7 +20,7 @@ enum PopupType: String, CaseIterable, Codable {
     }
 
     /// Human-readable display name
-    var displayName: String {
+    public var displayName: String {
         switch self {
         case .tutorial: return "新手教學"
         case .interstitialAd: return "插頁式廣告"
@@ -41,12 +31,12 @@ enum PopupType: String, CaseIterable, Codable {
     }
 
     /// Whether this popup terminates the chain after display
-    var terminatesChain: Bool {
+    public var terminatesChain: Bool {
         self == .tutorial
     }
 
     /// Reset policy for this popup type
-    var resetPolicy: ResetPolicy {
+    public var resetPolicy: ResetPolicy {
         switch self {
         case .tutorial, .interstitialAd, .newFeature:
             return .permanent
@@ -56,4 +46,14 @@ enum PopupType: String, CaseIterable, Codable {
             return .onNewResult
         }
     }
+}
+
+/// Reset policies for popup states
+public enum ResetPolicy {
+    /// Never resets (shown only once per user)
+    case permanent
+    /// Resets daily (can show once per calendar day)
+    case daily
+    /// Resets when new result is available
+    case onNewResult
 }

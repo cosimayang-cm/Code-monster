@@ -16,8 +16,8 @@
 ## Path Conventions
 
 Based on plan.md structure:
-- **Source**: `PopupChain/` at repository root
-- **Tests**: `PopupChainTests/` at repository root
+- **Source**: `sonia/CodeMonster/CodeMonster/CodeMonster/PopupChain/`
+- **Tests**: `sonia/CodeMonster/CodeMonster/CodeMonsterTests/PopupChainTests/`
 
 ---
 
@@ -26,8 +26,8 @@ Based on plan.md structure:
 **Purpose**: Project initialization and basic structure
 
 - [x] T001 Create project directory structure per plan.md (PopupChain/, PopupChainTests/)
-- [ ] T002 [P] Create PopupChain Xcode project/package with iOS 15.0+ target
-- [ ] T003 [P] Configure XCTest target for PopupChainTests
+- [x] T002 [P] Create PopupChain Xcode project/package with iOS 15.0+ target
+- [x] T003 [P] Configure XCTest target for PopupChainTests
 
 ---
 
@@ -39,33 +39,33 @@ Based on plan.md structure:
 
 ### Models (Shared by all stories)
 
-- [ ] T004 [P] Create PopupType enum with priority and resetPolicy in PopupChain/Models/PopupType.swift
-- [ ] T005 [P] Create PopupState struct in PopupChain/Models/PopupState.swift
-- [ ] T006 [P] Create PopupError enum in PopupChain/Models/PopupError.swift
-- [ ] T007 [P] Create PopupEvent enum in PopupChain/Models/PopupEvent.swift
-- [ ] T008 [P] Create PopupHandleResult enum in PopupChain/Models/PopupHandleResult.swift
-- [ ] T009 [P] Create UserInfo struct with test profiles in PopupChain/Models/UserInfo.swift
-- [ ] T010 Create PopupContext struct in PopupChain/Models/PopupContext.swift
+- [x] T004 [P] Create PopupType enum with priority and resetPolicy in PopupChain/Models/PopupType.swift
+- [x] T005 [P] Create PopupState struct in PopupChain/Models/PopupState.swift
+- [x] T006 [P] Create PopupError enum in PopupChain/Models/PopupError.swift
+- [x] T007 [P] Create PopupEvent enum in PopupChain/Models/PopupEvent.swift
+- [x] T008 [P] Create PopupHandleResult enum in PopupChain/Models/PopupHandleResult.swift
+- [x] T009 [P] Create UserInfo struct with test profiles in PopupChain/Models/UserInfo.swift
+- [x] T010 Create PopupContext struct in PopupChain/Models/PopupContext.swift
 
 ### Protocols (Shared by all stories)
 
-- [ ] T011 [P] Define PopupHandler protocol in PopupChain/Protocols/PopupHandler.swift
-- [ ] T012 [P] Define PopupStateRepository protocol in PopupChain/Protocols/PopupStateRepository.swift
-- [ ] T013 [P] Define PopupPresenter protocol in PopupChain/Protocols/PopupPresenter.swift
-- [ ] T014 [P] Define PopupEventObserver protocol in PopupChain/Protocols/PopupEventObserver.swift
-- [ ] T015 [P] Define Logger protocol with LogLevel in PopupChain/Protocols/Logger.swift
+- [x] T011 [P] Define PopupHandler protocol in PopupChain/Protocols/PopupHandler.swift
+- [x] T012 [P] Define PopupStateRepository protocol in PopupChain/Protocols/PopupStateRepository.swift
+- [x] T013 [P] Define PopupPresenter protocol in PopupChain/Protocols/PopupPresenter.swift
+- [x] T014 [P] Define PopupEventObserver protocol in PopupChain/Protocols/PopupEventObserver.swift
+- [x] T015 [P] Define Logger protocol with LogLevel (shared from CarSystem/Protocols/Logger.swift)
 
 ### Mock Infrastructure (Shared by all tests)
 
-- [ ] T016 [P] Create MockPopupStateRepository in PopupChainTests/Mocks/MockPopupStateRepository.swift
-- [ ] T017 [P] Create MockPopupPresenter in PopupChainTests/Mocks/MockPopupPresenter.swift
-- [ ] T018 [P] Create MockLogger in PopupChainTests/Mocks/MockLogger.swift
-- [ ] T019 [P] Create SpyPopupEventObserver in PopupChainTests/Mocks/SpyPopupEventObserver.swift
-- [ ] T020 Create InMemoryPopupStateRepository in PopupChain/Repositories/InMemoryPopupStateRepository.swift
+- [x] T016 [P] Create MockPopupStateRepository in PopupChainTests/Mocks/MockPopupStateRepository.swift
+- [x] T017 [P] Create MockPopupPresenter in PopupChainTests/Mocks/MockPopupPresenter.swift
+- [x] T018 [P] Create MockLogger in PopupChainTests/Mocks/MockLogger.swift
+- [x] T019 [P] Create SpyPopupEventObserver in PopupChainTests/Mocks/SpyPopupEventObserver.swift
+- [x] T020 Create InMemoryPopupStateRepository in PopupChain/Repositories/InMemoryPopupStateRepository.swift
 
 ### Base Handler (Required for all handlers)
 
-- [ ] T021 Create BasePopupHandler abstract class in PopupChain/Handlers/BasePopupHandler.swift
+- [x] T021 Create BasePopupHandler abstract class in PopupChain/Handlers/BasePopupHandler.swift
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -79,15 +79,15 @@ Based on plan.md structure:
 
 ### Tests for User Story 1
 
-- [ ] T022 [P] [US1] Unit tests for TutorialPopupHandler in PopupChainTests/HandlerTests/TutorialPopupHandlerTests.swift
-- [ ] T023 [P] [US1] Integration test for new user tutorial flow in PopupChainTests/IntegrationTests/PopupChainIntegrationTests.swift
+- [x] T022 [P] [US1] Unit tests for TutorialPopupHandler in PopupChainTests/HandlerTests/TutorialPopupHandlerTests.swift
+- [x] T023 [P] [US1] Integration test for new user tutorial flow in PopupChainTests/IntegrationTests/PopupChainIntegrationTests.swift
 
 ### Implementation for User Story 1
 
-- [ ] T024 [US1] Implement TutorialPopupHandler with chain termination logic in PopupChain/Handlers/TutorialPopupHandler.swift
-- [ ] T025 [US1] Create TutorialPopupView (Alert-based) in PopupChain/UI/PopupViews/TutorialPopupView.swift
-- [ ] T026 [US1] Implement PopupChainManager with single-handler chain support in PopupChain/Services/PopupChainManager.swift
-- [ ] T027 [US1] Implement ConsoleLogger for debugging in PopupChain/Services/ConsoleLogger.swift
+- [x] T024 [US1] Implement TutorialPopupHandler with chain termination logic in PopupChain/Handlers/TutorialPopupHandler.swift
+- [x] T025 [US1] Create TutorialPopupView (Alert-based) in PopupChain/UI/PopupViews/TutorialPopupView.swift
+- [x] T026 [US1] Implement PopupChainManager with single-handler chain support in PopupChain/Services/PopupChainManager.swift
+- [x] T027 [US1] Implement ConsoleLogger for debugging (shared from CarSystem/Protocols/Logger.swift)
 
 **Checkpoint**: User Story 1 complete - new users see tutorial and chain terminates correctly
 

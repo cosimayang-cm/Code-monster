@@ -2,7 +2,7 @@ import Foundation
 
 /// Manages persistence of popup states per user.
 /// Implementations must ensure thread-safety for concurrent access.
-protocol PopupStateRepository {
+public protocol PopupStateRepository {
     /// Retrieves the state for a specific popup type and user.
     /// - Parameters:
     ///   - type: The popup type to query.

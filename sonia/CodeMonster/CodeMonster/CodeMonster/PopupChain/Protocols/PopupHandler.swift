@@ -2,7 +2,7 @@ import Foundation
 
 /// Defines a handler in the popup chain of responsibility.
 /// Each handler checks one popup type and decides whether to show, skip, or terminate.
-protocol PopupHandler: AnyObject {
+public protocol PopupHandler: AnyObject {
     /// The next handler in the chain. Set to nil for the last handler.
     var next: PopupHandler? { get set }
 
@@ -21,7 +21,7 @@ protocol PopupHandler: AnyObject {
 
 // MARK: - Default Implementation
 
-extension PopupHandler {
+public extension PopupHandler {
     func onPopupDismissed(context: PopupContext) {
         // Default: continue to next handler
         if let next = next {

@@ -1,15 +1,15 @@
 import Foundation
 
 /// User information passed to the popup chain
-struct UserInfo {
-    let memberId: String
-    let hasSeenTutorial: Bool
-    let hasSeenAd: Bool
-    let hasSeenNewFeature: Bool
-    let lastCheckInDate: Date?
-    let hasPredictionResult: Bool
+public struct UserInfo {
+    public let memberId: String
+    public let hasSeenTutorial: Bool
+    public let hasSeenAd: Bool
+    public let hasSeenNewFeature: Bool
+    public let lastCheckInDate: Date?
+    public let hasPredictionResult: Bool
 
-    init(
+    public init(
         memberId: String,
         hasSeenTutorial: Bool = false,
         hasSeenAd: Bool = false,
@@ -25,10 +25,9 @@ struct UserInfo {
         self.hasPredictionResult = hasPredictionResult
     }
 
-    // MARK: - Test Profiles (Fixed IDs for reproducibility)
+    // MARK: - Test Profiles
 
-    /// New user - has seen nothing
-    static let newUser = UserInfo(
+    public static let newUser = UserInfo(
         memberId: "1",
         hasSeenTutorial: false,
         hasSeenAd: false,
@@ -37,8 +36,7 @@ struct UserInfo {
         hasPredictionResult: false
     )
 
-    /// Returning user - has seen tutorial, not ad
-    static let returningUser = UserInfo(
+    public static let returningUser = UserInfo(
         memberId: "2",
         hasSeenTutorial: true,
         hasSeenAd: false,
@@ -47,8 +45,7 @@ struct UserInfo {
         hasPredictionResult: false
     )
 
-    /// Experienced user - has seen tutorial and ad
-    static let experiencedUser = UserInfo(
+    public static let experiencedUser = UserInfo(
         memberId: "3",
         hasSeenTutorial: true,
         hasSeenAd: true,
@@ -57,8 +54,7 @@ struct UserInfo {
         hasPredictionResult: false
     )
 
-    /// Checked in user - already checked in today
-    static let checkedInUser = UserInfo(
+    public static let checkedInUser = UserInfo(
         memberId: "4",
         hasSeenTutorial: true,
         hasSeenAd: true,
@@ -67,8 +63,7 @@ struct UserInfo {
         hasPredictionResult: false
     )
 
-    /// All completed user - has seen everything
-    static let allCompletedUser = UserInfo(
+    public static let allCompletedUser = UserInfo(
         memberId: "5",
         hasSeenTutorial: true,
         hasSeenAd: true,

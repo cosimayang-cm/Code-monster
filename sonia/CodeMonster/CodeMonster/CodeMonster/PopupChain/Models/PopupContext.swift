@@ -1,16 +1,16 @@
-import UIKit
+import Foundation
 
 /// Execution context for the popup chain
-struct PopupContext {
-    let userInfo: UserInfo
-    let stateRepository: PopupStateRepository
-    let presenter: PopupPresenter?
-    let logger: Logger
+public struct PopupContext {
+    public let userInfo: UserInfo
+    public let stateRepository: PopupStateRepository
+    public let presenter: PopupPresenter?
+    public let logger: Logger
 
-    init(
+    public init(
         userInfo: UserInfo,
         stateRepository: PopupStateRepository,
-        presenter: PopupPresenter? = nil,
+        presenter: PopupPresenter?,
         logger: Logger
     ) {
         self.userInfo = userInfo

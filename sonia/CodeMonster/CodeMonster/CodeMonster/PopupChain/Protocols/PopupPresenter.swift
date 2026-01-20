@@ -2,7 +2,7 @@ import UIKit
 
 /// Presents popup UI to the user.
 /// Implementations handle the actual UI display mechanics.
-protocol PopupPresenter: AnyObject {
+public protocol PopupPresenter: AnyObject {
     /// Presents a popup of the specified type.
     /// - Parameters:
     ///   - type: The type of popup to present.
