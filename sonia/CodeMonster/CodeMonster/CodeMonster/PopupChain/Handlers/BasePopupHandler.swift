@@ -68,10 +68,12 @@ open class BasePopupHandler: PopupHandler {
         )
 
         guard case .success(let state) = stateResult else {
-            context.logger.log(
-                "Failed to read state for \(popupType.rawValue), skipping",
-                level: .warning
-            )
+            if case .failure(let error) = stateResult {
+                context.logger.log(
+                    "Repository read failed for \(popupType.rawValue): \(error.localizedDescription). Skipping popup.",
+                    level: .error
+                )
+            }
             return false
         }
 
@@ -109,11 +111,10 @@ open class BasePopupHandler: PopupHandler {
 
         if case .failure(let error) = markResult {
             context.logger.log(
-                "Failed to mark \(popupType.rawValue) as shown: \(error.localizedDescription)",
+                "Repository write failed for \(popupType.rawValue): \(error.localizedDescription). Continuing anyway.",
                 level: .error
             )
-            // Optionally, return an error to halt the chain
-            // return .failure(.stateUpdateFailed(error))
+            // Don't halt chain - graceful degradation
         }
 
         // Present popup via presenter
@@ -124,8 +125,12 @@ open class BasePopupHandler: PopupHandler {
                 self?.onPopupDismissed()
             }
         } else {
-            // No presenter, so continue chain immediately (for testing)
-            onPopupDismissed()
+            context.logger.log(
+                "No presenter available for \(popupType.rawValue). Skipping popup and continuing chain.",
+                level: .warning
+            )
+            // No presenter, skip this popup and continue
+            return skip()
         }
 
         return .success(.shown(popupType))
@@ -160,6 +165,11 @@ open class BasePopupHandler: PopupHandler {
                 guard let self = self, let context = self.context else { return }
                 context.logger.log("Terminating chain after \(self.popupType.displayName) was dismissed.", level: .info)
             }
+        } else {
+            context.logger.log(
+                "No presenter available for \(popupType.rawValue). Skipping popup.",
+                level: .warning
+            )
         }
         
         return .success(.chainTerminated)
