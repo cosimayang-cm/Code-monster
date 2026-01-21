@@ -8,13 +8,13 @@
 import Foundation
 
 /// 日誌級別
-enum LogLevel {
+public enum LogLevel {
     case debug
     case info
     case warning
     case error
     
-    var icon: String {
+    public var icon: String {
         switch self {
         case .debug: return "🔍"
         case .info: return "ℹ️"
@@ -25,13 +25,15 @@ enum LogLevel {
 }
 
 /// 日誌協議
-protocol Logger {
+public protocol Logger {
     func log(_ message: String, level: LogLevel)
 }
 
 /// 控制台日誌實現
-class ConsoleLogger: Logger {
-    func log(_ message: String, level: LogLevel) {
+public class ConsoleLogger: Logger {
+    public init() {}
+    
+    public func log(_ message: String, level: LogLevel) {
         print("\(level.icon) \(message)")
     }
 }
