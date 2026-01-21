@@ -1,8 +1,14 @@
 ---
 description: Generate an actionable, dependency-ordered tasks.md for the feature based on available design artifacts.
-version: "1.1.0"
-updated: "2025-10-17"
-constitution_awareness: "Generates tasks compliant with Constitution v1.2.0 principles"
+handoffs: 
+  - label: Analyze For Consistency
+    agent: speckit.analyze
+    prompt: Run a project analysis for consistency
+    send: true
+  - label: Implement Project
+    agent: speckit.implement
+    prompt: Start the implementation in phases
+    send: true
 ---
 
 ## User Input
@@ -33,7 +39,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Create parallel execution examples per user story
    - Validate task completeness (each user story has all needed tasks, independently testable)
 
-4. **Generate tasks.md**: Use `.specify.specify/templates/tasks-template.md` as structure, fill with:
+4. **Generate tasks.md**: Use `.specify/templates/tasks-template.md` as structure, fill with:
    - Correct feature name from plan.md
    - Phase 1: Setup tasks (project initialization)
    - Phase 2: Foundational tasks (blocking prerequisites for all user stories)
@@ -96,40 +102,6 @@ Every task MUST strictly follow this format:
 - ❌ WRONG: `- [ ] [US1] Create User model` (missing Task ID)
 - ❌ WRONG: `- [ ] T001 [US1] Create model` (missing file path)
 
-### Constitution Compliance in Task Generation
-
-Tasks generated MUST align with project constitution principles (`.specify/memory/constitution.md`):
-
-**Test Task Naming** (Constitution Principle III):
-- Test task descriptions MUST use camelCase format following pattern: `testMethodNameWhenConditionThenExpectedResult`
-- Example: `- [ ] T010 [P] Write test: testFetchStockDataWhenValidCodeThenEmitsData in StockRepositoryTests.swift`
-- Example: `- [ ] T025 Write test: testViewDidLoadWhenCalledThenInitializesUI in StockViewModelTests.swift`
-- ❌ FORBIDDEN: `- [ ] T010 Write test: test_fetch_stock_data` (snake_case forbidden)
-- ❌ FORBIDDEN: `- [ ] T010 Write test: test當呼叫fetchStockData時應返回數據` (Chinese forbidden)
-- Test device specification: "Run tests on iPhone 16 Pro simulator"
-- Test structure: Use Given-When-Then format in test implementation
-
-**Architecture Compliance** (Constitution Principles I-II):
-- Task descriptions should reflect proper dependency injection patterns
-- Example: `- [ ] T020 Implement StockViewModel with GetStockPriceUseCase injection in StockViewModel.swift`
-- Example: `- [ ] T030 Implement GetStockPriceUseCase with StockRepository injection in GetStockPriceUseCase.swift`
-- Example: `- [ ] T035 Implement StockViewComponent with StateManager injection in StockViewComponent.swift`
-- ❌ FORBIDDEN: `- [ ] T020 Implement ViewModel accessing PAGEs.shared.manager`
-- ❌ FORBIDDEN: `- [ ] T035 Implement ViewComponent using StateManager.shared directly`
-- Layer boundaries: ViewModel → UseCase/Manager → Repository → DataSource
-
-**File Operations** (Constitution Principle IV):
-- After tasks that add, move, or delete Swift files, include xcodegen tasks:
-- Example: `- [ ] T050 Run xcodegen generate in CMProductionLego directory`
-- Example: `- [ ] T051 Verify project integrity: plutil -lint CMProductionLego.xcodeproj/project.pbxproj`
-- Example: `- [ ] T052 Verify build: xcodebuild build -workspace CMProductionLego.xcworkspace -scheme CMProductionLego`
-
-**Compliance Checks** (Constitution Principle VI):
-- After code implementation tasks, include compliance validation:
-- Example: `- [ ] T060 Run SwiftLint validation`
-- Example: `- [ ] T061 Run tests on iPhone 16 Pro simulator`
-- Include these in appropriate phases (not after every single task, but after logical completion points)
-
 ### Task Organization
 
 1. **From User Stories (spec.md)** - PRIMARY ORGANIZATION:
@@ -140,16 +112,15 @@ Tasks generated MUST align with project constitution principles (`.specify/memor
      - Endpoints/UI needed for that story
      - If tests requested: Tests specific to that story
    - Mark story dependencies (most stories should be independent)
-   
+
 2. **From Contracts**:
    - Map each contract/endpoint → to the user story it serves
    - If tests requested: Each contract → contract test task [P] before implementation in that story's phase
-   
+
 3. **From Data Model**:
    - Map each entity to the user story(ies) that need it
    - If entity serves multiple stories: Put in earliest story or Setup phase
    - Relationships → service layer tasks in appropriate story phase
-   
 4. **From Setup/Infrastructure**:
    - Shared infrastructure → Setup phase (Phase 1)
    - Foundational/blocking tasks → Foundational phase (Phase 2)
