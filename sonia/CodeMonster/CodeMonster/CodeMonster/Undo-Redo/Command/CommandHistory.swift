@@ -13,6 +13,11 @@ final class CommandHistory {
     private var undoStack: [Command] = []
     private var redoStack: [Command] = []
 
+    // MARK: - Observer Properties (FR-025 ~ FR-027)
+
+    /// 觀察者列表，使用弱引用避免循環引用
+    private var observers: [WeakCommandHistoryObserver] = []
+
     // MARK: - Configuration
 
     /// 是否啟用命令合併功能（預設關閉）
@@ -67,6 +72,7 @@ final class CommandHistory {
                     var mutableLastCommand = lastCommand
                     mutableLastCommand.lastExecutionTime = Date()
                     redoStack.removeAll()
+                    notifyObservers()
                     return
                 }
             }
@@ -74,6 +80,7 @@ final class CommandHistory {
 
         undoStack.append(command)
         redoStack.removeAll() // FR-006
+        notifyObservers()
     }
 
     /// 撤銷最後一個命令
@@ -81,6 +88,7 @@ final class CommandHistory {
         guard let command = undoStack.popLast() else { return }
         command.undo()
         redoStack.append(command)
+        notifyObservers()
     }
 
     /// 重做最後一個撤銷的命令
@@ -88,5 +96,36 @@ final class CommandHistory {
         guard let command = redoStack.popLast() else { return }
         command.execute()
         undoStack.append(command)
+        notifyObservers()
+    }
+
+    // MARK: - Observer Methods (FR-025 ~ FR-027)
+
+    /// 註冊觀察者
+    /// - Parameter observer: 要註冊的觀察者，會以弱引用方式持有
+    func addObserver(_ observer: CommandHistoryObserver) {
+        // 檢查是否已經存在（避免重複註冊）
+        let alreadyExists = observers.contains { $0.observer === observer }
+        if !alreadyExists {
+            observers.append(WeakCommandHistoryObserver(observer))
+        }
+    }
+
+    /// 移除觀察者
+    /// - Parameter observer: 要移除的觀察者
+    func removeObserver(_ observer: CommandHistoryObserver) {
+        observers.removeAll { $0.observer === observer }
+    }
+
+    /// 通知所有觀察者狀態已變化（私有方法）
+    /// 同時清理已被釋放的弱引用
+    private func notifyObservers() {
+        // 清理 nil 的 weak references
+        observers.removeAll { $0.observer == nil }
+
+        // 通知所有存活的觀察者
+        for weakObserver in observers {
+            weakObserver.observer?.commandHistoryDidChange(self)
+        }
     }
 }

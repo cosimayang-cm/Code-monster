@@ -66,16 +66,16 @@
 
 ### Foundational - Observer Pattern (FR-025 ~ FR-027)
 
-- [ ] T090 [P] Create sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/ directory structure per plan.md
-- [ ] T091 [P] Write CommandHistoryObserver tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryObserverTests.swift
-- [ ] T092 Create CommandHistoryObserver protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistoryObserver.swift
-- [ ] T093 Add WeakObserver struct in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistoryObserver.swift
-- [ ] T094 Add observers array to CommandHistory in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T095 Implement addObserver() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T096 Implement removeObserver() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T097 Implement private notifyObservers() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T098 Call notifyObservers() at end of execute(), undo(), redo() in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T099 Write integration tests for Observer notification flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryObserverTests.swift
+- [x] T090 [P] Create sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/ directory structure per plan.md
+- [x] T091 [P] Write CommandHistoryObserver tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryObserverTests.swift
+- [x] T092 Create CommandHistoryObserver protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistoryObserver.swift
+- [x] T093 Add WeakCommandHistoryObserver struct in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistoryObserver.swift
+- [x] T094 Add observers array to CommandHistory in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T095 Implement addObserver() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T096 Implement removeObserver() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T097 Implement private notifyObservers() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T098 Call notifyObservers() at end of execute(), undo(), redo() in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T099 Write integration tests for Observer notification flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryObserverTests.swift
 
 **Checkpoint**: Observer Pattern ready - UI can subscribe to CommandHistory changes
 
@@ -85,10 +85,10 @@
 
 **Purpose**: Build reusable UI components
 
-- [ ] T100 [P] Create Color+UIKit.swift extension with uiColor computed property in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Extensions/Color+UIKit.swift
-- [ ] T101 Create UndoRedoToolbarView with Undo/Redo buttons in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Components/UndoRedoToolbarView.swift
-- [ ] T102 Add onUndo and onRedo closures to UndoRedoToolbarView in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Components/UndoRedoToolbarView.swift
-- [ ] T103 Implement updateState(canUndo:canRedo:) method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Components/UndoRedoToolbarView.swift
+- [x] T100 [P] Create Color+UIKit.swift extension with uiColor computed property in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Extensions/Color+UIKit.swift
+- [x] T101 Create UndoRedoToolbarView with Undo/Redo buttons in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Components/UndoRedoToolbarView.swift
+- [x] T102 Add onUndo and onRedo closures to UndoRedoToolbarView in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Components/UndoRedoToolbarView.swift
+- [x] T103 Implement updateState(canUndo:canRedo:) method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Components/UndoRedoToolbarView.swift
 
 **Checkpoint**: Core UI components ready for use in ViewControllers
 
@@ -102,10 +102,10 @@
 
 ### Implementation for User Story 7 (FR-028 ~ FR-029)
 
-- [ ] T104 [US7] Create UndoRedoDemoViewController with title "Undo/Redo 系統展示" in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
-- [ ] T105 [US7] Add "文字編輯器" button with navigation action in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
-- [ ] T106 [US7] Add "畫布編輯器" button with navigation action in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
-- [ ] T107 [US7] Update SceneDelegate to use UndoRedoDemoViewController as root in sonia/CodeMonster/CodeMonster/CodeMonster/SceneDelegate.swift
+- [x] T104 [US7] Create UndoRedoDemoViewController with title "Undo/Redo 系統展示" in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
+- [x] T105 [US7] Add "文字編輯器" button with navigation action in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
+- [x] T106 [US7] Add "畫布編輯器" button with navigation action in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
+- [x] T107 [US7] Update SceneDelegate to use UndoRedoDemoViewController as root in sonia/CodeMonster/CodeMonster/CodeMonster/SceneDelegate.swift
 
 **Checkpoint**: Demo Hub functional - can navigate to placeholder editors
 
@@ -119,23 +119,23 @@
 
 ### Implementation for User Story 8 (FR-030 ~ FR-032)
 
-- [ ] T108 [US8] Create TextEditorViewController skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T109 [US8] Add UITextView for text display in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T110 [US8] Add TextDocument and CommandHistory properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T111 [US8] Conform to CommandHistoryObserver protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T112 [US8] Add Navigation Bar Undo/Redo buttons (right bar button items) in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T113 [US8] Implement undoTapped() and redoTapped() actions in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T114 [US8] Implement commandHistoryDidChange() to update button states in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T115 [US8] Add bottom toolbar with Insert button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T116 [US8] Add bottom toolbar Delete button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T117 [US8] Add bottom toolbar Replace button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T118 [US8] Add bottom toolbar Style buttons (Bold, Italic, Underline) in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T119 [US8] Implement insertButtonTapped() with InsertTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T120 [US8] Implement deleteButtonTapped() with DeleteTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T121 [US8] Implement replaceButtonTapped() with ReplaceTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T122 [US8] Implement styleButtonTapped() with ApplyStyleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T123 [US8] Implement refreshTextView() to sync UITextView with TextDocument in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T124 [US8] Connect Demo Hub navigation to TextEditorViewController in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
+- [x] T108 [US8] Create TextEditorViewController skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T109 [US8] Add UITextView for text display in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T110 [US8] Add TextDocument and CommandHistory properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T111 [US8] Conform to CommandHistoryObserver protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T112 [US8] Add Navigation Bar Undo/Redo buttons (right bar button items) in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T113 [US8] Implement undoTapped() and redoTapped() actions in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T114 [US8] Implement commandHistoryDidChange() to update button states in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T115 [US8] Add bottom toolbar with Insert button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T116 [US8] Add bottom toolbar Delete button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T117 [US8] Add bottom toolbar Replace button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T118 [US8] Add bottom toolbar Style buttons (Bold, Italic, Underline) in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T119 [US8] Implement insertButtonTapped() with InsertTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T120 [US8] Implement deleteButtonTapped() with DeleteTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T121 [US8] Implement replaceButtonTapped() with ReplaceTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T122 [US8] Implement styleButtonTapped() with ApplyStyleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T123 [US8] Implement refreshTextView() to sync UITextView with TextDocument in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T124 [US8] Connect Demo Hub navigation to TextEditorViewController in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
 
 **Checkpoint**: Text Editor UI functional - Undo/Redo works with button state updates
 
@@ -151,48 +151,48 @@
 
 #### ShapeView Component
 
-- [ ] T125 [P] [US9] Create ShapeView class skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
-- [ ] T126 [P] [US9] Add shapeId and shape properties to ShapeView in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
-- [ ] T127 [US9] Implement draw(_:) for Rectangle rendering in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
-- [ ] T128 [US9] Implement draw(_:) for Circle rendering in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
-- [ ] T129 [US9] Implement draw(_:) for Line rendering in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
-- [ ] T130 [US9] Add ShapeViewDelegate protocol for drag events in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
-- [ ] T131 [US9] Add UIPanGestureRecognizer for shape dragging in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
-- [ ] T132 [US9] Implement handlePan() gesture handler in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [x] T125 [P] [US9] Create ShapeView class skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [x] T126 [P] [US9] Add shapeId and shape properties to ShapeView in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [x] T127 [US9] Implement draw(_:) for Rectangle rendering in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [x] T128 [US9] Implement draw(_:) for Circle rendering in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [x] T129 [US9] Implement draw(_:) for Line rendering in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [x] T130 [US9] Add ShapeViewDelegate protocol for drag events in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [x] T131 [US9] Add UIPanGestureRecognizer for shape dragging in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [x] T132 [US9] Implement handlePan() gesture handler in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
 
 #### CanvasView Container
 
-- [ ] T133 [US9] Create CanvasView class skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
-- [ ] T134 [US9] Add shapeViews dictionary [UUID: ShapeView] in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
-- [ ] T135 [US9] Add CanvasViewDelegate protocol for shape events in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
-- [ ] T136 [US9] Implement sync(with canvas:) method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
-- [ ] T137 [US9] Implement addShapeView() helper in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
-- [ ] T138 [US9] Implement removeShapeView() helper in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
-- [ ] T139 [US9] Implement updateShapeView() helper in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [x] T133 [US9] Create CanvasView class skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [x] T134 [US9] Add shapeViews dictionary [UUID: ShapeView] in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [x] T135 [US9] Add CanvasViewDelegate protocol for shape events in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [x] T136 [US9] Implement sync(with canvas:) method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [x] T137 [US9] Implement addShapeView() helper in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [x] T138 [US9] Implement removeShapeView() helper in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [x] T139 [US9] Implement updateShapeView() helper in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
 
 #### CanvasEditorViewController
 
-- [ ] T140 [US9] Create CanvasEditorViewController skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T141 [US9] Add Canvas and CommandHistory properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T142 [US9] Add CanvasView subview in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T143 [US9] Conform to CommandHistoryObserver protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T144 [US9] Add Navigation Bar Undo/Redo buttons in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T145 [US9] Implement undoTapped() and redoTapped() actions in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T146 [US9] Implement commandHistoryDidChange() to update button states in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T147 [US9] Add bottom toolbar with Add Rectangle button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T148 [US9] Add bottom toolbar Add Circle button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T149 [US9] Add bottom toolbar Add Line button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T150 [US9] Add bottom toolbar Delete button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T151 [US9] Add bottom toolbar Color picker button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T152 [US9] Implement addRectangleTapped() with AddShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T153 [US9] Implement addCircleTapped() with AddShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T154 [US9] Implement addLineTapped() with AddShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T155 [US9] Implement deleteSelectedTapped() with RemoveShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T156 [US9] Implement changeColorTapped() with ChangeColorCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T157 [US9] Conform to CanvasViewDelegate for shape move events in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T158 [US9] Implement canvasView(_:didMoveShape:by:) with MoveShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T159 [US9] Implement refreshCanvasView() to sync CanvasView with Canvas in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T160 [US9] Connect Demo Hub navigation to CanvasEditorViewController in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
+- [x] T140 [US9] Create CanvasEditorViewController skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T141 [US9] Add Canvas and CommandHistory properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T142 [US9] Add CanvasView subview in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T143 [US9] Conform to CommandHistoryObserver protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T144 [US9] Add Navigation Bar Undo/Redo buttons in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T145 [US9] Implement undoTapped() and redoTapped() actions in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T146 [US9] Implement commandHistoryDidChange() to update button states in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T147 [US9] Add bottom toolbar with Add Rectangle button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T148 [US9] Add bottom toolbar Add Circle button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T149 [US9] Add bottom toolbar Add Line button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T150 [US9] Add bottom toolbar Delete button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T151 [US9] Add bottom toolbar Color picker button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T152 [US9] Implement addRectangleTapped() with AddShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T153 [US9] Implement addCircleTapped() with AddShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T154 [US9] Implement addLineTapped() with AddShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T155 [US9] Implement deleteSelectedTapped() with RemoveShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T156 [US9] Implement changeColorTapped() with ChangeColorCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T157 [US9] Conform to CanvasViewDelegate for shape move events in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T158 [US9] Implement canvasView(_:didMoveShape:by:) with MoveShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T159 [US9] Implement refreshCanvasView() to sync CanvasView with Canvas in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T160 [US9] Connect Demo Hub navigation to CanvasEditorViewController in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
 
 **Checkpoint**: Canvas Editor UI functional - All shape operations with Undo/Redo working
 
@@ -206,11 +206,11 @@
 
 ### Implementation for User Story 10
 
-- [ ] T161 [US10] Verify Observer registration in TextEditorViewController viewDidLoad in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T162 [US10] Verify Observer registration in CanvasEditorViewController viewDidLoad in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T163 [US10] Verify Observer removal in TextEditorViewController deinit in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
-- [ ] T164 [US10] Verify Observer removal in CanvasEditorViewController deinit in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
-- [ ] T165 [US10] Ensure UI updates on main thread in notifyObservers() in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T161 [US10] Verify Observer registration in TextEditorViewController viewDidLoad in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T162 [US10] Verify Observer registration in CanvasEditorViewController viewDidLoad in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T163 [US10] Verify Observer removal in TextEditorViewController deinit in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [x] T164 [US10] Verify Observer removal in CanvasEditorViewController deinit in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [x] T165 [US10] Ensure UI updates on main thread in notifyObservers() in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
 
 **Checkpoint**: UI syncs in real-time with Model layer changes
 
@@ -220,18 +220,18 @@
 
 **Purpose**: Final integration and validation
 
-- [ ] T166 [P] Verify Demo Hub navigation to both editors works correctly
-- [ ] T167 [P] Verify Text Editor Undo/Redo button states update correctly
-- [ ] T168 [P] Verify Canvas Editor Undo/Redo button states update correctly
-- [ ] T169 [P] Verify shape dragging creates MoveShapeCommand correctly
-- [ ] T170 Test consecutive Undo operations in Text Editor
-- [ ] T171 Test consecutive Undo operations in Canvas Editor
-- [ ] T172 Test Redo after multiple Undo operations
-- [ ] T173 Test new operation clears Redo stack
-- [ ] T174 Verify no memory leaks with Observer weak references
-- [ ] T175 Run full manual test: Demo Hub → Text Editor → operations → Undo/Redo → back
-- [ ] T176 Run full manual test: Demo Hub → Canvas Editor → operations → Undo/Redo → back
-- [ ] T177 Code review for UIKit-only imports in UI layer files
+- [x] T166 [P] Verify Demo Hub navigation to both editors works correctly
+- [x] T167 [P] Verify Text Editor Undo/Redo button states update correctly
+- [x] T168 [P] Verify Canvas Editor Undo/Redo button states update correctly
+- [x] T169 [P] Verify shape dragging creates MoveShapeCommand correctly
+- [x] T170 Test consecutive Undo operations in Text Editor
+- [x] T171 Test consecutive Undo operations in Canvas Editor
+- [x] T172 Test Redo after multiple Undo operations
+- [x] T173 Test new operation clears Redo stack
+- [x] T174 Verify no memory leaks with Observer weak references
+- [x] T175 Run full manual test: Demo Hub → Text Editor → operations → Undo/Redo → back
+- [x] T176 Run full manual test: Demo Hub → Canvas Editor → operations → Undo/Redo → back
+- [x] T177 Code review for UIKit-only imports in UI layer files
 
 **Checkpoint**: UI Layer complete - All acceptance scenarios verified
 
