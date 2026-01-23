@@ -141,19 +141,19 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T051 [P] [US3] Write TextStyle tests for OptionSet behavior in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
-- [ ] T052 [P] [US3] Write TextStyleRange tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
-- [ ] T053 [P] [US3] Write ApplyStyleCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
+- [x] T051 [P] [US3] Write TextStyle tests for OptionSet behavior in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
+- [x] T052 [P] [US3] Write TextStyleRange tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
+- [x] T053 [P] [US3] Write ApplyStyleCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
 
 ### Implementation for User Story 3
 
-- [ ] T054 [US3] Create TextStyle OptionSet with bold, italic, underline in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextStyle.swift
-- [ ] T055 [US3] Create TextStyleRange struct in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextStyle.swift
-- [ ] T056 [US3] Add styles property to TextDocument in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [ ] T057 [US3] Implement TextDocument.applyStyle() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [ ] T058 [US3] Implement TextDocument.removeStyle() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [ ] T059 [US3] Implement ApplyStyleCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ApplyStyleCommand.swift
-- [ ] T060 [US3] Write integration tests for style undo/redo flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
+- [x] T054 [US3] Create TextStyle OptionSet with bold, italic, underline in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextStyle.swift
+- [x] T055 [US3] Create TextStyleRange struct in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextStyle.swift
+- [x] T056 [US3] Add styles property to TextDocument in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
+- [x] T057 [US3] Implement TextDocument.applyStyle() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
+- [x] T058 [US3] Implement TextDocument.removeStyle() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
+- [x] T059 [US3] Implement ApplyStyleCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ApplyStyleCommand.swift
+- [x] T060 [US3] Write integration tests for style undo/redo flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
 
 **Checkpoint**: User Story 3 should work independently
 
@@ -169,18 +169,18 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T061 [P] [US4] Write tests for canUndo/canRedo edge cases in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-- [ ] T062 [P] [US4] Write tests for undoDescription/redoDescription accuracy in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-- [ ] T063 [P] [US4] Write tests for redo stack clearing on new execute in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [x] T061 [P] [US4] Write tests for canUndo/canRedo edge cases in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [x] T062 [P] [US4] Write tests for undoDescription/redoDescription accuracy in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [x] T063 [P] [US4] Write tests for redo stack clearing on new execute in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
 
 ### Implementation for User Story 4
 
-- [ ] T064 [US4] Add description property to InsertTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/InsertTextCommand.swift
-- [ ] T065 [US4] Add description property to DeleteTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/DeleteTextCommand.swift
-- [ ] T066 [US4] Add description property to ReplaceTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ReplaceTextCommand.swift
-- [ ] T067 [US4] Add description property to ApplyStyleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ApplyStyleCommand.swift
-- [ ] T068 [P] [US4] Add description property to all Canvas commands in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/*.swift
-- [ ] T069 [US4] Write integration tests for state display accuracy in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [x] T064 [US4] Add description property to InsertTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/InsertTextCommand.swift
+- [x] T065 [US4] Add description property to DeleteTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/DeleteTextCommand.swift
+- [x] T066 [US4] Add description property to ReplaceTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ReplaceTextCommand.swift
+- [x] T067 [US4] Add description property to ApplyStyleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ApplyStyleCommand.swift
+- [x] T068 [P] [US4] Add description property to all Canvas commands in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/*.swift
+- [x] T069 [US4] Write integration tests for state display accuracy in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
 
 **Checkpoint**: User Story 4 should work independently - UI can now display undo/redo state
 
@@ -196,17 +196,17 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T070 [P] [US5] Write CoalescibleCommand protocol tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-- [ ] T071 [P] [US5] Write tests for consecutive InsertTextCommand coalescing in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/InsertTextCommandTests.swift
-- [ ] T072 [P] [US5] Write tests for consecutive MoveShapeCommand coalescing in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/MoveShapeCommandTests.swift
+- [x] T070 [P] [US5] Write CoalescibleCommand protocol tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [x] T071 [P] [US5] Write tests for consecutive InsertTextCommand coalescing in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/InsertTextCommandTests.swift
+- [x] T072 [P] [US5] Write tests for consecutive MoveShapeCommand coalescing in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/MoveShapeCommandTests.swift
 
 ### Implementation for User Story 5
 
-- [ ] T073 [US5] Define CoalescibleCommand protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/Command.swift
-- [ ] T074 [US5] Implement coalescing logic in CommandHistory.execute() in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T075 [US5] Make InsertTextCommand conform to CoalescibleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/InsertTextCommand.swift
-- [ ] T076 [US5] Make MoveShapeCommand conform to CoalescibleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/MoveShapeCommand.swift
-- [ ] T077 [US5] Write integration tests for coalescing flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [x] T073 [US5] Define CoalescibleCommand protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/Command.swift
+- [x] T074 [US5] Implement coalescing logic in CommandHistory.execute() in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T075 [US5] Make InsertTextCommand conform to CoalescibleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/InsertTextCommand.swift
+- [x] T076 [US5] Make MoveShapeCommand conform to CoalescibleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/MoveShapeCommand.swift
+- [x] T077 [US5] Write integration tests for coalescing flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
 
 **Checkpoint**: User Story 5 should work independently
 
@@ -222,15 +222,15 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T078 [P] [US6] Write CompositeCommand tests for sequential execute in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-- [ ] T079 [P] [US6] Write CompositeCommand tests for reverse undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [x] T078 [P] [US6] Write CompositeCommand tests for sequential execute in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [x] T079 [P] [US6] Write CompositeCommand tests for reverse undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
 
 ### Implementation for User Story 6
 
-- [ ] T080 [US6] Implement CompositeCommand class in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CompositeCommand.swift
-- [ ] T081 [US6] Implement CompositeCommand.execute() with sequential execution in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CompositeCommand.swift
-- [ ] T082 [US6] Implement CompositeCommand.undo() with reverse order in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CompositeCommand.swift
-- [ ] T083 [US6] Write integration tests for composite command flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [x] T080 [US6] Implement CompositeCommand class in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CompositeCommand.swift
+- [x] T081 [US6] Implement CompositeCommand.execute() with sequential execution in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CompositeCommand.swift
+- [x] T082 [US6] Implement CompositeCommand.undo() with reverse order in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CompositeCommand.swift
+- [x] T083 [US6] Write integration tests for composite command flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -240,12 +240,12 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T084 [P] Add edge case handling for empty undo/redo stack operations in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T085 [P] Add edge case handling for invalid text ranges in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [ ] T086 [P] Add edge case handling for non-existent shape operations in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
-- [ ] T087 [P] Write edge case tests for all error scenarios in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/
-- [ ] T088 Run quickstart.md validation - verify all examples work correctly
-- [ ] T089 Code review for Foundation-only imports (no UIKit in Model layer)
+- [x] T084 [P] Add edge case handling for empty undo/redo stack operations in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T085 [P] Add edge case handling for invalid text ranges in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
+- [x] T086 [P] Add edge case handling for non-existent shape operations in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
+- [x] T087 [P] Write edge case tests for all error scenarios in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/
+- [x] T088 Run quickstart.md validation - verify all examples work correctly
+- [x] T089 Code review for Foundation-only imports (no UIKit in Model layer)
 
 ---
 

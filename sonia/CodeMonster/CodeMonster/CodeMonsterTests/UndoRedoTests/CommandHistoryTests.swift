@@ -312,6 +312,205 @@ final class CommandHistoryTests: XCTestCase {
         XCTAssertFalse(sut.canUndo, "canUndo should be false after all undos")
         XCTAssertTrue(sut.canRedo, "canRedo should be true")
     }
+
+    /// Test: Stress test - Random interleaved undo/redo operations
+    func testRandomUndoRedoWhenInterleavedThenStateConsistent() {
+        // Given: Execute some initial commands
+        var expectedUndoCount = 0
+
+        for i in 1...20 {
+            let command = MockCommand(description: "Initial \(i)")
+            sut.execute(command)
+            expectedUndoCount += 1
+        }
+
+        // When: Random interleaved operations (deterministic seed for reproducibility)
+        //
+        // srand48(42) 說明：
+        // - srand48 = Seed Random 48-bit，設定 48 位元隨機數產生器的種子
+        // - 42 是種子值（任意數字皆可，42 是程式界的梗：生命、宇宙及萬事萬物的終極答案）
+        // - drand48() 會產生 0.0 ~ 1.0 之間的隨機小數
+        //
+        // 為什麼要用固定種子？
+        // - 相同種子 = 相同的「隨機」序列，每次測試都會產生一模一樣的操作順序
+        // - 好處：測試結果可重現，如果失敗可以 debug，避免「有時過有時不過」的不穩定測試
+        //
+        // 範例：
+        //   srand48(42)
+        //   drand48() → 0.374540...（每次執行都一樣）
+        //   drand48() → 0.950714...（每次執行都一樣）
+        //
+        srand48(42)
+
+        for _ in 1...100 {
+            let action = Int(drand48() * 3)  // 0, 1, or 2
+
+            switch action {
+            case 0:  // Execute new command
+                let command = MockCommand(description: "Random")
+                sut.execute(command)
+                expectedUndoCount += 1
+
+            case 1:  // Undo if possible
+                if sut.canUndo {
+                    sut.undo()
+                    expectedUndoCount -= 1
+                }
+
+            case 2:  // Redo if possible
+                if sut.canRedo {
+                    sut.redo()
+                    expectedUndoCount += 1
+                }
+
+            default:
+                break
+            }
+
+            // Invariant checks after each operation
+            XCTAssertEqual(sut.canUndo, expectedUndoCount > 0,
+                           "canUndo should match expected state")
+
+            if sut.canUndo {
+                XCTAssertNotNil(sut.undoDescription,
+                               "undoDescription should exist when canUndo is true")
+            }
+        }
+    }
+
+    /// Test: Stress test - Rapid undo/redo cycling
+    func testRapidUndoRedoCycleWhenRepeatedThenStateCorrect() {
+        // Given: A set of commands
+        for i in 1...10 {
+            sut.execute(MockCommand(description: "Command \(i)"))
+        }
+
+        // When: Rapidly cycle undo/redo multiple times
+        for cycle in 1...5 {
+            // Undo all
+            while sut.canUndo {
+                sut.undo()
+            }
+            XCTAssertFalse(sut.canUndo, "Cycle \(cycle): Should not be able to undo")
+            XCTAssertTrue(sut.canRedo, "Cycle \(cycle): Should be able to redo")
+            XCTAssertEqual(sut.redoDescription, "Command 1",
+                          "Cycle \(cycle): First command should be next redo")
+
+            // Redo all
+            while sut.canRedo {
+                sut.redo()
+            }
+            XCTAssertTrue(sut.canUndo, "Cycle \(cycle): Should be able to undo")
+            XCTAssertFalse(sut.canRedo, "Cycle \(cycle): Should not be able to redo")
+            XCTAssertEqual(sut.undoDescription, "Command 10",
+                          "Cycle \(cycle): Last command should be next undo")
+        }
+    }
+
+    /// Test: Edge case - Execute interrupts undo/redo sequence
+    func testExecuteDuringUndoRedoWhenNewCommandThenRedoCleared() {
+        // Given: Commands with partial undo
+        for i in 1...5 {
+            sut.execute(MockCommand(description: "Original \(i)"))
+        }
+
+        sut.undo()  // undo Original 5
+        sut.undo()  // undo Original 4
+        sut.undo()  // undo Original 3
+
+        XCTAssertEqual(sut.undoDescription, "Original 2")
+        XCTAssertEqual(sut.redoDescription, "Original 3")
+
+        // When: Execute new command mid-sequence
+        sut.execute(MockCommand(description: "Interrupt"))
+
+        // Then: Redo stack cleared, can only undo
+        XCTAssertFalse(sut.canRedo, "Redo should be cleared after new execute")
+        XCTAssertEqual(sut.undoDescription, "Interrupt")
+
+        // Undo the interrupt
+        sut.undo()
+        XCTAssertEqual(sut.undoDescription, "Original 2")
+
+        // Original 3, 4, 5 are gone forever
+        sut.redo()
+        XCTAssertEqual(sut.undoDescription, "Interrupt")
+        XCTAssertFalse(sut.canRedo)
+    }
+
+    // MARK: - FR-020: CompositeCommand Tests
+
+    /// Test: T078-001 - CompositeCommand executes all sub-commands sequentially
+    func testCompositeCommandWhenExecutedThenAllSubCommandsExecuted() {
+        // Given: A composite command with multiple sub-commands
+        let command1 = MockCommand(description: "Sub 1")
+        let command2 = MockCommand(description: "Sub 2")
+        let command3 = MockCommand(description: "Sub 3")
+
+        let composite = CompositeCommand(
+            commands: [command1, command2, command3],
+            description: "複合操作"
+        )
+
+        // When: Execute the composite command
+        sut.execute(composite)
+
+        // Then: All sub-commands should be executed
+        XCTAssertTrue(command1.executeWasCalled, "Sub-command 1 should be executed")
+        XCTAssertTrue(command2.executeWasCalled, "Sub-command 2 should be executed")
+        XCTAssertTrue(command3.executeWasCalled, "Sub-command 3 should be executed")
+    }
+
+    /// Test: T079-001 - CompositeCommand undoes all sub-commands in reverse order
+    func testCompositeCommandWhenUndoThenAllSubCommandsUndoneInReverse() {
+        // Given: A composite command that was executed
+        let command1 = OrderTrackingMockCommand(description: "Sub 1")
+        let command2 = OrderTrackingMockCommand(description: "Sub 2")
+        let command3 = OrderTrackingMockCommand(description: "Sub 3")
+
+        OrderTrackingMockCommand.undoOrder = []
+
+        let composite = CompositeCommand(
+            commands: [command1, command2, command3],
+            description: "複合操作"
+        )
+
+        sut.execute(composite)
+
+        // When: Undo the composite command
+        sut.undo()
+
+        // Then: All sub-commands should be undone in reverse order
+        XCTAssertTrue(command1.undoWasCalled, "Sub-command 1 should be undone")
+        XCTAssertTrue(command2.undoWasCalled, "Sub-command 2 should be undone")
+        XCTAssertTrue(command3.undoWasCalled, "Sub-command 3 should be undone")
+
+        // Verify reverse order: 3, 2, 1
+        XCTAssertEqual(OrderTrackingMockCommand.undoOrder, ["Sub 3", "Sub 2", "Sub 1"],
+                       "Sub-commands should be undone in reverse order")
+    }
+
+    /// Test: T080-001 - CompositeCommand description is correct
+    func testCompositeCommandWhenCreatedThenDescriptionCorrect() {
+        // Given: A composite command
+        let composite = CompositeCommand(description: "批次操作")
+
+        // Then: Description should match
+        XCTAssertEqual(composite.description, "批次操作")
+    }
+
+    /// Test: T081-001 - CompositeCommand can add commands dynamically
+    func testCompositeCommandWhenAddCommandThenCountIncreases() {
+        // Given: An empty composite command
+        let composite = CompositeCommand(description: "Dynamic")
+
+        // When: Add commands
+        composite.add(MockCommand(description: "Cmd 1"))
+        composite.add(MockCommand(description: "Cmd 2"))
+
+        // Then: Count should be correct
+        XCTAssertEqual(composite.count, 2)
+    }
 }
 
 // MARK: - Mock Command
@@ -332,6 +531,32 @@ class MockCommand: Command {
 
     func undo() {
         undoWasCalled = true
+    }
+
+    var description: String {
+        return commandDescription
+    }
+}
+
+/// Mock command that tracks undo order for testing CompositeCommand
+class OrderTrackingMockCommand: Command {
+    static var undoOrder: [String] = []
+
+    let commandDescription: String
+    var executeWasCalled = false
+    var undoWasCalled = false
+
+    init(description: String) {
+        self.commandDescription = description
+    }
+
+    func execute() {
+        executeWasCalled = true
+    }
+
+    func undo() {
+        undoWasCalled = true
+        OrderTrackingMockCommand.undoOrder.append(commandDescription)
     }
 
     var description: String {

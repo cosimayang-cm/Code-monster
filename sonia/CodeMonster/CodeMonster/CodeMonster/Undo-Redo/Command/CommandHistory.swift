@@ -13,6 +13,11 @@ final class CommandHistory {
     private var undoStack: [Command] = []
     private var redoStack: [Command] = []
 
+    // MARK: - Configuration
+
+    /// 是否啟用命令合併功能（預設關閉）
+    var coalescingEnabled: Bool = false
+
     // MARK: - Public Properties (FR-004)
 
     /// 是否可以執行 Undo
@@ -45,8 +50,28 @@ final class CommandHistory {
 
     /// 執行命令並加入 undo stack
     /// FR-006: 執行新命令時清空 redo stack
+    /// FR-019: 支援命令合併
     func execute(_ command: Command) {
         command.execute()
+
+        // 嘗試合併命令 (FR-019) - 只有在啟用合併功能時才嘗試
+        if coalescingEnabled,
+           let coalescibleCommand = command as? CoalescibleCommand,
+           let lastCommand = undoStack.last as? CoalescibleCommand {
+            // 檢查是否在超時時間內
+            let timeSinceLastExecution = Date().timeIntervalSince(lastCommand.lastExecutionTime)
+            if timeSinceLastExecution <= lastCommand.coalescingTimeout {
+                // 嘗試合併
+                if lastCommand.coalesce(with: command) {
+                    // 合併成功，更新時間戳
+                    var mutableLastCommand = lastCommand
+                    mutableLastCommand.lastExecutionTime = Date()
+                    redoStack.removeAll()
+                    return
+                }
+            }
+        }
+
         undoStack.append(command)
         redoStack.removeAll() // FR-006
     }

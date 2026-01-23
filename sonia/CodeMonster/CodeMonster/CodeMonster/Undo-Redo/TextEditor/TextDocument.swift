@@ -9,6 +9,9 @@ final class TextDocument {
     /// 文件的文字內容
     private(set) var content: String = ""
 
+    /// 文件的樣式列表
+    private(set) var styles: [TextStyleRange] = []
+
     // MARK: - Initialization
 
     init(content: String = "") {
@@ -45,5 +48,33 @@ final class TextDocument {
         let oldText = String(content[range])
         content.replaceSubrange(range, with: newText)
         return oldText
+    }
+
+    // MARK: - Style Operations
+
+    /// 對指定範圍套用樣式
+    /// - Parameters:
+    ///   - style: 要套用的樣式
+    ///   - range: 套用範圍
+    func applyStyle(_ style: TextStyle, to range: Range<String.Index>) {
+        // 移除該範圍現有的相同樣式（避免重複）
+        styles.removeAll { $0.range == range && $0.style == style }
+        // 新增樣式
+        styles.append(TextStyleRange(range: range, style: style))
+    }
+
+    /// 從指定範圍移除樣式
+    /// - Parameters:
+    ///   - style: 要移除的樣式
+    ///   - range: 移除範圍
+    func removeStyle(_ style: TextStyle, from range: Range<String.Index>) {
+        styles.removeAll { $0.range == range && $0.style == style }
+    }
+
+    /// 取得指定範圍的樣式
+    /// - Parameter range: 查詢範圍
+    /// - Returns: 該範圍的所有樣式
+    func stylesIn(range: Range<String.Index>) -> [TextStyleRange] {
+        return styles.filter { $0.range.overlaps(range) }
     }
 }
