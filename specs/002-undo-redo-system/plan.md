@@ -43,50 +43,50 @@ specs/002-undo-redo-system/
 └── tasks.md             # Phase 2 output (/speckit.tasks)
 ```
 
-### Source Code (repository root)
+### Source Code
+
+> **Note**: 以下為邏輯結構示意。實際檔案路徑請參考 [tasks.md](./tasks.md) 的 Path Conventions 段落，已配合現有 Xcode 專案結構調整。
 
 ```text
-Sources/
-├── UndoRedo/
-│   ├── Command/
-│   │   ├── Command.swift              # Command protocol
-│   │   └── CommandHistory.swift       # 管理 undo/redo 堆疊
-│   ├── TextEditor/
-│   │   ├── TextDocument.swift         # Receiver
-│   │   ├── TextStyle.swift            # 樣式定義
-│   │   ├── InsertTextCommand.swift
-│   │   ├── DeleteTextCommand.swift
-│   │   ├── ReplaceTextCommand.swift
-│   │   └── ApplyStyleCommand.swift
-│   └── CanvasEditor/
-│       ├── Canvas.swift               # Receiver
-│       ├── Shape.swift                # 圖形基底
-│       ├── Color.swift                # UIKit-independent 顏色
-│       ├── AddShapeCommand.swift
-│       ├── RemoveShapeCommand.swift
-│       ├── MoveShapeCommand.swift
-│       ├── ResizeShapeCommand.swift
-│       └── ChangeColorCommand.swift
+Undo-Redo/
+├── Command/
+│   ├── Command.swift              # Command protocol
+│   └── CommandHistory.swift       # 管理 undo/redo 堆疊
+├── TextEditor/
+│   ├── TextDocument.swift         # Receiver
+│   ├── TextStyle.swift            # 樣式定義
+│   ├── InsertTextCommand.swift
+│   ├── DeleteTextCommand.swift
+│   ├── ReplaceTextCommand.swift
+│   └── ApplyStyleCommand.swift
+└── CanvasEditor/
+    ├── Canvas.swift               # Receiver
+    ├── Shape.swift                # 圖形基底
+    ├── Color.swift                # UIKit-independent 顏色
+    ├── AddShapeCommand.swift
+    ├── RemoveShapeCommand.swift
+    ├── MoveShapeCommand.swift
+    ├── ResizeShapeCommand.swift
+    └── ChangeColorCommand.swift
 
-Tests/
-├── UndoRedoTests/
-│   ├── CommandHistoryTests.swift
-│   ├── TextEditor/
-│   │   ├── TextDocumentTests.swift
-│   │   ├── InsertTextCommandTests.swift
-│   │   ├── DeleteTextCommandTests.swift
-│   │   ├── ReplaceTextCommandTests.swift
-│   │   └── ApplyStyleCommandTests.swift
-│   └── CanvasEditor/
-│       ├── CanvasTests.swift
-│       ├── AddShapeCommandTests.swift
-│       ├── RemoveShapeCommandTests.swift
-│       ├── MoveShapeCommandTests.swift
-│       ├── ResizeShapeCommandTests.swift
-│       └── ChangeColorCommandTests.swift
+UndoRedoTests/
+├── CommandHistoryTests.swift
+├── TextEditor/
+│   ├── TextDocumentTests.swift
+│   ├── InsertTextCommandTests.swift
+│   ├── DeleteTextCommandTests.swift
+│   ├── ReplaceTextCommandTests.swift
+│   └── ApplyStyleCommandTests.swift
+└── CanvasEditor/
+    ├── CanvasTests.swift
+    ├── AddShapeCommandTests.swift
+    ├── RemoveShapeCommandTests.swift
+    ├── MoveShapeCommandTests.swift
+    ├── ResizeShapeCommandTests.swift
+    └── ChangeColorCommandTests.swift
 ```
 
-**Structure Decision**: 採用簡單的 Sources/Tests 結構，按功能模組分組（Command、TextEditor、CanvasEditor）。
+**Structure Decision**: 按功能模組分組（Command、TextEditor、CanvasEditor），保持結構簡單清晰。
 
 ## Complexity Tracking
 
