@@ -24,11 +24,11 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create Undo-Redo folder structure in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/
-- [ ] T002 [P] Create sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/ directory
-- [ ] T003 [P] Create sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ directory
-- [ ] T004 [P] Create sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/ directory
-- [ ] T005 [P] Create sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/ directory with TextEditor/ and CanvasEditor/ subdirectories
+- [x] T001 Create Undo-Redo folder structure in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/
+- [x] T002 [P] Create sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/ directory
+- [x] T003 [P] Create sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ directory
+- [x] T004 [P] Create sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/ directory
+- [x] T005 [P] Create sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/ directory with TextEditor/ and CanvasEditor/ subdirectories
 
 ---
 
@@ -42,18 +42,18 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T006 [P] Write Command protocol tests (verify interface) in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-- [ ] T007 [P] Write CommandHistory tests for initial state in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [x] T006 [P] Write Command protocol tests (verify interface) in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [x] T007 [P] Write CommandHistory tests for initial state in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
 
 ### Implementation for Foundational
 
-- [ ] T008 Define Command protocol with execute(), undo(), description in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/Command.swift
-- [ ] T009 Implement CommandHistory class with undoStack, redoStack in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T010 Implement CommandHistory.execute() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T011 Implement CommandHistory.undo() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T012 Implement CommandHistory.redo() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T013 Implement canUndo, canRedo computed properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [ ] T014 Implement undoDescription, redoDescription computed properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T008 Define Command protocol with execute(), undo(), description in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/Command.swift
+- [x] T009 Implement CommandHistory class with undoStack, redoStack in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T010 Implement CommandHistory.execute() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T011 Implement CommandHistory.undo() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T012 Implement CommandHistory.redo() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T013 Implement canUndo, canRedo computed properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [x] T014 Implement undoDescription, redoDescription computed properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
 
 **Checkpoint**: Command infrastructure ready - user story implementation can now begin
 
@@ -69,21 +69,21 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T015 [P] [US1] Write TextDocument tests for content management in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/TextDocumentTests.swift
-- [ ] T016 [P] [US1] Write InsertTextCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/InsertTextCommandTests.swift
-- [ ] T017 [P] [US1] Write DeleteTextCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/DeleteTextCommandTests.swift
-- [ ] T018 [P] [US1] Write ReplaceTextCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ReplaceTextCommandTests.swift
+- [x] T015 [P] [US1] Write TextDocument tests for content management in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/TextDocumentTests.swift
+- [x] T016 [P] [US1] Write InsertTextCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/InsertTextCommandTests.swift
+- [x] T017 [P] [US1] Write DeleteTextCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/DeleteTextCommandTests.swift
+- [x] T018 [P] [US1] Write ReplaceTextCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ReplaceTextCommandTests.swift
 
 ### Implementation for User Story 1
 
-- [ ] T019 [US1] Create TextDocument class with content property in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [ ] T020 [US1] Implement TextDocument.insert() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [ ] T021 [US1] Implement TextDocument.delete() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [ ] T022 [US1] Implement TextDocument.replace() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [ ] T023 [US1] Implement InsertTextCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/InsertTextCommand.swift
-- [ ] T024 [US1] Implement DeleteTextCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/DeleteTextCommand.swift
-- [ ] T025 [US1] Implement ReplaceTextCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ReplaceTextCommand.swift
-- [ ] T026 [US1] Write integration tests for TextEditor undo/redo flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/TextDocumentTests.swift
+- [x] T019 [US1] Create TextDocument class with content property in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
+- [x] T020 [US1] Implement TextDocument.insert() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
+- [x] T021 [US1] Implement TextDocument.delete() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
+- [x] T022 [US1] Implement TextDocument.replace() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
+- [x] T023 [US1] Implement InsertTextCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/InsertTextCommand.swift
+- [x] T024 [US1] Implement DeleteTextCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/DeleteTextCommand.swift
+- [x] T025 [US1] Implement ReplaceTextCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ReplaceTextCommand.swift
+- [x] T026 [US1] Write integration tests for TextEditor undo/redo flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/TextDocumentTests.swift
 
 **Checkpoint**: User Story 1 (文章編輯器基本編輯) should be fully functional and testable independently
 
@@ -99,33 +99,33 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T027 [P] [US2] Write Color struct tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [ ] T028 [P] [US2] Write Point, Size struct tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [ ] T029 [P] [US2] Write Shape protocol and concrete types tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [ ] T030 [P] [US2] Write Canvas tests for shape management in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [ ] T031 [P] [US2] Write AddShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/AddShapeCommandTests.swift
-- [ ] T032 [P] [US2] Write RemoveShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/RemoveShapeCommandTests.swift
-- [ ] T033 [P] [US2] Write MoveShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/MoveShapeCommandTests.swift
-- [ ] T034 [P] [US2] Write ResizeShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/ResizeShapeCommandTests.swift
-- [ ] T035 [P] [US2] Write ChangeColorCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/ChangeColorCommandTests.swift
+- [x] T027 [P] [US2] Write Color struct tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
+- [x] T028 [P] [US2] Write Point, Size struct tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
+- [x] T029 [P] [US2] Write Shape protocol and concrete types tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
+- [x] T030 [P] [US2] Write Canvas tests for shape management in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
+- [x] T031 [P] [US2] Write AddShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
+- [x] T032 [P] [US2] Write RemoveShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
+- [x] T033 [P] [US2] Write MoveShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
+- [x] T034 [P] [US2] Write ResizeShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
+- [x] T035 [P] [US2] Write ChangeColorCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
 
 ### Implementation for User Story 2
 
-- [ ] T036 [P] [US2] Create Color struct with RGBA properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Color.swift
-- [ ] T037 [P] [US2] Create Point and Size structs in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
-- [ ] T038 [US2] Define Shape protocol with id, position, fillColor, strokeColor in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
-- [ ] T039 [US2] Implement Rectangle struct conforming to Shape in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
-- [ ] T040 [US2] Implement Circle struct conforming to Shape in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
-- [ ] T041 [US2] Implement Line struct conforming to Shape in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
-- [ ] T042 [US2] Create Canvas class with shapes array in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
-- [ ] T043 [US2] Implement Canvas.add(), remove(), shape(withId:) methods in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
-- [ ] T044 [US2] Implement Canvas.updateShape() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
-- [ ] T045 [US2] Implement AddShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/AddShapeCommand.swift
-- [ ] T046 [US2] Implement RemoveShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/RemoveShapeCommand.swift
-- [ ] T047 [US2] Implement MoveShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/MoveShapeCommand.swift
-- [ ] T048 [US2] Implement ResizeShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/ResizeShapeCommand.swift
-- [ ] T049 [US2] Implement ChangeColorCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/ChangeColorCommand.swift
-- [ ] T050 [US2] Write integration tests for Canvas undo/redo flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
+- [x] T036 [P] [US2] Create Color struct with RGBA properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Color.swift
+- [x] T037 [P] [US2] Create Point and Size structs in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
+- [x] T038 [US2] Define Shape protocol with id, position, fillColor, strokeColor in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
+- [x] T039 [US2] Implement Rectangle struct conforming to Shape in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
+- [x] T040 [US2] Implement Circle struct conforming to Shape in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
+- [x] T041 [US2] Implement Line struct conforming to Shape in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
+- [x] T042 [US2] Create Canvas class with shapes array in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
+- [x] T043 [US2] Implement Canvas.add(), remove(), shape(withId:) methods in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
+- [x] T044 [US2] Implement Canvas.updateShape() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
+- [x] T045 [US2] Implement AddShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/AddShapeCommand.swift
+- [x] T046 [US2] Implement RemoveShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/RemoveShapeCommand.swift
+- [x] T047 [US2] Implement MoveShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/MoveShapeCommand.swift
+- [x] T048 [US2] Implement ResizeShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/ResizeShapeCommand.swift
+- [x] T049 [US2] Implement ChangeColorCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/ChangeColorCommand.swift
+- [x] T050 [US2] Write integration tests for Canvas undo/redo flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
 
 **Checkpoint**: User Stories 1 AND 2 should both work independently - Core MVP complete
 
