@@ -166,10 +166,190 @@ swift build
 
 ## 檔案對照表
 
+### Model Layer
+
 | 規格中的類別 | 檔案位置 |
 |-------------|----------|
-| Command | Sources/UndoRedo/Command/Command.swift |
-| CommandHistory | Sources/UndoRedo/Command/CommandHistory.swift |
-| TextDocument | Sources/UndoRedo/TextEditor/TextDocument.swift |
-| Canvas | Sources/UndoRedo/CanvasEditor/Canvas.swift |
-| Shape | Sources/UndoRedo/CanvasEditor/Shape.swift |
+| Command | Undo-Redo/Command/Command.swift |
+| CommandHistory | Undo-Redo/Command/CommandHistory.swift |
+| TextDocument | Undo-Redo/TextEditor/TextDocument.swift |
+| Canvas | Undo-Redo/CanvasEditor/Canvas.swift |
+| Shape | Undo-Redo/CanvasEditor/Shape.swift |
+
+### UI Layer (2026-01-23 新增)
+
+| 規格中的類別 | 檔案位置 |
+|-------------|----------|
+| CommandHistoryObserver | Undo-Redo/Command/CommandHistoryObserver.swift |
+| Color+UIKit | Undo-Redo/UI/Extensions/Color+UIKit.swift |
+| UndoRedoToolbarView | Undo-Redo/UI/Components/UndoRedoToolbarView.swift |
+| UndoRedoDemoViewController | Undo-Redo/UI/UndoRedoDemoViewController.swift |
+| TextEditorViewController | Undo-Redo/UI/TextEditor/TextEditorViewController.swift |
+| CanvasEditorViewController | Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift |
+| CanvasView | Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift |
+| ShapeView | Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift |
+
+---
+
+# UI Layer Quickstart (2026-01-23)
+
+## Observer Pattern 使用
+
+```swift
+// 1. 讓 ViewController 實作 Observer
+class TextEditorViewController: UIViewController, CommandHistoryObserver {
+
+    private let history = CommandHistory()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        history.addObserver(self)
+    }
+
+    deinit {
+        history.removeObserver(self)
+    }
+
+    // 2. 實作 Observer 方法
+    func commandHistoryDidChange(_ history: CommandHistory) {
+        // 更新 UI
+        undoButton.isEnabled = history.canUndo
+        redoButton.isEnabled = history.canRedo
+    }
+}
+```
+
+## 文字編輯器 UI 範例
+
+```swift
+class TextEditorViewController: UIViewController, CommandHistoryObserver {
+
+    private let document = TextDocument()
+    private let history = CommandHistory()
+    private let textView = UITextView()
+
+    // 插入文字按鈕動作
+    @objc func insertButtonTapped() {
+        let command = InsertTextCommand(
+            document: document,
+            text: "Sample Text",
+            at: document.content.endIndex
+        )
+        history.execute(command)
+        refreshTextView()
+    }
+
+    // Undo 按鈕動作
+    @objc func undoTapped() {
+        history.undo()
+        refreshTextView()
+    }
+
+    // Redo 按鈕動作
+    @objc func redoTapped() {
+        history.redo()
+        refreshTextView()
+    }
+
+    // 更新文字顯示
+    private func refreshTextView() {
+        textView.text = document.content
+    }
+
+    // Observer callback
+    func commandHistoryDidChange(_ history: CommandHistory) {
+        navigationItem.rightBarButtonItems?.forEach { item in
+            // 更新 Undo/Redo 按鈕狀態
+        }
+    }
+}
+```
+
+## 畫布編輯器 UI 範例
+
+```swift
+class CanvasEditorViewController: UIViewController, CommandHistoryObserver, CanvasViewDelegate {
+
+    private let canvas = Canvas()
+    private let history = CommandHistory()
+    private let canvasView = CanvasView()
+
+    // 新增矩形按鈕動作
+    @objc func addRectangleTapped() {
+        let rect = Rectangle(
+            id: UUID(),
+            position: Point(x: 50, y: 50),
+            size: Size(width: 100, height: 100),
+            fillColor: .blue,
+            strokeColor: .black
+        )
+        let command = AddShapeCommand(canvas: canvas, shape: rect)
+        history.execute(command)
+        canvasView.sync(with: canvas)
+    }
+
+    // CanvasViewDelegate - 處理圖形移動
+    func canvasView(_ view: CanvasView, didMoveShape id: UUID, by offset: Point) {
+        let command = MoveShapeCommand(
+            canvas: canvas,
+            shapeId: id,
+            offset: offset
+        )
+        history.execute(command)
+    }
+
+    // Observer callback
+    func commandHistoryDidChange(_ history: CommandHistory) {
+        // 更新 Undo/Redo 按鈕狀態
+    }
+}
+```
+
+## Color 轉換
+
+```swift
+import UIKit
+
+// 在 UI 層使用 Model 的 Color
+let modelColor = Color.blue
+let uiColor = modelColor.uiColor  // UIColor
+
+// 應用到 View
+shapeView.backgroundColor = canvas.shapes[0].fillColor.uiColor
+```
+
+## 架構概覽（含 UI 層）
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      UI Layer (UIKit)                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────────────────┐    ┌──────────────────────────┐   │
+│  │UndoRedoDemoViewController│    UndoRedoToolbarView     │   │
+│  └──────────────────────┘    └──────────────────────────┘   │
+│           │                                                  │
+│     ┌─────┴─────┐                                            │
+│     ▼           ▼                                            │
+│  ┌──────────────────┐    ┌──────────────────────────────┐   │
+│  │TextEditorVC      │    │CanvasEditorVC                │   │
+│  │  ├─ UITextView   │    │  ├─ CanvasView               │   │
+│  │  └─ Toolbar      │    │  │    └─ [ShapeView]         │   │
+│  └──────────────────┘    │  └─ Toolbar                  │   │
+│           │              └──────────────────────────────┘   │
+│           │                         │                        │
+│           │    CommandHistoryObserver                        │
+│           │              │                                   │
+├───────────┴──────────────┴───────────────────────────────────┤
+│                                                              │
+│  ┌─────────────┐  ┌──────────────┐                          │
+│  │CommandHistory│  │   Commands   │                          │
+│  │ + Observer   │  └──────────────┘                          │
+│  └─────────────┘         │                                   │
+│          │               ▼                                   │
+│  ┌─────────────┐  ┌──────────────┐                          │
+│  │TextDocument │  │   Canvas     │   ← Model Layer           │
+│  └─────────────┘  └──────────────┘     (Foundation only)     │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```

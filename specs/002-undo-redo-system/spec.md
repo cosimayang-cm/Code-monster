@@ -2,8 +2,10 @@
 
 **Feature Branch**: `002-undo-redo-system`
 **Created**: 2026-01-22
+**Updated**: 2026-01-23 (UI Layer 新增)
 **Status**: Draft
 **Input**: User description: "透過設計一個支援 Undo/Redo 的編輯系統，學習 Command Pattern 與 Memento Pattern"
+**UI Layer Input**: "為已完成的 Model 層建立 UIKit UI，展示 Undo/Redo 功能"
 
 ## Clarifications
 
@@ -209,6 +211,124 @@
 1. **先做 Model 層**：寫測試 → 寫實作 → 測試通過
 2. **最後做 UI 層**：所有單元測試通過後才做
 
+## UI Layer Requirements
+
+### User Story 7 - Demo Hub 導覽頁面 (Priority: P1)
+
+使用者啟動 App 後看到 Demo Hub 頁面，可以選擇進入「文字編輯器」或「畫布編輯器」來體驗 Undo/Redo 功能。
+
+**Why this priority**: 作為 UI 層的入口點，必須先建立才能展示兩個編輯器。
+
+**Independent Test**: 可透過啟動 App 並點擊按鈕來獨立測試導覽功能。
+
+**Acceptance Scenarios**:
+
+1. **Given** 使用者啟動 App, **When** App 載入完成, **Then** 顯示 Demo Hub 頁面，標題為「Undo/Redo 系統展示」
+2. **Given** Demo Hub 頁面已顯示, **When** 使用者點擊「文字編輯器」按鈕, **Then** 導覽至文字編輯器頁面
+3. **Given** Demo Hub 頁面已顯示, **When** 使用者點擊「畫布編輯器」按鈕, **Then** 導覽至畫布編輯器頁面
+
+---
+
+### User Story 8 - 文字編輯器 UI 操作 (Priority: P1)
+
+使用者在文字編輯器頁面可以執行各種文字操作，並透過 Navigation Bar 右上角的 Undo/Redo 按鈕撤銷或重做操作。
+
+**Why this priority**: 文字編輯器 UI 是展示 Model 層功能的核心介面之一。
+
+**Independent Test**: 可透過操作編輯器介面並點擊 Undo/Redo 按鈕來獨立測試。
+
+**Acceptance Scenarios**:
+
+1. **Given** 文字編輯器頁面已顯示, **When** 頁面載入完成, **Then** Navigation Bar 右上角顯示 Undo/Redo 按鈕，Undo 按鈕為停用狀態
+2. **Given** 文字編輯器中的文字內容為空, **When** 使用者透過工具列插入文字, **Then** 文字顯示在編輯區域且 Undo 按鈕變為啟用狀態
+3. **Given** 使用者已執行插入文字操作, **When** 使用者點擊 Undo 按鈕, **Then** 文字被移除且 Redo 按鈕變為啟用狀態
+4. **Given** 使用者已執行 Undo, **When** 使用者點擊 Redo 按鈕, **Then** 文字重新顯示
+5. **Given** 文字編輯器顯示中, **When** 使用者使用底部工具列執行刪除/取代/樣式操作, **Then** 操作結果即時反映在編輯區域
+
+---
+
+### User Story 9 - 畫布編輯器 UI 操作 (Priority: P1)
+
+使用者在畫布編輯器頁面可以新增、移動圖形，並透過 Navigation Bar 右上角的 Undo/Redo 按鈕撤銷或重做操作。
+
+**Why this priority**: 畫布編輯器 UI 是展示 Model 層功能的核心介面之一。
+
+**Independent Test**: 可透過操作畫布介面並點擊 Undo/Redo 按鈕來獨立測試。
+
+**Acceptance Scenarios**:
+
+1. **Given** 畫布編輯器頁面已顯示, **When** 頁面載入完成, **Then** Navigation Bar 右上角顯示 Undo/Redo 按鈕，Undo 按鈕為停用狀態
+2. **Given** 畫布為空, **When** 使用者透過底部工具列新增矩形, **Then** 矩形顯示在畫布上且 Undo 按鈕變為啟用狀態
+3. **Given** 畫布上有圖形, **When** 使用者透過拖曳手勢移動圖形, **Then** 圖形位置即時更新
+4. **Given** 使用者已移動圖形, **When** 使用者點擊 Undo 按鈕, **Then** 圖形回到原本位置
+5. **Given** 使用者已執行多次操作, **When** 使用者連續點擊 Undo 多次, **Then** 每次 Undo 都正確還原上一步狀態
+
+---
+
+### User Story 10 - UI 與 Model 層即時同步 (Priority: P2)
+
+當 Model 層的 CommandHistory 狀態變化時，UI 層需要即時更新以反映當前狀態。
+
+**Why this priority**: 確保 UI 與 Model 層的狀態同步，提供一致的使用者體驗。
+
+**Independent Test**: 可透過 Observer Pattern 機制驗證 UI 是否在狀態變化時收到通知並更新。
+
+**Acceptance Scenarios**:
+
+1. **Given** 使用者在編輯器中, **When** 執行任何編輯操作, **Then** Undo/Redo 按鈕狀態即時更新
+2. **Given** canUndo 為 false, **When** UI 收到歷史變更通知, **Then** Undo 按鈕顯示為停用（灰色）
+3. **Given** canRedo 為 true, **When** UI 收到歷史變更通知, **Then** Redo 按鈕顯示為啟用
+
+---
+
+### UI Layer Functional Requirements
+
+#### Observer Pattern 增強
+
+- **FR-025**: CommandHistory MUST 支援 Observer Pattern，允許 UI 訂閱狀態變化通知
+- **FR-026**: 系統 MUST 定義 CommandHistoryObserver 協議，包含 commandHistoryDidChange() 方法
+- **FR-027**: CommandHistory MUST 在 execute()、undo()、redo() 執行後通知所有觀察者
+
+#### Demo Hub 要求
+
+- **FR-028**: 系統 MUST 提供 Demo Hub 頁面，作為展示入口
+- **FR-029**: Demo Hub MUST 顯示「文字編輯器」和「畫布編輯器」兩個導覽選項
+
+#### 文字編輯器 UI 要求
+
+- **FR-030**: 文字編輯器 MUST 在 Navigation Bar 右上角放置 Undo/Redo 按鈕
+- **FR-031**: 文字編輯器 MUST 提供底部工具列，包含插入、刪除、取代、樣式按鈕
+- **FR-032**: Undo/Redo 按鈕 MUST 根據 canUndo/canRedo 狀態正確啟用或停用
+
+#### 畫布編輯器 UI 要求
+
+- **FR-033**: 畫布編輯器 MUST 在 Navigation Bar 右上角放置 Undo/Redo 按鈕
+- **FR-034**: 畫布編輯器 MUST 提供底部工具列，包含新增矩形、圓形、線條、刪除、顏色選項
+- **FR-035**: 畫布編輯器 MUST 支援 Pan gesture 拖曳移動圖形
+- **FR-036**: 畫布上的圖形 MUST 正確繪製位置、大小和顏色
+
+#### 顏色轉換要求
+
+- **FR-037**: 系統 MUST 提供 Model Color 到 UIColor 的轉換擴展
+
+### UI Layer Key Entities
+
+- **CommandHistoryObserver**: 觀察者協議，定義 UI 如何接收 CommandHistory 狀態變化通知
+- **UndoRedoDemoViewController**: Demo Hub 入口頁面控制器
+- **UndoRedoToolbarView**: 可重用的 Undo/Redo 按鈕元件
+- **TextEditorViewController**: 文字編輯器頁面控制器
+- **CanvasEditorViewController**: 畫布編輯器頁面控制器
+- **CanvasView**: 畫布視圖，管理多個 ShapeView
+- **ShapeView**: 繪製單一圖形的視圖
+
+### UI Layer Success Criteria
+
+- **SC-009**: Demo Hub 能正確導覽至兩個編輯器
+- **SC-010**: 文字編輯器的 Undo/Redo 按鈕正確反映 canUndo/canRedo 狀態
+- **SC-011**: 畫布編輯器的 Undo/Redo 按鈕正確反映 canUndo/canRedo 狀態
+- **SC-012**: 執行操作後 UI 即時更新顯示結果
+- **SC-013**: 連續多次 Undo/Redo 操作，UI 狀態與 Model 層狀態保持一致
+
 ## Assumptions
 
 - 本規格假設使用 Swift 語言實作，遵循 Swift 5.9+ 標準
@@ -217,3 +337,6 @@
 - 顏色資訊以獨立於 UIKit 的方式表示（如 RGB 數值或自定義結構）
 - 每個 Command 物件在建立時就需要持有足夠的資訊以支援 undo 操作
 - 使用 Reference Type（class）實作 Receiver，以便 Command 能修改其狀態
+- UI 層使用 UIKit 框架實作
+- Model 層已完成並通過所有單元測試
+- Observer Pattern 使用弱引用避免記憶體循環

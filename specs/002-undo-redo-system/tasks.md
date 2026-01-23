@@ -20,7 +20,9 @@
 
 ---
 
-## Phase 1: Setup (Shared Infrastructure)
+# Part A: Model Layer (已完成 ✅)
+
+## Phase 1: Setup (Shared Infrastructure) ✅
 
 **Purpose**: Project initialization and basic structure
 
@@ -32,21 +34,12 @@
 
 ---
 
-## Phase 2: Foundational (Blocking Prerequisites)
+## Phase 2: Foundational (Blocking Prerequisites) ✅
 
 **Purpose**: Core Command infrastructure that MUST be complete before ANY user story can be implemented
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete
-
-### Tests for Foundational (TDD - Write First) ⚠️
-
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
-
 - [x] T006 [P] Write Command protocol tests (verify interface) in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
 - [x] T007 [P] Write CommandHistory tests for initial state in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-
-### Implementation for Foundational
-
 - [x] T008 Define Command protocol with execute(), undo(), description in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/Command.swift
 - [x] T009 Implement CommandHistory class with undoStack, redoStack in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
 - [x] T010 Implement CommandHistory.execute() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
@@ -55,197 +48,192 @@
 - [x] T013 Implement canUndo, canRedo computed properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
 - [x] T014 Implement undoDescription, redoDescription computed properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
 
-**Checkpoint**: Command infrastructure ready - user story implementation can now begin
+---
+
+## Phase 3-9: Model Layer User Stories (US1-US6) ✅
+
+> All Model layer tasks (T015-T089) completed. See git history for details.
+
+**Checkpoint**: Model layer complete - all unit tests passing
 
 ---
 
-## Phase 3: User Story 1 - 文章編輯器基本編輯與撤銷 (Priority: P1) 🎯 MVP
+# Part B: UI Layer (新增)
 
-**Goal**: 使用者在文章編輯器中進行文字編輯操作（插入、刪除、取代文字），並能夠撤銷和重做這些操作
+## Phase 10: UI Setup (Shared UI Infrastructure)
 
-**Independent Test**: 建立 TextDocument、執行插入/刪除操作、呼叫 undo/redo，驗證文件內容是否正確還原
+**Purpose**: Create UI folder structure and Observer Pattern foundation
 
-### Tests for User Story 1 (TDD - Write First) ⚠️
+### Foundational - Observer Pattern (FR-025 ~ FR-027)
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+- [ ] T090 [P] Create sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/ directory structure per plan.md
+- [ ] T091 [P] Write CommandHistoryObserver tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryObserverTests.swift
+- [ ] T092 Create CommandHistoryObserver protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistoryObserver.swift
+- [ ] T093 Add WeakObserver struct in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistoryObserver.swift
+- [ ] T094 Add observers array to CommandHistory in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [ ] T095 Implement addObserver() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [ ] T096 Implement removeObserver() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [ ] T097 Implement private notifyObservers() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [ ] T098 Call notifyObservers() at end of execute(), undo(), redo() in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+- [ ] T099 Write integration tests for Observer notification flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryObserverTests.swift
 
-- [x] T015 [P] [US1] Write TextDocument tests for content management in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/TextDocumentTests.swift
-- [x] T016 [P] [US1] Write InsertTextCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/InsertTextCommandTests.swift
-- [x] T017 [P] [US1] Write DeleteTextCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/DeleteTextCommandTests.swift
-- [x] T018 [P] [US1] Write ReplaceTextCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ReplaceTextCommandTests.swift
-
-### Implementation for User Story 1
-
-- [x] T019 [US1] Create TextDocument class with content property in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [x] T020 [US1] Implement TextDocument.insert() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [x] T021 [US1] Implement TextDocument.delete() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [x] T022 [US1] Implement TextDocument.replace() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [x] T023 [US1] Implement InsertTextCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/InsertTextCommand.swift
-- [x] T024 [US1] Implement DeleteTextCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/DeleteTextCommand.swift
-- [x] T025 [US1] Implement ReplaceTextCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ReplaceTextCommand.swift
-- [x] T026 [US1] Write integration tests for TextEditor undo/redo flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/TextDocumentTests.swift
-
-**Checkpoint**: User Story 1 (文章編輯器基本編輯) should be fully functional and testable independently
+**Checkpoint**: Observer Pattern ready - UI can subscribe to CommandHistory changes
 
 ---
 
-## Phase 4: User Story 2 - 畫布編輯器圖形操作與撤銷 (Priority: P1)
+## Phase 11: Core UI Components (FR-037)
 
-**Goal**: 使用者在畫布編輯器中進行圖形操作（新增、刪除、移動、縮放、變更顏色），並能夠撤銷和重做這些操作
+**Purpose**: Build reusable UI components
 
-**Independent Test**: 建立 Canvas、執行圖形操作、呼叫 undo/redo，驗證畫布狀態是否正確還原
+- [ ] T100 [P] Create Color+UIKit.swift extension with uiColor computed property in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Extensions/Color+UIKit.swift
+- [ ] T101 Create UndoRedoToolbarView with Undo/Redo buttons in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Components/UndoRedoToolbarView.swift
+- [ ] T102 Add onUndo and onRedo closures to UndoRedoToolbarView in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Components/UndoRedoToolbarView.swift
+- [ ] T103 Implement updateState(canUndo:canRedo:) method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/Components/UndoRedoToolbarView.swift
 
-### Tests for User Story 2 (TDD - Write First) ⚠️
-
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
-
-- [x] T027 [P] [US2] Write Color struct tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [x] T028 [P] [US2] Write Point, Size struct tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [x] T029 [P] [US2] Write Shape protocol and concrete types tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [x] T030 [P] [US2] Write Canvas tests for shape management in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [x] T031 [P] [US2] Write AddShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [x] T032 [P] [US2] Write RemoveShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [x] T033 [P] [US2] Write MoveShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [x] T034 [P] [US2] Write ResizeShapeCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-- [x] T035 [P] [US2] Write ChangeColorCommand tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-
-### Implementation for User Story 2
-
-- [x] T036 [P] [US2] Create Color struct with RGBA properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Color.swift
-- [x] T037 [P] [US2] Create Point and Size structs in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
-- [x] T038 [US2] Define Shape protocol with id, position, fillColor, strokeColor in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
-- [x] T039 [US2] Implement Rectangle struct conforming to Shape in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
-- [x] T040 [US2] Implement Circle struct conforming to Shape in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
-- [x] T041 [US2] Implement Line struct conforming to Shape in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Shape.swift
-- [x] T042 [US2] Create Canvas class with shapes array in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
-- [x] T043 [US2] Implement Canvas.add(), remove(), shape(withId:) methods in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
-- [x] T044 [US2] Implement Canvas.updateShape() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
-- [x] T045 [US2] Implement AddShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/AddShapeCommand.swift
-- [x] T046 [US2] Implement RemoveShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/RemoveShapeCommand.swift
-- [x] T047 [US2] Implement MoveShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/MoveShapeCommand.swift
-- [x] T048 [US2] Implement ResizeShapeCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/ResizeShapeCommand.swift
-- [x] T049 [US2] Implement ChangeColorCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/ChangeColorCommand.swift
-- [x] T050 [US2] Write integration tests for Canvas undo/redo flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/CanvasTests.swift
-
-**Checkpoint**: User Stories 1 AND 2 should both work independently - Core MVP complete
+**Checkpoint**: Core UI components ready for use in ViewControllers
 
 ---
 
-## Phase 5: User Story 3 - 文字樣式套用與撤銷 (Priority: P2)
+## Phase 12: User Story 7 - Demo Hub 導覽頁面 (Priority: P1) 🎯 UI MVP
 
-**Goal**: 使用者對文字編輯器中的指定範圍套用樣式（粗體、斜體、底線），並能夠撤銷和重做樣式變更
+**Goal**: 使用者啟動 App 後看到 Demo Hub 頁面，可以選擇進入「文字編輯器」或「畫布編輯器」
 
-**Independent Test**: 對文字範圍套用樣式、執行 undo/redo，驗證樣式是否正確套用/移除
+**Independent Test**: 啟動 App 並點擊按鈕測試導覽功能
 
-### Tests for User Story 3 (TDD - Write First) ⚠️
+### Implementation for User Story 7 (FR-028 ~ FR-029)
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+- [ ] T104 [US7] Create UndoRedoDemoViewController with title "Undo/Redo 系統展示" in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
+- [ ] T105 [US7] Add "文字編輯器" button with navigation action in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
+- [ ] T106 [US7] Add "畫布編輯器" button with navigation action in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
+- [ ] T107 [US7] Update SceneDelegate to use UndoRedoDemoViewController as root in sonia/CodeMonster/CodeMonster/CodeMonster/SceneDelegate.swift
 
-- [x] T051 [P] [US3] Write TextStyle tests for OptionSet behavior in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
-- [x] T052 [P] [US3] Write TextStyleRange tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
-- [x] T053 [P] [US3] Write ApplyStyleCommand tests for execute/undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
-
-### Implementation for User Story 3
-
-- [x] T054 [US3] Create TextStyle OptionSet with bold, italic, underline in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextStyle.swift
-- [x] T055 [US3] Create TextStyleRange struct in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextStyle.swift
-- [x] T056 [US3] Add styles property to TextDocument in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [x] T057 [US3] Implement TextDocument.applyStyle() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [x] T058 [US3] Implement TextDocument.removeStyle() method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [x] T059 [US3] Implement ApplyStyleCommand with execute/undo in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ApplyStyleCommand.swift
-- [x] T060 [US3] Write integration tests for style undo/redo flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/ApplyStyleCommandTests.swift
-
-**Checkpoint**: User Story 3 should work independently
+**Checkpoint**: Demo Hub functional - can navigate to placeholder editors
 
 ---
 
-## Phase 6: User Story 4 - Undo/Redo 狀態顯示 (Priority: P2)
+## Phase 13: User Story 8 - 文字編輯器 UI 操作 (Priority: P1)
 
-**Goal**: 系統能夠正確顯示目前是否可以執行 Undo/Redo，以及下一個將被撤銷/重做的操作描述
+**Goal**: 使用者在文字編輯器頁面可以執行各種文字操作，並透過 Navigation Bar 右上角的 Undo/Redo 按鈕撤銷或重做操作
 
-**Independent Test**: 檢查 canUndo/canRedo 屬性和 undoDescription/redoDescription 是否正確反映狀態
+**Independent Test**: 操作編輯器介面並點擊 Undo/Redo 按鈕測試
 
-### Tests for User Story 4 (TDD - Write First) ⚠️
+### Implementation for User Story 8 (FR-030 ~ FR-032)
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+- [ ] T108 [US8] Create TextEditorViewController skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T109 [US8] Add UITextView for text display in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T110 [US8] Add TextDocument and CommandHistory properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T111 [US8] Conform to CommandHistoryObserver protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T112 [US8] Add Navigation Bar Undo/Redo buttons (right bar button items) in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T113 [US8] Implement undoTapped() and redoTapped() actions in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T114 [US8] Implement commandHistoryDidChange() to update button states in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T115 [US8] Add bottom toolbar with Insert button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T116 [US8] Add bottom toolbar Delete button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T117 [US8] Add bottom toolbar Replace button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T118 [US8] Add bottom toolbar Style buttons (Bold, Italic, Underline) in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T119 [US8] Implement insertButtonTapped() with InsertTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T120 [US8] Implement deleteButtonTapped() with DeleteTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T121 [US8] Implement replaceButtonTapped() with ReplaceTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T122 [US8] Implement styleButtonTapped() with ApplyStyleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T123 [US8] Implement refreshTextView() to sync UITextView with TextDocument in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T124 [US8] Connect Demo Hub navigation to TextEditorViewController in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
 
-- [x] T061 [P] [US4] Write tests for canUndo/canRedo edge cases in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-- [x] T062 [P] [US4] Write tests for undoDescription/redoDescription accuracy in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-- [x] T063 [P] [US4] Write tests for redo stack clearing on new execute in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-
-### Implementation for User Story 4
-
-- [x] T064 [US4] Add description property to InsertTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/InsertTextCommand.swift
-- [x] T065 [US4] Add description property to DeleteTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/DeleteTextCommand.swift
-- [x] T066 [US4] Add description property to ReplaceTextCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ReplaceTextCommand.swift
-- [x] T067 [US4] Add description property to ApplyStyleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/ApplyStyleCommand.swift
-- [x] T068 [P] [US4] Add description property to all Canvas commands in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/*.swift
-- [x] T069 [US4] Write integration tests for state display accuracy in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-
-**Checkpoint**: User Story 4 should work independently - UI can now display undo/redo state
-
----
-
-## Phase 7: User Story 5 - 命令合併 (Priority: P3)
-
-**Goal**: 連續的同類型操作能夠合併為一個命令，讓 Undo 時能一次撤銷整批操作
-
-**Independent Test**: 連續輸入字元後執行一次 Undo，驗證是否一次撤銷所有連續輸入
-
-### Tests for User Story 5 (TDD - Write First) ⚠️
-
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
-
-- [x] T070 [P] [US5] Write CoalescibleCommand protocol tests in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-- [x] T071 [P] [US5] Write tests for consecutive InsertTextCommand coalescing in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/TextEditor/InsertTextCommandTests.swift
-- [x] T072 [P] [US5] Write tests for consecutive MoveShapeCommand coalescing in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CanvasEditor/MoveShapeCommandTests.swift
-
-### Implementation for User Story 5
-
-- [x] T073 [US5] Define CoalescibleCommand protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/Command.swift
-- [x] T074 [US5] Implement coalescing logic in CommandHistory.execute() in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [x] T075 [US5] Make InsertTextCommand conform to CoalescibleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/InsertTextCommand.swift
-- [x] T076 [US5] Make MoveShapeCommand conform to CoalescibleCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/MoveShapeCommand.swift
-- [x] T077 [US5] Write integration tests for coalescing flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-
-**Checkpoint**: User Story 5 should work independently
+**Checkpoint**: Text Editor UI functional - Undo/Redo works with button state updates
 
 ---
 
-## Phase 8: User Story 6 - 命令群組 (Priority: P3)
+## Phase 14: User Story 9 - 畫布編輯器 UI 操作 (Priority: P1)
 
-**Goal**: 多個命令可以組合成一個原子操作，執行時依序執行，撤銷時反序撤銷
+**Goal**: 使用者在畫布編輯器頁面可以新增、移動圖形，並透過 Navigation Bar 右上角的 Undo/Redo 按鈕撤銷或重做操作
 
-**Independent Test**: 建立 CompositeCommand、執行、然後 Undo，驗證所有子命令是否被正確撤銷
+**Independent Test**: 操作畫布介面並點擊 Undo/Redo 按鈕測試
 
-### Tests for User Story 6 (TDD - Write First) ⚠️
+### Implementation for User Story 9 (FR-033 ~ FR-036)
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+#### ShapeView Component
 
-- [x] T078 [P] [US6] Write CompositeCommand tests for sequential execute in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
-- [x] T079 [P] [US6] Write CompositeCommand tests for reverse undo in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [ ] T125 [P] [US9] Create ShapeView class skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [ ] T126 [P] [US9] Add shapeId and shape properties to ShapeView in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [ ] T127 [US9] Implement draw(_:) for Rectangle rendering in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [ ] T128 [US9] Implement draw(_:) for Circle rendering in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [ ] T129 [US9] Implement draw(_:) for Line rendering in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [ ] T130 [US9] Add ShapeViewDelegate protocol for drag events in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [ ] T131 [US9] Add UIPanGestureRecognizer for shape dragging in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
+- [ ] T132 [US9] Implement handlePan() gesture handler in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/ShapeView.swift
 
-### Implementation for User Story 6
+#### CanvasView Container
 
-- [x] T080 [US6] Implement CompositeCommand class in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CompositeCommand.swift
-- [x] T081 [US6] Implement CompositeCommand.execute() with sequential execution in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CompositeCommand.swift
-- [x] T082 [US6] Implement CompositeCommand.undo() with reverse order in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CompositeCommand.swift
-- [x] T083 [US6] Write integration tests for composite command flow in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/CommandHistoryTests.swift
+- [ ] T133 [US9] Create CanvasView class skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [ ] T134 [US9] Add shapeViews dictionary [UUID: ShapeView] in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [ ] T135 [US9] Add CanvasViewDelegate protocol for shape events in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [ ] T136 [US9] Implement sync(with canvas:) method in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [ ] T137 [US9] Implement addShapeView() helper in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [ ] T138 [US9] Implement removeShapeView() helper in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
+- [ ] T139 [US9] Implement updateShapeView() helper in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/Views/CanvasView.swift
 
-**Checkpoint**: All user stories should now be independently functional
+#### CanvasEditorViewController
+
+- [ ] T140 [US9] Create CanvasEditorViewController skeleton in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T141 [US9] Add Canvas and CommandHistory properties in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T142 [US9] Add CanvasView subview in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T143 [US9] Conform to CommandHistoryObserver protocol in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T144 [US9] Add Navigation Bar Undo/Redo buttons in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T145 [US9] Implement undoTapped() and redoTapped() actions in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T146 [US9] Implement commandHistoryDidChange() to update button states in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T147 [US9] Add bottom toolbar with Add Rectangle button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T148 [US9] Add bottom toolbar Add Circle button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T149 [US9] Add bottom toolbar Add Line button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T150 [US9] Add bottom toolbar Delete button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T151 [US9] Add bottom toolbar Color picker button in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T152 [US9] Implement addRectangleTapped() with AddShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T153 [US9] Implement addCircleTapped() with AddShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T154 [US9] Implement addLineTapped() with AddShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T155 [US9] Implement deleteSelectedTapped() with RemoveShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T156 [US9] Implement changeColorTapped() with ChangeColorCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T157 [US9] Conform to CanvasViewDelegate for shape move events in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T158 [US9] Implement canvasView(_:didMoveShape:by:) with MoveShapeCommand in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T159 [US9] Implement refreshCanvasView() to sync CanvasView with Canvas in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T160 [US9] Connect Demo Hub navigation to CanvasEditorViewController in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/UndoRedoDemoViewController.swift
+
+**Checkpoint**: Canvas Editor UI functional - All shape operations with Undo/Redo working
 
 ---
 
-## Phase 9: Polish & Cross-Cutting Concerns
+## Phase 15: User Story 10 - UI 與 Model 層即時同步 (Priority: P2)
 
-**Purpose**: Improvements that affect multiple user stories
+**Goal**: 當 Model 層的 CommandHistory 狀態變化時，UI 層即時更新
 
-- [x] T084 [P] Add edge case handling for empty undo/redo stack operations in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
-- [x] T085 [P] Add edge case handling for invalid text ranges in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/TextEditor/TextDocument.swift
-- [x] T086 [P] Add edge case handling for non-existent shape operations in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/CanvasEditor/Canvas.swift
-- [x] T087 [P] Write edge case tests for all error scenarios in sonia/CodeMonster/CodeMonster/CodeMonsterTests/UndoRedoTests/
-- [x] T088 Run quickstart.md validation - verify all examples work correctly
-- [x] T089 Code review for Foundation-only imports (no UIKit in Model layer)
+**Independent Test**: 透過 Observer Pattern 驗證 UI 收到通知並更新
+
+### Implementation for User Story 10
+
+- [ ] T161 [US10] Verify Observer registration in TextEditorViewController viewDidLoad in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T162 [US10] Verify Observer registration in CanvasEditorViewController viewDidLoad in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T163 [US10] Verify Observer removal in TextEditorViewController deinit in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/TextEditor/TextEditorViewController.swift
+- [ ] T164 [US10] Verify Observer removal in CanvasEditorViewController deinit in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/UI/CanvasEditor/CanvasEditorViewController.swift
+- [ ] T165 [US10] Ensure UI updates on main thread in notifyObservers() in sonia/CodeMonster/CodeMonster/CodeMonster/Undo-Redo/Command/CommandHistory.swift
+
+**Checkpoint**: UI syncs in real-time with Model layer changes
+
+---
+
+## Phase 16: Integration & Polish
+
+**Purpose**: Final integration and validation
+
+- [ ] T166 [P] Verify Demo Hub navigation to both editors works correctly
+- [ ] T167 [P] Verify Text Editor Undo/Redo button states update correctly
+- [ ] T168 [P] Verify Canvas Editor Undo/Redo button states update correctly
+- [ ] T169 [P] Verify shape dragging creates MoveShapeCommand correctly
+- [ ] T170 Test consecutive Undo operations in Text Editor
+- [ ] T171 Test consecutive Undo operations in Canvas Editor
+- [ ] T172 Test Redo after multiple Undo operations
+- [ ] T173 Test new operation clears Redo stack
+- [ ] T174 Verify no memory leaks with Observer weak references
+- [ ] T175 Run full manual test: Demo Hub → Text Editor → operations → Undo/Redo → back
+- [ ] T176 Run full manual test: Demo Hub → Canvas Editor → operations → Undo/Redo → back
+- [ ] T177 Code review for UIKit-only imports in UI layer files
+
+**Checkpoint**: UI Layer complete - All acceptance scenarios verified
 
 ---
 
@@ -253,96 +241,105 @@
 
 ### Phase Dependencies
 
-- **Setup (Phase 1)**: No dependencies - can start immediately
-- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phase 3-8)**: All depend on Foundational phase completion
-  - US1 (P1) and US2 (P1) can proceed in parallel after Foundational
-  - US3 (P2) and US4 (P2) can proceed after Foundational (or after US1 for better context)
-  - US5 (P3) and US6 (P3) can proceed after Foundational
-- **Polish (Phase 9)**: Depends on all desired user stories being complete
+```
+Phase 10 (UI Setup) ──► Phase 11 (Core UI Components)
+                   │
+                   └──► Phase 12 (Demo Hub - US7)
 
-### User Story Dependencies
+Phase 11 ──┬──► Phase 13 (Text Editor - US8)
+           │
+           └──► Phase 14 (Canvas Editor - US9)
 
-- **User Story 1 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories
-- **User Story 2 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories
-- **User Story 3 (P2)**: Can start after Foundational (Phase 2) - Builds on US1's TextDocument
-- **User Story 4 (P2)**: Can start after Foundational (Phase 2) - Uses commands from US1/US2
-- **User Story 5 (P3)**: Can start after Foundational (Phase 2) - Extends US1/US2 commands
-- **User Story 6 (P3)**: Can start after Foundational (Phase 2) - Independent of other stories
+Phase 13 + Phase 14 ──► Phase 15 (UI Sync - US10)
 
-### Within Each User Story
+Phase 12 + Phase 13 + Phase 14 + Phase 15 ──► Phase 16 (Integration)
+```
 
-- Tests MUST be written FIRST and FAIL before implementation (TDD)
-- Models/Receivers before Commands
-- Core implementation before integration tests
-- Story complete before moving to next priority
+### User Story Dependencies (UI Layer)
+
+- **User Story 7 (Demo Hub)**: Can start after Phase 10 (UI Setup)
+- **User Story 8 (Text Editor UI)**: Can start after Phase 11 (Core UI Components)
+- **User Story 9 (Canvas Editor UI)**: Can start after Phase 11 (Core UI Components)
+- **User Story 10 (UI Sync)**: Can start after US8 and US9 have Observer integration
 
 ### Parallel Opportunities
 
-- All Setup tasks marked [P] can run in parallel
-- All test tasks within a story marked [P] can run in parallel
-- US1 and US2 can run in parallel after Foundational phase
-- US3, US4, US5, US6 can run in parallel after Foundational phase
-- Within US2: Color, Point/Size structs can be created in parallel (T036, T037)
-- Within US2: All command tests (T031-T035) can be written in parallel
+- T090 (UI folder) and T091 (Observer tests) can run in parallel
+- T100 (Color+UIKit) and T101 (UndoRedoToolbarView) can run in parallel
+- Phase 13 (Text Editor) and Phase 14 (Canvas Editor) can run in parallel
+- Within Phase 14: T125-T126 (ShapeView skeleton) can run in parallel with T133 (CanvasView skeleton)
 
 ---
 
-## Parallel Example: User Story 2
+## Parallel Example: Phase 14 (Canvas Editor)
 
 ```bash
-# Launch all tests for User Story 2 together:
-Task: "Write Color struct tests" (T027)
-Task: "Write Point, Size struct tests" (T028)
-Task: "Write Shape protocol tests" (T029)
-Task: "Write Canvas tests" (T030)
-Task: "Write AddShapeCommand tests" (T031)
-Task: "Write RemoveShapeCommand tests" (T032)
-Task: "Write MoveShapeCommand tests" (T033)
-Task: "Write ResizeShapeCommand tests" (T034)
-Task: "Write ChangeColorCommand tests" (T035)
+# Launch ShapeView and CanvasView in parallel:
+Task: "Create ShapeView class skeleton" (T125)
+Task: "Create CanvasView class skeleton" (T133)
 
-# Launch foundation types in parallel:
-Task: "Create Color struct" (T036)
-Task: "Create Point and Size structs" (T037)
+# After skeletons are ready, implementation can proceed
 ```
 
 ---
 
 ## Implementation Strategy
 
-### MVP First (User Stories 1 + 2 Only)
+### UI MVP First (US7 + US8 Only)
 
-1. Complete Phase 1: Setup
-2. Complete Phase 2: Foundational (CRITICAL - blocks all stories)
-3. Complete Phase 3: User Story 1 (文章編輯器基本編輯)
-4. Complete Phase 4: User Story 2 (畫布編輯器圖形操作)
-5. **STOP and VALIDATE**: Test both stories independently
-6. Deploy/demo if ready - Core undo/redo functionality complete
+1. Complete Phase 10: UI Setup + Observer Pattern
+2. Complete Phase 11: Core UI Components
+3. Complete Phase 12: Demo Hub (US7)
+4. Complete Phase 13: Text Editor UI (US8)
+5. **STOP and VALIDATE**: Test text editing with Undo/Redo
+6. Demo if ready - Text Editor UI functional
 
-### Incremental Delivery
+### Full UI Implementation
 
-1. Complete Setup + Foundational → Foundation ready
-2. Add User Story 1 → Test independently → Demo (Basic text editor)
-3. Add User Story 2 → Test independently → Demo (Basic canvas editor)
-4. Add User Story 3 → Test independently → Demo (Text styles)
-5. Add User Story 4 → Test independently → Demo (State display)
-6. Add User Story 5 → Test independently → Demo (Command coalescing)
-7. Add User Story 6 → Test independently → Demo (Command groups)
-8. Each story adds value without breaking previous stories
+1. Complete Phase 10-13 (MVP)
+2. Add Phase 14: Canvas Editor UI (US9)
+3. Add Phase 15: UI Sync verification (US10)
+4. Complete Phase 16: Integration & Polish
+5. **FULL DEMO**: Both editors with complete Undo/Redo functionality
 
 ### Parallel Team Strategy
 
-With multiple developers:
+With two developers:
 
-1. Team completes Setup + Foundational together
-2. Once Foundational is done:
-   - Developer A: User Story 1 (Text Editor)
-   - Developer B: User Story 2 (Canvas Editor)
-3. After US1/US2 complete:
-   - Developer A: User Story 3 (Text Styles)
-   - Developer B: User Story 4 (State Display)
-4. Stories complete and integrate independently
+1. Both complete Phase 10-11 together
+2. Developer A: Phase 12 (Demo Hub) → Phase 13 (Text Editor)
+3. Developer B: Phase 14 (Canvas Editor)
+4. Both: Phase 15-16 (Integration)
+
+---
+
+## Summary
+
+### Total Tasks
+
+| Part | Phases | Task Count | Status |
+|------|--------|------------|--------|
+| Model Layer | 1-9 | T001-T089 (89 tasks) | ✅ 完成 |
+| UI Layer | 10-16 | T090-T177 (88 tasks) | ⏳ 待實作 |
+| **Total** | **1-16** | **177 tasks** | |
+
+### Tasks per UI User Story
+
+| User Story | Phase | Task IDs | Count |
+|------------|-------|----------|-------|
+| US7 (Demo Hub) | 12 | T104-T107 | 4 |
+| US8 (Text Editor UI) | 13 | T108-T124 | 17 |
+| US9 (Canvas Editor UI) | 14 | T125-T160 | 36 |
+| US10 (UI Sync) | 15 | T161-T165 | 5 |
+| Setup & Integration | 10, 11, 16 | T090-T103, T166-T177 | 26 |
+
+### Suggested MVP Scope
+
+**UI MVP**: Phase 10 + 11 + 12 + 13 (T090-T124, 35 tasks)
+- Observer Pattern 支援
+- Core UI 元件
+- Demo Hub
+- 文字編輯器 UI
 
 ---
 
@@ -351,8 +348,6 @@ With multiple developers:
 - [P] tasks = different files, no dependencies
 - [Story] label maps task to specific user story for traceability
 - Each user story should be independently completable and testable
-- **TDD is mandatory**: Verify tests FAIL before implementing
-- Commit after each task or logical group
-- Stop at any checkpoint to validate story independently
-- All Model layer code MUST only import Foundation (no UIKit)
+- UI layer files MUST only import UIKit and Foundation
+- Model layer files remain Foundation-only (no UIKit)
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
