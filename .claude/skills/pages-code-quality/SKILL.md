@@ -1,6 +1,6 @@
 ---
 name: pages-code-quality
-description: PAGEs 代碼品質規範。Use when writing closures with weak self, handling memory management, using Logger.log, or working with XcodeGen file operations.
+description: PAGEs 代碼品質規範。MUST load when planning, writing, reviewing, debugging, or troubleshooting ANY Swift code. Covers weak self, memory management, Logger.log, XcodeGen file operations. 任何涉及 Swift 代碼撰寫、審查、問題排查的任務都必須載入此 skill。
 ---
 
 # PAGEs Code Quality Rules
@@ -45,13 +45,8 @@ memory_management:
 
     examples:
       correct: |
-        // ✅ 正確:使用 [weak self] 和 guard let self
-        .sink { [weak self] data in
-            guard let self else { return }
-            updateUI(data)              // ✅ 不使用 self. 前綴
-            processData(data)           // ✅ 不使用 self. 前綴
-            viewModel.refresh()         // ✅ 不使用 self. 前綴
-        }
+        # 👉 Quick Reference: 見 CLAUDE.md「Weak Self 處理」
+        # 詳細錯誤示範見下方 incorrect_* 區塊
 
       incorrect_self_prefix: |
         // ❌ 錯誤:guard let self 後仍使用 self. 前綴
@@ -180,12 +175,13 @@ project_management:
       rule: "NEVER manually edit .xcodeproj or project.pbxproj files"
 
     file_operations_workflow:
-      rule: "所有檔案操作後必須自動執行 xcodegen generate"
+      rule: "所有檔案操作後必須執行 xcodegen generate → pod install → 編譯驗證"
 
       after_add_file:
         steps:
           - "Add file to appropriate directory"
           - "Auto-execute: cd CMProductionLego && xcodegen generate"
+          - "Auto-execute: cd CMProductionLego && pod install"
           - "Verify: plutil -lint CMProductionLego/CMProductionLego.xcodeproj/project.pbxproj"
           - "Verify build succeeds"
 
@@ -193,16 +189,20 @@ project_management:
         steps:
           - "Delete file from sources directory"
           - "Auto-execute: cd CMProductionLego && xcodegen generate"
+          - "Auto-execute: cd CMProductionLego && pod install"
           - "Verify build succeeds"
 
       after_move_file:
         steps:
           - "Move file to new location"
           - "Auto-execute: cd CMProductionLego && xcodegen generate"
+          - "Auto-execute: cd CMProductionLego && pod install"
           - "Verify build succeeds"
 
     commands:
       generate: "cd CMProductionLego && xcodegen generate"
+      pod_install: "cd CMProductionLego && pod install"
+      full_regenerate: "cd CMProductionLego && xcodegen generate && pod install"
       validate: "plutil -lint CMProductionLego/CMProductionLego.xcodeproj/project.pbxproj"
 
     forbidden_operations:
@@ -293,7 +293,7 @@ best_practices:
     - "重要操作和錯誤都要 log"
 
   project_management:
-    - "檔案操作後自動執行 xcodegen generate"
+    - "檔案操作後執行 xcodegen generate → pod install"
     - "修改 project.yml 而非 .xcodeproj"
     - "確保 build 成功"
 ```

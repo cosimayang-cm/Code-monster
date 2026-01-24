@@ -1,9 +1,12 @@
 ---
 name: pages-architecture
-description: PAGEs Framework Clean Architecture 架構規範。Use when implementing ViewModels, UseCases, Managers, Repositories, discussing data flow, dependency injection, or StateManager usage.
+description: PAGEs Framework Clean Architecture 架構規範。MUST load when planning, designing, implementing, reviewing, debugging, or troubleshooting ANY iOS feature or code issue. Covers ViewModels, UseCases, Managers, Repositories, data flow, dependency injection, StateManager, AddInfoInitializer. 任何涉及功能規劃、架構設計、代碼實作、問題排查的任務都必須載入此 skill。
+triggers: ViewModel, UseCase, Manager, Repository, DataSource, 依賴注入, StateManager, AddInfoInitializer, CMAddInfo, CMHistoryStrategy, CMRealTimeStrategy, ApiConfig
 ---
 
 # PAGEs Framework Architecture Rules
+
+> **SSOT 提示**: 檔案結構規範、資料類型定義、Mapper 使用規範請參閱 `CLAUDE.md` 中的 `file_structure`、`data_types`、`mapper_usage` 區塊。
 
 ```yaml
 # ============================================
@@ -13,11 +16,11 @@ description: PAGEs Framework Clean Architecture 架構規範。Use when implemen
 # 此檔案定義 CMProductionPAGE 專案的核心架構規則
 # 所有 agents (ios-developer, ios-code-reviewer 等) 必須遵循此規範
 #
-# 版本: 1.0.0
-# 最後更新: 2025-11-03
+# 版本: 1.1.0
+# 最後更新: 2026-01-12
 # ============================================
 
-version: "1.0.0"
+version: "1.1.0"
 framework: "PAGEs Framework Clean Architecture"
 
 # ============================================
@@ -102,29 +105,13 @@ dependency_injection:
         }
 
       correct_with_statemanager: |
-        // ✅ 狀態管理 - 注入 StateManager
-        public class StockPriceVM: CMViewModel {
-            private let useCase: GetStockPriceUseCase
-            private let stateManager: StateManager
-
-            public init(parameter: StockPriceParameter,
-                        useCase: GetStockPriceUseCase,
-                        stateManager: StateManager) {
-                self.useCase = useCase
-                self.stateManager = stateManager
-            }
-
-            func subscribeToUpdates() {
-                stateManager.subscribe(to: "StockPriceUpdated") { [weak self] price in
-                    guard let self else { return }
-                    handlePriceUpdate(price)
-                }
-            }
-
-            func publishPriceUpdate(_ price: Double) {
-                stateManager.send(name: "StockPriceUpdated", value: price)
-            }
-        }
+        # 👉 Quick Reference: 見 CLAUDE.md「v2.0 StateManager Pattern」
+        #
+        # 核心要點：
+        # - ViewModel 注入 StateManager（非 ViewComponent）
+        # - 使用 stateManager.subscribe() 訂閱狀態變化
+        # - 使用 stateManager.send() 發送狀態更新
+        # - 閉包中使用 [weak self] + guard let self
 
       incorrect_shared_access: |
         // ❌ 禁止使用 .shared
@@ -169,6 +156,8 @@ dependency_injection:
       - "直接存取 UseCase"
       - "直接存取 Manager"
       - "使用 PAGEs.shared.xxxManager"
+      - "保存業務狀態 (業務狀態應由 ViewModel 管理)"
+      - "包含業務邏輯 (業務邏輯應放在 ViewModel)"
 
   # UseCase 層級
   usecase:
@@ -299,6 +288,173 @@ state_management:
     subscribe:
       signature: "subscribe(to: String, uuid: String, type: T.Type, handler: (T) -> Void)"
       usage: "ViewModel 代替 ViewComponent 訂閱狀態"
+
+# ============================================
+# AddInfoInitializer 架構規範
+# ============================================
+# AddInfoInitializer 是用於管理「附加資訊」初始化的模組
+# 採用 Strategy Pattern 處理不同資料類型的即時/回補/快取策略
+# ============================================
+
+add_info_initializer:
+  location: "Page/Core/Domain/Entities/AddInfoInitializer/"
+
+  description: |
+    AddInfoInitializer 模組負責初始化各種附加資訊的資料取得策略，
+    包含即時資料、歷史回補、快取策略等。透過 Strategy Pattern
+    讓新增資料類型時不需修改既有程式碼。
+
+  # 核心 Protocol 定義
+  core_protocols:
+    AddInfoInitializer:
+      inherits: "CMAddInfo (from CMWebSocketKit)"
+      location: "Protocol/AddInfoInitializer.swift"
+      purpose: "所有附加資訊初始化器的統一介面"
+      required_properties:
+        - "strategyKey: String - 策略識別鍵"
+        - "realTimeStrategy: CMRealTimeStrategy? - 即時資料策略"
+        - "historyStrategy: CMHistoryStrategy? - 回補資料策略"
+        - "cacheStrategy: CMInfoDataCacheStrategy - 快取策略"
+
+    AddInfoDataResultDTO:
+      inherits: "CMInfoData (from CMWebSocketKit)"
+      location: "Protocol/AddInfoDataResultDTO.swift"
+      purpose: "附加資訊資料結果的統一介面"
+      required_properties:
+        - "target: String - 目標標的"
+
+  # 目錄結構
+  directory_structure:
+    pattern: |
+      AddInfoInitializer/
+      ├── Protocol/                     # 核心協議定義
+      │   ├── AddInfoInitializer.swift
+      │   └── AddInfoDataResultDTO.swift
+      ├── {DataType}/                   # 各資料類型目錄
+      │   ├── ApiConfig/                # API 配置
+      │   │   └── {Market}{DataType}ApiConfig.swift
+      │   ├── {DataType}DTO/            # 資料傳輸物件
+      │   │   ├── {DataType}DTO.swift   # Protocol
+      │   │   └── {Market}{DataType}DTO.swift
+      │   └── Strategy/                 # 策略實作
+      │       ├── {DataType}HistoryStrategy.swift
+      │       └── {DataType}RealTimeStrategy.swift
+      └── {DataType}AddInfoInitializer.swift  # 主要實作
+
+    existing_data_types:
+      - "CalculationByTargets - 股票/期貨計算資料"
+      - "CandlestickChart - K線圖資料"
+      - "Commodity - 商品基本資料"
+      - "CommoditySettlementPrice - 結算價資料"
+      - "TickAverage - 均價資料"
+
+  # 組件職責
+  components:
+    Initializer:
+      naming: "{DataType}AddInfoInitializer"
+      purpose: "組裝策略並提供統一入口"
+      must_implement: "AddInfoInitializer protocol"
+      example: |
+        public struct CandlestickChartAddInfoInitializer<DTO: CandlesticksDTO>: AddInfoInitializer {
+            public var strategyKey: String
+            public var realTimeStrategy: CMRealTimeStrategy?
+            public var historyStrategy: CMHistoryStrategy?
+            public var cacheStrategy: CMInfoDataCacheStrategy
+
+            public init(target: String,
+                        minuteInterval: Int,
+                        apiConfig: CMGetMultipleHistoryConfig,
+                        market: String) {
+                strategyKey = "TW\(apiConfig.dataType)_\(target)_\(minuteInterval)"
+                historyStrategy = CandlestickChartHistoryStrategy<DTO>(...)
+                cacheStrategy = CMInfoDataCacheStrategy(storage: .onlyMemory,
+                                                        clear: .serverCommodityValidTimeByMarket(market: market))
+            }
+        }
+
+    ApiConfig:
+      naming: "{Market}{DataType}ApiConfig"
+      purpose: "定義 API 請求的配置參數"
+      must_implement: "CMGetTargetHistoryConfig 或 CMGetMultipleHistoryConfig"
+      required_properties:
+        - "dataType: String"
+        - "columns: [String]"
+        - "keyNamePath: [String]"
+        - "json: String"
+      example: |
+        public struct TWStockCalculationHistoryApiConfig: CMGetTargetHistoryConfig {
+            public var dataType: String = "StockCalculation"
+            public var columns: [String] = ["標的", "即時成交價", ...]
+            public var keyNamePath: [String] = ["Commodity", "CommKey"]
+            public var json: String
+
+            public init(targets: [String]) {
+                let jsonString = targets.map { "\"\($0)\"" }.joined(separator: ",")
+                self.json = "[\(jsonString)]"
+            }
+        }
+
+    Strategy:
+      naming: "{DataType}HistoryStrategy / {DataType}RealTimeStrategy"
+      purpose: "實作資料取得和轉換邏輯"
+      history_strategy:
+        must_implement: "CMHistoryStrategy"
+        required_methods:
+          - "convertData(rowData:) -> [CMInfoData]"
+          - "mergeData(originData:newData:) -> CMInfoData?"
+      realtime_strategy:
+        must_implement: "CMRealTimeStrategy"
+      example: |
+        public struct CalculationByTargetsHistoryStrategy<DTO: CalculationDataDTO>: CMHistoryStrategy {
+            public var stepQueue: [CMHistoryStep] = [.api]
+            public var apiMethod: CMHistoryApiMethod
+
+            public func convertData(rowData: [[String]]) -> [CMInfoData] {
+                return rowData.compactMap { DTO.init(columnNames: columnNames, rowData: $0) }
+            }
+
+            public func mergeData(originData: CMInfoData, newData: CMInfoData) -> CMInfoData? {
+                guard let originData = originData as? DTO,
+                      let newData = newData as? DTO else { return nil }
+                return newData.sn > originData.sn ? newData : originData
+            }
+        }
+
+    DataDTO:
+      naming: "{DataType}DTO (Protocol) / {Market}{DataType}DTO (Implementation)"
+      purpose: "定義資料結構"
+      must_implement: "AddInfoDataResultDTO"
+      common_properties:
+        - "target: String"
+        - "sn: Int (傳輸序號，用於 merge 判斷)"
+        - "keyValueDic: [String: String]"
+
+  # 新增資料類型流程
+  adding_new_data_type:
+    steps:
+      - step: 1
+        action: "建立 {DataType}DTO Protocol"
+        location: "{DataType}/{DataType}DTO/{DataType}DTO.swift"
+        note: "繼承 AddInfoDataResultDTO"
+      - step: 2
+        action: "建立各市場的 DTO 實作"
+        location: "{DataType}/{DataType}DTO/{Market}{DataType}DTO.swift"
+      - step: 3
+        action: "建立 ApiConfig"
+        location: "{DataType}/ApiConfig/{Market}{DataType}ApiConfig.swift"
+      - step: 4
+        action: "建立 Strategy"
+        location: "{DataType}/Strategy/{DataType}HistoryStrategy.swift"
+      - step: 5
+        action: "建立 Initializer"
+        location: "{DataType}AddInfoInitializer.swift 或 AddInfoByTargetsInitializer 泛型使用"
+
+  # 禁止事項
+  forbidden:
+    - "在 Initializer 中直接實作資料轉換邏輯（應放在 Strategy）"
+    - "在 Strategy 中硬編碼 API 配置（應使用 ApiConfig）"
+    - "多個市場共用同一個 DTO 實作（各市場應有獨立 DTO）"
+    - "跳過 Protocol 直接實作具體類型"
 
 # ============================================
 # 違規處理
