@@ -6,12 +6,13 @@ import PackageDescription
 let package = Package(
     name: "UndoRedoSystem",
     platforms: [
-        .iOS(.v15),
-        .macOS(.v12)
+        .iOS(.v15),      // For framework only
+        .macOS(.v12)     // For framework and demo app
     ],
     products: [
         .library(
             name: "UndoRedoSystem",
+            type: .dynamic,
             targets: ["UndoRedoSystem"]
         ),
         .executable(
