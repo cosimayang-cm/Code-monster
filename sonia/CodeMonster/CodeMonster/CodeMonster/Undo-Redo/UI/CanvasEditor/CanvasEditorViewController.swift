@@ -108,6 +108,8 @@ final class CanvasEditorViewController: UIViewController, CommandHistoryObserver
         let addRectButton = UIBarButtonItem(title: "▢", style: .plain, target: self, action: #selector(addRectangleTapped))
         let addCircleButton = UIBarButtonItem(title: "○", style: .plain, target: self, action: #selector(addCircleTapped))
         let addLineButton = UIBarButtonItem(title: "╱", style: .plain, target: self, action: #selector(addLineTapped))
+        let scaleUpButton = UIBarButtonItem(title: "➕", style: .plain, target: self, action: #selector(scaleUpTapped))
+        let scaleDownButton = UIBarButtonItem(title: "➖", style: .plain, target: self, action: #selector(scaleDownTapped))
         let deleteButton = UIBarButtonItem(title: "🗑", style: .plain, target: self, action: #selector(deleteSelectedTapped))
         let colorButton = UIBarButtonItem(title: "🎨", style: .plain, target: self, action: #selector(changeColorTapped))
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
@@ -117,6 +119,8 @@ final class CanvasEditorViewController: UIViewController, CommandHistoryObserver
         addRectButton.setTitleTextAttributes(attributes, for: .normal)
         addCircleButton.setTitleTextAttributes(attributes, for: .normal)
         addLineButton.setTitleTextAttributes(attributes, for: .normal)
+        scaleUpButton.setTitleTextAttributes(attributes, for: .normal)
+        scaleDownButton.setTitleTextAttributes(attributes, for: .normal)
         deleteButton.setTitleTextAttributes(attributes, for: .normal)
         colorButton.setTitleTextAttributes(attributes, for: .normal)
 
@@ -127,6 +131,9 @@ final class CanvasEditorViewController: UIViewController, CommandHistoryObserver
             UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil),
             addLineButton,
             flexSpace,
+            scaleUpButton,
+            scaleDownButton,
+            UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil),
             deleteButton,
             UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil),
             colorButton
@@ -219,6 +226,46 @@ final class CanvasEditorViewController: UIViewController, CommandHistoryObserver
             fillColor: newColor,
             strokeColor: shape.strokeColor
         )
+        history.execute(command)
+        refreshCanvasView()
+    }
+
+    @objc private func scaleUpTapped() {
+        resizeSelectedShape(scaleFactor: 1.2)
+    }
+
+    @objc private func scaleDownTapped() {
+        resizeSelectedShape(scaleFactor: 0.8)
+    }
+
+    private func resizeSelectedShape(scaleFactor: Double) {
+        guard let selectedId = canvasView.selectedShapeId,
+              let shape = canvas.shape(withId: selectedId) else {
+            let alert = UIAlertController(title: "提示", message: "請先點選要縮放的圖形", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "確定", style: .default))
+            present(alert, animated: true)
+            return
+        }
+
+        // 計算新尺寸
+        let newSize: Size
+        if let rect = shape as? Rectangle {
+            newSize = Size(
+                width: rect.size.width * scaleFactor,
+                height: rect.size.height * scaleFactor
+            )
+        } else if let circle = shape as? Circle {
+            let diameter = circle.radius * 2 * scaleFactor
+            newSize = Size(width: diameter, height: diameter)
+        } else {
+            // 線條不支援縮放
+            let alert = UIAlertController(title: "提示", message: "線條不支援縮放", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "確定", style: .default))
+            present(alert, animated: true)
+            return
+        }
+
+        let command = ResizeShapeCommand(canvas: canvas, shapeId: selectedId, newSize: newSize)
         history.execute(command)
         refreshCanvasView()
     }
