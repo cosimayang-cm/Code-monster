@@ -294,3 +294,241 @@ Canvas
                        ├──resize──► [InCanvas]
                        └──changeColor──► [InCanvas]
 ```
+
+---
+
+# UI Layer Entities (2026-01-23)
+
+## Observer Pattern
+
+### CommandHistoryObserver (Protocol)
+
+```swift
+protocol CommandHistoryObserver: AnyObject {
+    func commandHistoryDidChange(_ history: CommandHistory)
+}
+```
+
+| Method | Description |
+|--------|-------------|
+| commandHistoryDidChange(_:) | 當 CommandHistory 狀態變化時被呼叫 |
+
+---
+
+### WeakObserver
+
+```swift
+struct WeakObserver {
+    weak var observer: CommandHistoryObserver?
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| observer | CommandHistoryObserver? | 弱引用的觀察者 |
+
+---
+
+### CommandHistory (Updated)
+
+```swift
+class CommandHistory {
+    // ... existing properties ...
+
+    private var observers: [WeakObserver] = []
+
+    func addObserver(_ observer: CommandHistoryObserver)
+    func removeObserver(_ observer: CommandHistoryObserver)
+    private func notifyObservers()
+}
+```
+
+**New Methods**:
+| Method | Description |
+|--------|-------------|
+| addObserver(_:) | 註冊觀察者 |
+| removeObserver(_:) | 移除觀察者 |
+| notifyObservers() | 通知所有觀察者（私有） |
+
+**Behavior Update**:
+- `execute()`, `undo()`, `redo()` 結尾呼叫 `notifyObservers()`
+
+---
+
+## UI Components
+
+### Color+UIKit Extension
+
+```swift
+extension Color {
+    var uiColor: UIColor {
+        UIColor(red: red, green: green, blue: blue, alpha: alpha)
+    }
+}
+```
+
+---
+
+### UndoRedoToolbarView
+
+```swift
+class UndoRedoToolbarView: UIView {
+    var onUndo: (() -> Void)?
+    var onRedo: (() -> Void)?
+
+    func updateState(canUndo: Bool, canRedo: Bool)
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| onUndo | (() -> Void)? | Undo 按鈕點擊回調 |
+| onRedo | (() -> Void)? | Redo 按鈕點擊回調 |
+
+| Method | Description |
+|--------|-------------|
+| updateState(canUndo:canRedo:) | 更新按鈕啟用狀態 |
+
+---
+
+## View Controllers
+
+### UndoRedoDemoViewController
+
+```swift
+class UndoRedoDemoViewController: UIViewController {
+    // Demo Hub - 展示入口
+    // 導覽至 TextEditorViewController 或 CanvasEditorViewController
+}
+```
+
+---
+
+### TextEditorViewController
+
+```swift
+class TextEditorViewController: UIViewController, CommandHistoryObserver {
+    private let document = TextDocument()
+    private let history = CommandHistory()
+    private let textView = UITextView()
+
+    func commandHistoryDidChange(_ history: CommandHistory)
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| document | TextDocument | 文字文件 (Model) |
+| history | CommandHistory | 命令歷史 |
+| textView | UITextView | 文字顯示區域 |
+
+---
+
+### CanvasEditorViewController
+
+```swift
+class CanvasEditorViewController: UIViewController, CommandHistoryObserver {
+    private let canvas = Canvas()
+    private let history = CommandHistory()
+    private let canvasView = CanvasView()
+
+    func commandHistoryDidChange(_ history: CommandHistory)
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| canvas | Canvas | 畫布 (Model) |
+| history | CommandHistory | 命令歷史 |
+| canvasView | CanvasView | 畫布視圖 |
+
+---
+
+## Canvas Views
+
+### ShapeView
+
+```swift
+class ShapeView: UIView {
+    let shapeId: UUID
+    var shape: any Shape
+    weak var delegate: ShapeViewDelegate?
+
+    override func draw(_ rect: CGRect)
+}
+
+protocol ShapeViewDelegate: AnyObject {
+    func shapeView(_ view: ShapeView, didMoveBy offset: Point)
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| shapeId | UUID | 對應的 Shape ID |
+| shape | any Shape | 圖形資料 |
+| delegate | ShapeViewDelegate? | 移動事件代理 |
+
+---
+
+### CanvasView
+
+```swift
+class CanvasView: UIView {
+    private var shapeViews: [UUID: ShapeView] = [:]
+    weak var delegate: CanvasViewDelegate?
+
+    func sync(with canvas: Canvas)
+}
+
+protocol CanvasViewDelegate: AnyObject {
+    func canvasView(_ view: CanvasView, didMoveShape id: UUID, by offset: Point)
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| shapeViews | [UUID: ShapeView] | Shape ID → ShapeView 映射 |
+| delegate | CanvasViewDelegate? | 畫布事件代理 |
+
+| Method | Description |
+|--------|-------------|
+| sync(with:) | 同步 Model Canvas 狀態到 UI |
+
+---
+
+## UI Entity Relationships
+
+```
+UndoRedoDemoViewController
+    ├──► TextEditorViewController
+    │        ├── TextDocument (Model)
+    │        ├── CommandHistory ──► [CommandHistoryObserver]
+    │        └── UITextView
+    │
+    └──► CanvasEditorViewController
+             ├── Canvas (Model)
+             ├── CommandHistory ──► [CommandHistoryObserver]
+             └── CanvasView
+                     └── [ShapeView] ──► Shape (Model)
+```
+
+---
+
+## UI State Flow
+
+```
+User Action (button/gesture)
+    │
+    ▼
+ViewController creates Command
+    │
+    ▼
+history.execute(command)
+    │
+    ├── command.execute() ──► Model updated
+    │
+    └── notifyObservers() ──► commandHistoryDidChange()
+                                      │
+                                      ▼
+                              UI updates (buttons, view)
+```
