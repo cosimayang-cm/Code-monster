@@ -18,8 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // 創建 window
         let window = UIWindow(windowScene: windowScene)
         
-        // 設置根 ViewController - 使用 PopupDebugViewController 測試彈窗系統
-        let viewController = PopupDebugViewController()
+        // 設置根 ViewController - Undo/Redo Demo Hub
+        let viewController = UndoRedoDemoViewController()
         let navigationController = UINavigationController(rootViewController: viewController)
         window.rootViewController = navigationController
         
