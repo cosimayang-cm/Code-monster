@@ -1,3 +1,10 @@
+//
+//  Color.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// Color - UIKit-independent 顏色結構

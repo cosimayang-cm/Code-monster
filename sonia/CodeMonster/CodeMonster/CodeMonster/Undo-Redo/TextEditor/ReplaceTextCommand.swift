@@ -1,3 +1,10 @@
+//
+//  ReplaceTextCommand.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// ReplaceTextCommand - 取代文字的命令

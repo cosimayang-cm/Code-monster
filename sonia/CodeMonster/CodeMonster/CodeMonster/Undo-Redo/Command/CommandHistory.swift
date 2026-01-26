@@ -1,3 +1,10 @@
+//
+//  CommandHistory.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// CommandHistory - 管理命令歷史的協調者

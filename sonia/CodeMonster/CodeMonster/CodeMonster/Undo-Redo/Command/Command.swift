@@ -1,3 +1,10 @@
+//
+//  Command.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// Command protocol - 代表一個可執行、可撤銷的操作

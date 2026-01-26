@@ -1,3 +1,10 @@
+//
+//  Canvas.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// Canvas - 畫布編輯器的接收者 (Receiver)

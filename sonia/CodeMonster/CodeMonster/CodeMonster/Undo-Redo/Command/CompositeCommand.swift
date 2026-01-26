@@ -1,3 +1,10 @@
+//
+//  CompositeCommand.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// CompositeCommand - 複合命令，將多個命令組合為一個原子操作

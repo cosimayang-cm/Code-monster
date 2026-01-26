@@ -1,3 +1,10 @@
+//
+//  AddShapeCommand.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// AddShapeCommand - 新增圖形的命令

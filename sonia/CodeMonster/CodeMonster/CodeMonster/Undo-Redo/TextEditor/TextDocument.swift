@@ -1,3 +1,10 @@
+//
+//  TextDocument.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// TextDocument - 文字編輯器的接收者 (Receiver)

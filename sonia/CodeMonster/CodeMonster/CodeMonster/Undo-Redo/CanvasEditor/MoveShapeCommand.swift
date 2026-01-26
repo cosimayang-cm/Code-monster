@@ -1,3 +1,10 @@
+//
+//  MoveShapeCommand.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// MoveShapeCommand - 移動圖形的命令

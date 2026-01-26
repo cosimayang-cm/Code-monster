@@ -1,3 +1,10 @@
+//
+//  ApplyStyleCommand.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// ApplyStyleCommand - 套用樣式的命令

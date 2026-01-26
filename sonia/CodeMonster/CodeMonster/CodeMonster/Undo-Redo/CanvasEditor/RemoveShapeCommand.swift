@@ -1,3 +1,10 @@
+//
+//  RemoveShapeCommand.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// RemoveShapeCommand - 移除圖形的命令

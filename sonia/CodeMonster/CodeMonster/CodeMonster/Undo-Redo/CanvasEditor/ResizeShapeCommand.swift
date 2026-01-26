@@ -1,3 +1,10 @@
+//
+//  ResizeShapeCommand.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// ResizeShapeCommand - 縮放圖形的命令

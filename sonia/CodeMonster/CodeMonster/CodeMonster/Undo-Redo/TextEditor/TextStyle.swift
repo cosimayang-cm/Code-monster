@@ -1,3 +1,10 @@
+//
+//  TextStyle.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 // MARK: - TextStyle

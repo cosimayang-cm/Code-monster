@@ -1,3 +1,10 @@
+//
+//  DeleteTextCommand.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// DeleteTextCommand - 刪除文字的命令

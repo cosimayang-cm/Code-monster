@@ -1,3 +1,10 @@
+//
+//  ChangeColorCommand.swift
+//  CodeMonster
+//
+//  Created by Claude on 2026/1/23.
+//
+
 import Foundation
 
 /// ChangeColorCommand - 變更圖形顏色的命令
