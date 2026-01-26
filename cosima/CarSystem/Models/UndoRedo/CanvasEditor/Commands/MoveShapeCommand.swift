@@ -27,8 +27,8 @@ final class MoveShapeCommand: Command {
     /// 命令描述
     var description: String { "移動圖形" }
     
-    /// 目標畫布
-    private let canvas: Canvas
+    /// 目標畫布（weak 避免循環引用）
+    private weak var canvas: Canvas?
     
     /// 要移動的圖形 ID
     private let shapeId: UUID
@@ -39,8 +39,8 @@ final class MoveShapeCommand: Command {
     /// 移動前的位置（execute 後設定，供 undo 使用）
     private var originalPosition: Point?
     
-    /// 命令建立時間（用於合併判斷）
-    let timestamp: Date
+    /// 命令建立時間（用於合併判斷，合併時會更新）
+    private(set) var timestamp: Date
     
     // MARK: - Initialization
     
@@ -60,22 +60,45 @@ final class MoveShapeCommand: Command {
     // MARK: - Command Protocol
     
     func execute() {
-        guard let shape = canvas.shape(withId: shapeId) else { return }
-        
+        guard let canvas = canvas else {
+            UndoRedoLogger.warning("Canvas 已被釋放，無法執行", context: "MoveShapeCommand")
+            return
+        }
+        guard let shape = canvas.shape(withId: shapeId) else {
+            UndoRedoLogger.warning("找不到圖形", context: "MoveShapeCommand", details: ["shapeId": shapeId.uuidString])
+            return
+        }
+
         // 保存原位置
         if originalPosition == nil {
             originalPosition = shape.position
         }
-        
+
         // 移動
         shape.position = shape.position.offset(by: offset)
+
+        // 通知 UI 更新
+        canvas.notifyShapesChanged()
     }
-    
+
     func undo() {
-        guard let shape = canvas.shape(withId: shapeId),
-              let original = originalPosition else { return }
-        
+        guard let canvas = canvas else {
+            UndoRedoLogger.warning("Canvas 已被釋放，無法撤銷", context: "MoveShapeCommand")
+            return
+        }
+        guard let shape = canvas.shape(withId: shapeId) else {
+            UndoRedoLogger.warning("找不到圖形，無法撤銷", context: "MoveShapeCommand", details: ["shapeId": shapeId.uuidString])
+            return
+        }
+        guard let original = originalPosition else {
+            UndoRedoLogger.warning("無原始位置紀錄，無法撤銷", context: "MoveShapeCommand")
+            return
+        }
+
         shape.position = original
+
+        // 通知 UI 更新
+        canvas.notifyShapesChanged()
     }
 }
 
@@ -96,12 +119,16 @@ extension MoveShapeCommand: CoalescibleCommand {
               isWithinCoalescingWindow(of: other) else {
             return false
         }
-        
+
         // 合併偏移量
         self.offset = Point(
             x: self.offset.x + other.offset.x,
             y: self.offset.y + other.offset.y
         )
+
+        // 更新時間戳記，確保下一次合併判斷使用最新時間
+        self.timestamp = other.timestamp
+
         return true
     }
 }

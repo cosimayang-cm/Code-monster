@@ -186,6 +186,43 @@ final class Line: Shape {
     }
 }
 
+// MARK: - 手繪路徑
+
+/// 手繪路徑圖形（自由繪圖）
+final class Path: Shape {
+    let id: UUID
+    var position: Point  // 第一個點
+    var points: [Point]  // 所有點
+    var fillColor: Color
+    var strokeColor: Color
+    var lineWidth: Double
+
+    var typeName: String { "手繪" }
+
+    init(
+        id: UUID = UUID(),
+        points: [Point],
+        strokeColor: Color = .black,
+        lineWidth: Double = 3.0
+    ) {
+        self.id = id
+        self.position = points.first ?? .zero
+        self.points = points
+        self.fillColor = .clear
+        self.strokeColor = strokeColor
+        self.lineWidth = lineWidth
+    }
+
+    func snapshot() -> ShapeSnapshot {
+        return .path(
+            id: id,
+            points: points,
+            strokeColor: strokeColor,
+            lineWidth: lineWidth
+        )
+    }
+}
+
 // MARK: - ShapeSnapshot
 
 /// 圖形快照 - 值類型，用於 Memento Pattern
@@ -196,7 +233,8 @@ enum ShapeSnapshot: Equatable, Codable {
     case rectangle(id: UUID, position: Point, size: Size, fillColor: Color, strokeColor: Color)
     case circle(id: UUID, position: Point, radius: Double, fillColor: Color, strokeColor: Color)
     case line(id: UUID, startPoint: Point, endPoint: Point, strokeColor: Color)
-    
+    case path(id: UUID, points: [Point], strokeColor: Color, lineWidth: Double)
+
     /// 從快照建立圖形實例
     func restore() -> Shape {
         switch self {
@@ -206,15 +244,18 @@ enum ShapeSnapshot: Equatable, Codable {
             return Circle(id: id, position: position, radius: radius, fillColor: fillColor, strokeColor: strokeColor)
         case .line(let id, let startPoint, let endPoint, let strokeColor):
             return Line(id: id, startPoint: startPoint, endPoint: endPoint, strokeColor: strokeColor)
+        case .path(let id, let points, let strokeColor, let lineWidth):
+            return Path(id: id, points: points, strokeColor: strokeColor, lineWidth: lineWidth)
         }
     }
-    
+
     /// 圖形 ID
     var id: UUID {
         switch self {
         case .rectangle(let id, _, _, _, _): return id
         case .circle(let id, _, _, _, _): return id
         case .line(let id, _, _, _): return id
+        case .path(let id, _, _, _): return id
         }
     }
 }

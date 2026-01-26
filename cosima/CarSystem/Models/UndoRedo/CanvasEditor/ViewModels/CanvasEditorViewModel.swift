@@ -147,7 +147,26 @@ final class CanvasEditorViewModel: ObservableObject {
         history.execute(command)
         return line
     }
-    
+
+    /// 新增手繪路徑
+    ///
+    /// - Parameters:
+    ///   - points: 路徑上的所有點
+    ///   - strokeColor: 線條顏色
+    ///   - lineWidth: 線條寬度
+    /// - Returns: 新建的路徑
+    @discardableResult
+    func addPath(
+        points: [Point],
+        strokeColor: Color = .black,
+        lineWidth: Double = 3.0
+    ) -> Path {
+        let path = Path(points: points, strokeColor: strokeColor, lineWidth: lineWidth)
+        let command = AddShapeCommand(canvas: canvas, shape: path)
+        history.execute(command)
+        return path
+    }
+
     // MARK: - Shape Operations
     
     /// 刪除圖形

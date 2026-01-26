@@ -31,6 +31,8 @@ final class CanvasEditorViewController: UIViewController {
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.systemGray4.cgColor
         view.layer.cornerRadius = 8
+        view.clipsToBounds = true
+        view.isUserInteractionEnabled = true
         return view
     }()
     
@@ -180,9 +182,14 @@ final class CanvasEditorViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] shapes in
                 self?.canvasView.shapes = shapes
-                self?.statusLabel.text = "圖形數量: \(shapes.count)"
+                self?.statusLabel.text = "圖形數量: \(shapes.count)  ✏️ 在畫布上滑動即可繪圖"
             }
             .store(in: &cancellables)
+
+        // 手繪完成時添加到 ViewModel
+        canvasView.onDrawingFinished = { [weak self] points in
+            self?.viewModel.addPath(points: points, strokeColor: .blue, lineWidth: 3.0)
+        }
         
         // 綁定 Undo 按鈕
         viewModel.$canUndo
@@ -276,21 +283,76 @@ final class CanvasEditorViewController: UIViewController {
 
 // MARK: - CanvasView
 
-/// 簡單的畫布視圖，用於繪製圖形
+/// 簡單的畫布視圖，用於繪製圖形和手繪
 final class CanvasView: UIView {
-    
+
     var shapes: [Shape] = [] {
         didSet { setNeedsDisplay() }
     }
-    
+
+    /// 當前正在繪製的點（手繪中）
+    private var currentDrawingPoints: [Point] = [] {
+        didSet { setNeedsDisplay() }
+    }
+
+    /// 繪圖完成回調
+    var onDrawingFinished: (([Point]) -> Void)?
+
     override func draw(_ rect: CGRect) {
         super.draw(rect)
-        
+
         guard let context = UIGraphicsGetCurrentContext() else { return }
-        
+
+        // 繪製已保存的圖形
         for shape in shapes {
             drawShape(shape, in: context)
         }
+
+        // 繪製當前正在畫的路徑（即時預覽）
+        if currentDrawingPoints.count > 1 {
+            context.saveGState()
+            context.setStrokeColor(UIColor.systemBlue.cgColor)
+            context.setLineWidth(3)
+            context.setLineCap(.round)
+            context.setLineJoin(.round)
+
+            let first = currentDrawingPoints[0]
+            context.move(to: CGPoint(x: first.x, y: first.y))
+            for point in currentDrawingPoints.dropFirst() {
+                context.addLine(to: CGPoint(x: point.x, y: point.y))
+            }
+            context.strokePath()
+            context.restoreGState()
+        }
+    }
+
+    // MARK: - Touch Handling
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+        currentDrawingPoints = [Point(x: Double(location.x), y: Double(location.y))]
+    }
+
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+        currentDrawingPoints.append(Point(x: Double(location.x), y: Double(location.y)))
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard currentDrawingPoints.count > 1 else {
+            currentDrawingPoints = []
+            return
+        }
+
+        // 通知繪圖完成
+        onDrawingFinished?(currentDrawingPoints)
+        currentDrawingPoints = []
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        currentDrawingPoints = []
     }
     
     private func drawShape(_ shape: Shape, in context: CGContext) {
@@ -341,7 +403,20 @@ final class CanvasView: UIView {
             context.move(to: CGPoint(x: line.position.x, y: line.position.y))
             context.addLine(to: CGPoint(x: line.endPoint.x, y: line.endPoint.y))
             context.strokePath()
-            
+
+        case let path as Path:
+            guard path.points.count > 1 else { break }
+            context.setLineWidth(CGFloat(path.lineWidth))
+            context.setLineCap(.round)
+            context.setLineJoin(.round)
+
+            let first = path.points[0]
+            context.move(to: CGPoint(x: first.x, y: first.y))
+            for point in path.points.dropFirst() {
+                context.addLine(to: CGPoint(x: point.x, y: point.y))
+            }
+            context.strokePath()
+
         default:
             break
         }

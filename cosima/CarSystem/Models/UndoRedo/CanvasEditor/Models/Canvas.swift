@@ -139,10 +139,21 @@ final class Canvas: ObservableObject {
     }
     
     // MARK: - Bulk Operations
-    
+
     /// 清空畫布
     func clear() {
         shapes.removeAll()
         selectedShapeId = nil
+    }
+
+    // MARK: - Change Notification
+
+    /// 通知 Shape 屬性已變更，觸發 UI 更新
+    ///
+    /// 因為 `shapes` 是 reference type 陣列，當 Shape 內部屬性變更時
+    /// （如 position、fillColor），`@Published` 不會自動觸發。
+    /// Command 在修改 Shape 屬性後應呼叫此方法。
+    func notifyShapesChanged() {
+        objectWillChange.send()
     }
 }

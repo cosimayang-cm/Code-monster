@@ -30,9 +30,9 @@ final class ResizeShapeCommand: Command {
     /// 命令描述
     var description: String { "縮放圖形" }
     
-    /// 目標畫布
-    private let canvas: Canvas
-    
+    /// 目標畫布（weak 避免循環引用）
+    private weak var canvas: Canvas?
+
     /// 要縮放的圖形 ID
     private let shapeId: UUID
     
@@ -86,53 +86,73 @@ final class ResizeShapeCommand: Command {
     // MARK: - Command Protocol
     
     func execute() {
-        guard let shape = canvas.shape(withId: shapeId) else { return }
-        
+        guard let canvas = canvas else {
+            UndoRedoLogger.warning("Canvas 已被釋放，無法執行", context: "ResizeShapeCommand")
+            return
+        }
+        guard let shape = canvas.shape(withId: shapeId) else {
+            UndoRedoLogger.warning("找不到圖形", context: "ResizeShapeCommand", details: ["shapeId": shapeId.uuidString])
+            return
+        }
+
         switch shape {
         case let rect as Rectangle:
             originalSize = rect.size
             if let size = newSize {
                 rect.size = size
             }
-            
+
         case let circle as Circle:
             originalRadius = circle.radius
             if let radius = newRadius {
                 circle.radius = radius
             }
-            
+
         case let line as Line:
             originalEndPoint = line.endPoint
             if let endPoint = newEndPoint {
                 line.endPoint = endPoint
             }
-            
+
         default:
-            break
+            UndoRedoLogger.warning("不支援的圖形類型", context: "ResizeShapeCommand", details: ["type": String(describing: type(of: shape))])
         }
+
+        // 通知 UI 更新
+        canvas.notifyShapesChanged()
     }
-    
+
     func undo() {
-        guard let shape = canvas.shape(withId: shapeId) else { return }
-        
+        guard let canvas = canvas else {
+            UndoRedoLogger.warning("Canvas 已被釋放，無法撤銷", context: "ResizeShapeCommand")
+            return
+        }
+        guard let shape = canvas.shape(withId: shapeId) else {
+            UndoRedoLogger.warning("找不到圖形，無法撤銷", context: "ResizeShapeCommand", details: ["shapeId": shapeId.uuidString])
+            return
+        }
+
         switch shape {
         case let rect as Rectangle:
             if let size = originalSize {
                 rect.size = size
             }
-            
+
         case let circle as Circle:
             if let radius = originalRadius {
                 circle.radius = radius
             }
-            
+
         case let line as Line:
             if let endPoint = originalEndPoint {
                 line.endPoint = endPoint
             }
-            
+
         default:
             break
         }
+
+        // 通知 UI 更新
+        canvas.notifyShapesChanged()
     }
 }

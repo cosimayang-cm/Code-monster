@@ -28,23 +28,23 @@ final class ReplaceTextCommand: Command {
     /// 命令描述
     var description: String { "取代文字" }
     
-    /// 目標文件
-    private let document: TextDocument
-    
+    /// 目標文件（weak 避免循環引用）
+    private weak var document: TextDocument?
+
     /// 取代範圍
     private let range: Range<Int>
-    
+
     /// 新文字
     private let newText: String
-    
+
     /// 被取代的文字（execute 後設定，供 undo 使用）
     private var oldText: String?
-    
+
     /// 被取代範圍的樣式（execute 後設定，供 undo 使用）
     private var oldStyleRanges: [StyleRange]?
-    
+
     // MARK: - Initialization
-    
+
     /// 初始化取代文字命令
     ///
     /// - Parameters:
@@ -56,22 +56,25 @@ final class ReplaceTextCommand: Command {
         self.range = range
         self.newText = newText
     }
-    
+
     // MARK: - Command Protocol
-    
+
     func execute() {
+        guard let document = document else { return }
+
         // 保存被取代的內容（供 undo 使用）
         oldStyleRanges = document.getStyleRanges(in: range)
         oldText = document.replace(range: range, with: newText)
     }
-    
+
     func undo() {
-        guard let text = oldText else { return }
-        
+        guard let document = document,
+              let text = oldText else { return }
+
         // 還原文字
         let newRange = range.lowerBound..<(range.lowerBound + newText.count)
         document.replace(range: newRange, with: text)
-        
+
         // 還原樣式
         if let styles = oldStyleRanges {
             for styleRange in styles {

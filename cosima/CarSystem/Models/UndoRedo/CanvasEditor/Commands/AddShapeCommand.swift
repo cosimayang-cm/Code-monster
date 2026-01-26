@@ -27,14 +27,14 @@ final class AddShapeCommand: Command {
     /// 命令描述
     var description: String { "新增\(shape.typeName)" }
     
-    /// 目標畫布
-    private let canvas: Canvas
-    
+    /// 目標畫布（weak 避免循環引用）
+    private weak var canvas: Canvas?
+
     /// 要新增的圖形
     private let shape: Shape
-    
+
     // MARK: - Initialization
-    
+
     /// 初始化新增圖形命令
     ///
     /// - Parameters:
@@ -44,14 +44,22 @@ final class AddShapeCommand: Command {
         self.canvas = canvas
         self.shape = shape
     }
-    
+
     // MARK: - Command Protocol
-    
+
     func execute() {
+        guard let canvas = canvas else {
+            UndoRedoLogger.warning("Canvas 已被釋放，無法執行", context: "AddShapeCommand")
+            return
+        }
         canvas.add(shape)
     }
-    
+
     func undo() {
+        guard let canvas = canvas else {
+            UndoRedoLogger.warning("Canvas 已被釋放，無法撤銷", context: "AddShapeCommand")
+            return
+        }
         canvas.remove(shapeId: shape.id)
     }
 }

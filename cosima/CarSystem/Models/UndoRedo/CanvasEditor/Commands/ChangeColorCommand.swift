@@ -30,9 +30,9 @@ final class ChangeColorCommand: Command {
     /// 命令描述
     var description: String { "變更顏色" }
     
-    /// 目標畫布
-    private let canvas: Canvas
-    
+    /// 目標畫布（weak 避免循環引用）
+    private weak var canvas: Canvas?
+
     /// 要變更顏色的圖形 ID
     private let shapeId: UUID
     
@@ -67,12 +67,19 @@ final class ChangeColorCommand: Command {
     // MARK: - Command Protocol
     
     func execute() {
-        guard let shape = canvas.shape(withId: shapeId) else { return }
-        
+        guard let canvas = canvas else {
+            UndoRedoLogger.warning("Canvas 已被釋放，無法執行", context: "ChangeColorCommand")
+            return
+        }
+        guard let shape = canvas.shape(withId: shapeId) else {
+            UndoRedoLogger.warning("找不到圖形", context: "ChangeColorCommand", details: ["shapeId": shapeId.uuidString])
+            return
+        }
+
         // 保存原始顏色
         originalFillColor = shape.fillColor
         originalStrokeColor = shape.strokeColor
-        
+
         // 套用新顏色
         if let fillColor = newFillColor {
             shape.fillColor = fillColor
@@ -80,11 +87,21 @@ final class ChangeColorCommand: Command {
         if let strokeColor = newStrokeColor {
             shape.strokeColor = strokeColor
         }
+
+        // 通知 UI 更新
+        canvas.notifyShapesChanged()
     }
-    
+
     func undo() {
-        guard let shape = canvas.shape(withId: shapeId) else { return }
-        
+        guard let canvas = canvas else {
+            UndoRedoLogger.warning("Canvas 已被釋放，無法撤銷", context: "ChangeColorCommand")
+            return
+        }
+        guard let shape = canvas.shape(withId: shapeId) else {
+            UndoRedoLogger.warning("找不到圖形，無法撤銷", context: "ChangeColorCommand", details: ["shapeId": shapeId.uuidString])
+            return
+        }
+
         // 還原原始顏色
         if let fillColor = originalFillColor, newFillColor != nil {
             shape.fillColor = fillColor
@@ -92,5 +109,8 @@ final class ChangeColorCommand: Command {
         if let strokeColor = originalStrokeColor, newStrokeColor != nil {
             shape.strokeColor = strokeColor
         }
+
+        // 通知 UI 更新
+        canvas.notifyShapesChanged()
     }
 }

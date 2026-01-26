@@ -27,17 +27,20 @@ final class InsertTextCommand: Command {
     /// 命令描述
     var description: String { "插入文字" }
     
-    /// 目標文件
-    private let document: TextDocument
-    
+    /// 目標文件（weak 避免循環引用）
+    private weak var document: TextDocument?
+
     /// 要插入的文字
     private var text: String
-    
+
     /// 插入位置
     private let position: Int
-    
+
+    /// 命令建立時間（用於合併判斷，合併時會更新）
+    private(set) var timestamp: Date = Date()
+
     // MARK: - Initialization
-    
+
     /// 初始化插入文字命令
     ///
     /// - Parameters:
@@ -49,27 +52,23 @@ final class InsertTextCommand: Command {
         self.text = text
         self.position = position
     }
-    
+
     // MARK: - Command Protocol
-    
+
     func execute() {
-        document.insert(text, at: position)
+        document?.insert(text, at: position)
     }
-    
+
     func undo() {
         let range = position..<(position + text.count)
-        document.delete(range: range)
+        document?.delete(range: range)
     }
 }
 
 // MARK: - CoalescibleCommand
 
 extension InsertTextCommand: CoalescibleCommand {
-    
-    /// 命令建立時間
-    var timestamp: Date { _timestamp }
-    private let _timestamp = Date()
-    
+
     /// 嘗試合併連續輸入的文字
     ///
     /// 合併條件：
@@ -84,9 +83,13 @@ extension InsertTextCommand: CoalescibleCommand {
               isWithinCoalescingWindow(of: other) else {
             return false
         }
-        
+
         // 合併文字
         self.text += other.text
+
+        // 更新時間戳記，確保下一次合併判斷使用最新時間
+        self.timestamp = other.timestamp
+
         return true
     }
 }
