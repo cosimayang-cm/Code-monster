@@ -77,4 +77,24 @@ final class TextDocument {
     func stylesIn(range: Range<String.Index>) -> [TextStyleRange] {
         return styles.filter { $0.range.overlaps(range) }
     }
+
+    /// 檢查指定範圍是否已套用特定樣式
+    /// - Parameters:
+    ///   - style: 要檢查的樣式
+    ///   - range: 檢查範圍
+    /// - Returns: 是否已套用該樣式
+    func hasStyle(_ style: TextStyle, in range: Range<String.Index>) -> Bool {
+        return styles.contains { $0.range == range && $0.style.contains(style) }
+    }
+
+    /// 取得指定範圍的合併樣式
+    /// - Parameter range: 查詢範圍
+    /// - Returns: 該範圍所有樣式的合併結果
+    func combinedStyle(in range: Range<String.Index>) -> TextStyle {
+        var combined: TextStyle = []
+        for styleRange in styles where styleRange.range == range {
+            combined.insert(styleRange.style)
+        }
+        return combined
+    }
 }
