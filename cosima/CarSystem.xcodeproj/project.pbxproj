@@ -25,6 +25,30 @@
 		312A11AE2F1A37260074C196 /* PopupHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A11AB2F1A37260074C196 /* PopupHandlerTests.swift */; };
 		312A11AF2F1A37260074C196 /* PopupStateStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A11AC2F1A37260074C196 /* PopupStateStorageTests.swift */; };
 		312A11B02F1A37260074C196 /* PopupChainManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A11AA2F1A37260074C196 /* PopupChainManagerTests.swift */; };
+		316C56902F2768C7004132DA /* ResizeShapeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C566E2F2768C7004132DA /* ResizeShapeCommand.swift */; };
+		316C56912F2768C7004132DA /* CanvasEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56742F2768C7004132DA /* CanvasEditorViewModel.swift */; };
+		316C56922F2768C7004132DA /* AddShapeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C566A2F2768C7004132DA /* AddShapeCommand.swift */; };
+		316C56932F2768C7004132DA /* CompositeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56772F2768C7004132DA /* CompositeCommand.swift */; };
+		316C56942F2768C7004132DA /* DeleteTextCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56812F2768C7004132DA /* DeleteTextCommand.swift */; };
+		316C56952F2768C7004132DA /* CanvasMemento.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56712F2768C7004132DA /* CanvasMemento.swift */; };
+		316C56962F2768C7004132DA /* ReplaceTextCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56832F2768C7004132DA /* ReplaceTextCommand.swift */; };
+		316C56972F2768C7004132DA /* RemoveShapeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C566D2F2768C7004132DA /* RemoveShapeCommand.swift */; };
+		316C56982F2768C7004132DA /* TextDocumentMemento.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56862F2768C7004132DA /* TextDocumentMemento.swift */; };
+		316C56992F2768C7004132DA /* MoveShapeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C566C2F2768C7004132DA /* MoveShapeCommand.swift */; };
+		316C569A2F2768C7004132DA /* CanvasEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C568C2F2768C7004132DA /* CanvasEditorViewController.swift */; };
+		316C569B2F2768C7004132DA /* CommandHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56792F2768C7004132DA /* CommandHistory.swift */; };
+		316C569C2F2768C7004132DA /* ApplyStyleCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56802F2768C7004132DA /* ApplyStyleCommand.swift */; };
+		316C569D2F2768C7004132DA /* TextDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56852F2768C7004132DA /* TextDocument.swift */; };
+		316C569E2F2768C7004132DA /* Shape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56722F2768C7004132DA /* Shape.swift */; };
+		316C569F2F2768C7004132DA /* CoalescibleCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C567B2F2768C7004132DA /* CoalescibleCommand.swift */; };
+		316C56A02F2768C7004132DA /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C567C2F2768C7004132DA /* Command.swift */; };
+		316C56A12F2768C7004132DA /* TextEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C568D2F2768C7004132DA /* TextEditorViewController.swift */; };
+		316C56A22F2768C7004132DA /* TextEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56892F2768C7004132DA /* TextEditorViewModel.swift */; };
+		316C56A32F2768C7004132DA /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56702F2768C7004132DA /* Canvas.swift */; };
+		316C56A42F2768C7004132DA /* ChangeColorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C566B2F2768C7004132DA /* ChangeColorCommand.swift */; };
+		316C56A52F2768C7004132DA /* InsertTextCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56822F2768C7004132DA /* InsertTextCommand.swift */; };
+		316C56A62F2768C7004132DA /* TextStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C56872F2768C7004132DA /* TextStyle.swift */; };
+		316C56A72F2768C7004132DA /* UndoRedoLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C567E2F2768C7004132DA /* UndoRedoLogger.swift */; };
 		3843BEF19B55EB19B935DA35 /* Car.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21DBC3B68921FBF904CA6EB3 /* Car.swift */; };
 		49C08A2ADD0EE043816BBD03 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9715EE5C252BBE12E8950A8 /* AppDelegate.swift */; };
 		66C9D3F731D402B0E1ED845C /* OptionalComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDD9EC09EE5EBE1680083AF /* OptionalComponents.swift */; };
@@ -68,6 +92,30 @@
 		312A11AA2F1A37260074C196 /* PopupChainManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupChainManagerTests.swift; sourceTree = "<group>"; };
 		312A11AB2F1A37260074C196 /* PopupHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupHandlerTests.swift; sourceTree = "<group>"; };
 		312A11AC2F1A37260074C196 /* PopupStateStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupStateStorageTests.swift; sourceTree = "<group>"; };
+		316C566A2F2768C7004132DA /* AddShapeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddShapeCommand.swift; sourceTree = "<group>"; };
+		316C566B2F2768C7004132DA /* ChangeColorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeColorCommand.swift; sourceTree = "<group>"; };
+		316C566C2F2768C7004132DA /* MoveShapeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveShapeCommand.swift; sourceTree = "<group>"; };
+		316C566D2F2768C7004132DA /* RemoveShapeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveShapeCommand.swift; sourceTree = "<group>"; };
+		316C566E2F2768C7004132DA /* ResizeShapeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeShapeCommand.swift; sourceTree = "<group>"; };
+		316C56702F2768C7004132DA /* Canvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
+		316C56712F2768C7004132DA /* CanvasMemento.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasMemento.swift; sourceTree = "<group>"; };
+		316C56722F2768C7004132DA /* Shape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shape.swift; sourceTree = "<group>"; };
+		316C56742F2768C7004132DA /* CanvasEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEditorViewModel.swift; sourceTree = "<group>"; };
+		316C56772F2768C7004132DA /* CompositeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeCommand.swift; sourceTree = "<group>"; };
+		316C56792F2768C7004132DA /* CommandHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandHistory.swift; sourceTree = "<group>"; };
+		316C567B2F2768C7004132DA /* CoalescibleCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoalescibleCommand.swift; sourceTree = "<group>"; };
+		316C567C2F2768C7004132DA /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
+		316C567E2F2768C7004132DA /* UndoRedoLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoRedoLogger.swift; sourceTree = "<group>"; };
+		316C56802F2768C7004132DA /* ApplyStyleCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplyStyleCommand.swift; sourceTree = "<group>"; };
+		316C56812F2768C7004132DA /* DeleteTextCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteTextCommand.swift; sourceTree = "<group>"; };
+		316C56822F2768C7004132DA /* InsertTextCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsertTextCommand.swift; sourceTree = "<group>"; };
+		316C56832F2768C7004132DA /* ReplaceTextCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceTextCommand.swift; sourceTree = "<group>"; };
+		316C56852F2768C7004132DA /* TextDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDocument.swift; sourceTree = "<group>"; };
+		316C56862F2768C7004132DA /* TextDocumentMemento.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDocumentMemento.swift; sourceTree = "<group>"; };
+		316C56872F2768C7004132DA /* TextStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStyle.swift; sourceTree = "<group>"; };
+		316C56892F2768C7004132DA /* TextEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditorViewModel.swift; sourceTree = "<group>"; };
+		316C568C2F2768C7004132DA /* CanvasEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEditorViewController.swift; sourceTree = "<group>"; };
+		316C568D2F2768C7004132DA /* TextEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditorViewController.swift; sourceTree = "<group>"; };
 		42369B505A1DB8EA64E44ABC /* RequiredComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequiredComponents.swift; sourceTree = "<group>"; };
 		45B23C794ECE66C5BB1A5A11 /* FeatureError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureError.swift; sourceTree = "<group>"; };
 		93B1829B2C2A21E23AC25645 /* CarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarTests.swift; sourceTree = "<group>"; };
@@ -152,9 +200,145 @@
 			path = PopupChainTests;
 			sourceTree = "<group>";
 		};
+		316C566F2F2768C7004132DA /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				316C566A2F2768C7004132DA /* AddShapeCommand.swift */,
+				316C566B2F2768C7004132DA /* ChangeColorCommand.swift */,
+				316C566C2F2768C7004132DA /* MoveShapeCommand.swift */,
+				316C566D2F2768C7004132DA /* RemoveShapeCommand.swift */,
+				316C566E2F2768C7004132DA /* ResizeShapeCommand.swift */,
+			);
+			path = Commands;
+			sourceTree = "<group>";
+		};
+		316C56732F2768C7004132DA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				316C56702F2768C7004132DA /* Canvas.swift */,
+				316C56712F2768C7004132DA /* CanvasMemento.swift */,
+				316C56722F2768C7004132DA /* Shape.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		316C56752F2768C7004132DA /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				316C56742F2768C7004132DA /* CanvasEditorViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		316C56762F2768C7004132DA /* CanvasEditor */ = {
+			isa = PBXGroup;
+			children = (
+				316C566F2F2768C7004132DA /* Commands */,
+				316C56732F2768C7004132DA /* Models */,
+				316C56752F2768C7004132DA /* ViewModels */,
+			);
+			path = CanvasEditor;
+			sourceTree = "<group>";
+		};
+		316C56782F2768C7004132DA /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				316C56772F2768C7004132DA /* CompositeCommand.swift */,
+			);
+			path = Commands;
+			sourceTree = "<group>";
+		};
+		316C567A2F2768C7004132DA /* History */ = {
+			isa = PBXGroup;
+			children = (
+				316C56792F2768C7004132DA /* CommandHistory.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		316C567D2F2768C7004132DA /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				316C567B2F2768C7004132DA /* CoalescibleCommand.swift */,
+				316C567C2F2768C7004132DA /* Command.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		316C567F2F2768C7004132DA /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				316C56782F2768C7004132DA /* Commands */,
+				316C567A2F2768C7004132DA /* History */,
+				316C567D2F2768C7004132DA /* Protocols */,
+				316C567E2F2768C7004132DA /* UndoRedoLogger.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		316C56842F2768C7004132DA /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				316C56802F2768C7004132DA /* ApplyStyleCommand.swift */,
+				316C56812F2768C7004132DA /* DeleteTextCommand.swift */,
+				316C56822F2768C7004132DA /* InsertTextCommand.swift */,
+				316C56832F2768C7004132DA /* ReplaceTextCommand.swift */,
+			);
+			path = Commands;
+			sourceTree = "<group>";
+		};
+		316C56882F2768C7004132DA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				316C56852F2768C7004132DA /* TextDocument.swift */,
+				316C56862F2768C7004132DA /* TextDocumentMemento.swift */,
+				316C56872F2768C7004132DA /* TextStyle.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		316C568A2F2768C7004132DA /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				316C56892F2768C7004132DA /* TextEditorViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		316C568B2F2768C7004132DA /* TextEditor */ = {
+			isa = PBXGroup;
+			children = (
+				316C56842F2768C7004132DA /* Commands */,
+				316C56882F2768C7004132DA /* Models */,
+				316C568A2F2768C7004132DA /* ViewModels */,
+			);
+			path = TextEditor;
+			sourceTree = "<group>";
+		};
+		316C568E2F2768C7004132DA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				316C568C2F2768C7004132DA /* CanvasEditorViewController.swift */,
+				316C568D2F2768C7004132DA /* TextEditorViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		316C568F2F2768C7004132DA /* UndoRedo */ = {
+			isa = PBXGroup;
+			children = (
+				316C56762F2768C7004132DA /* CanvasEditor */,
+				316C567F2F2768C7004132DA /* Core */,
+				316C568B2F2768C7004132DA /* TextEditor */,
+				316C568E2F2768C7004132DA /* Views */,
+			);
+			path = UndoRedo;
+			sourceTree = "<group>";
+		};
 		39B038ED51EA157C7658D5C2 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				316C568F2F2768C7004132DA /* UndoRedo */,
 				21DBC3B68921FBF904CA6EB3 /* Car.swift */,
 				D7992881DD29253552ED7EB3 /* CarComponent.swift */,
 				45B23C794ECE66C5BB1A5A11 /* FeatureError.swift */,
@@ -312,6 +496,30 @@
 				312A11A22F1A37060074C196 /* DailyCheckInHandler.swift in Sources */,
 				312A11A32F1A37060074C196 /* PopupStateStorage.swift in Sources */,
 				312A11A42F1A37060074C196 /* NewFeaturePopupHandler.swift in Sources */,
+				316C56902F2768C7004132DA /* ResizeShapeCommand.swift in Sources */,
+				316C56912F2768C7004132DA /* CanvasEditorViewModel.swift in Sources */,
+				316C56922F2768C7004132DA /* AddShapeCommand.swift in Sources */,
+				316C56932F2768C7004132DA /* CompositeCommand.swift in Sources */,
+				316C56942F2768C7004132DA /* DeleteTextCommand.swift in Sources */,
+				316C56952F2768C7004132DA /* CanvasMemento.swift in Sources */,
+				316C56962F2768C7004132DA /* ReplaceTextCommand.swift in Sources */,
+				316C56972F2768C7004132DA /* RemoveShapeCommand.swift in Sources */,
+				316C56982F2768C7004132DA /* TextDocumentMemento.swift in Sources */,
+				316C56992F2768C7004132DA /* MoveShapeCommand.swift in Sources */,
+				316C569A2F2768C7004132DA /* CanvasEditorViewController.swift in Sources */,
+				316C569B2F2768C7004132DA /* CommandHistory.swift in Sources */,
+				316C569C2F2768C7004132DA /* ApplyStyleCommand.swift in Sources */,
+				316C569D2F2768C7004132DA /* TextDocument.swift in Sources */,
+				316C569E2F2768C7004132DA /* Shape.swift in Sources */,
+				316C569F2F2768C7004132DA /* CoalescibleCommand.swift in Sources */,
+				316C56A02F2768C7004132DA /* Command.swift in Sources */,
+				316C56A12F2768C7004132DA /* TextEditorViewController.swift in Sources */,
+				316C56A22F2768C7004132DA /* TextEditorViewModel.swift in Sources */,
+				316C56A32F2768C7004132DA /* Canvas.swift in Sources */,
+				316C56A42F2768C7004132DA /* ChangeColorCommand.swift in Sources */,
+				316C56A52F2768C7004132DA /* InsertTextCommand.swift in Sources */,
+				316C56A62F2768C7004132DA /* TextStyle.swift in Sources */,
+				316C56A72F2768C7004132DA /* UndoRedoLogger.swift in Sources */,
 				312A11A52F1A37060074C196 /* PopupChainError.swift in Sources */,
 				312A11A62F1A37060074C196 /* PopupUserState.swift in Sources */,
 				312A11A72F1A37060074C196 /* PopupType.swift in Sources */,
