@@ -1,0 +1,83 @@
+# SwiftLint Configuration for Undo/Redo System
+# Focused on Foundation-only enforcement and code quality
+
+# Paths
+included:
+  - Sources
+excluded:
+  - Tests
+  - .build
+
+# Enabled Rules
+opt_in_rules:
+  - empty_count
+  - explicit_init
+  - file_header
+  - first_where
+  - implicit_return
+  - multiline_parameters
+  - redundant_nil_coalescing
+  - sorted_first_last
+  - weak_delegate
+
+# Disabled Rules
+disabled_rules:
+  - line_length # Allow longer lines for clarity
+  - function_body_length # Complex commands may need more lines
+  - type_body_length # Canvas/Document may be large
+
+# Custom Rules
+custom_rules:
+  # Foundation-only enforcement for Model layer
+  no_uikit_in_models:
+    name: "No UIKit in Model Layer"
+    regex: "^import\\s+(UIKit|CoreGraphics|SwiftUI)"
+    match_kinds:
+      - identifier
+    included: "Sources/Models/.*\\.swift"
+    message: "Model layer must be Foundation-only. Use custom Color/Point/Size types."
+    severity: error
+
+  # Logger.log enforcement (not applicable for this project, but keep pattern)
+  no_print_statements:
+    name: "Use Logger instead of print"
+    regex: "\\bprint\\s*\\("
+    message: "Use Logger.log() instead of print() for logging"
+    severity: warning
+
+  # Weak reference reminder for Commands
+  command_weak_receiver:
+    name: "Commands should use weak receivers"
+    regex: "class\\s+\\w+Command.*\\{[^}]*\\n\\s*(var|let)\\s+\\w+:\\s*\\w+Protocol"
+    included: "Sources/Models/Command/.*\\.swift"
+    message: "Consider using 'weak var' for receiver references in Commands to avoid retain cycles"
+    severity: warning
+
+# Rule Configurations
+identifier_name:
+  min_length: 2
+  max_length: 50
+  excluded:
+    - id
+    - x
+    - y
+
+type_name:
+  min_length: 3
+  max_length: 50
+  excluded:
+    - ID
+
+nesting:
+  type_level: 2
+
+file_length:
+  warning: 500
+  error: 800
+
+# Naming Conventions
+identifier_name:
+  validates_start_with_lowercase: true
+
+type_name:
+  validates_start_with_uppercase: true

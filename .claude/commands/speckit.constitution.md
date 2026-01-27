@@ -1,9 +1,10 @@
 ---
 description: Create or update the project constitution from interactive or provided principle inputs, ensuring all dependent templates stay in sync.
-handoffs: 
-  - label: Build Specification
-    agent: speckit.specify
-    prompt: Implement the feature specification based on the updated constitution. I want to build...
+version: "1.1.0"
+updated: "2025-10-17"
+current_constitution_version: "v1.2.0"
+current_principle_count: 8
+note: "Principles VII and VIII are SpecKit-specific workflow principles"
 ---
 
 ## User Input
@@ -29,9 +30,9 @@ Follow this execution flow:
    - Otherwise infer from existing repo context (README, docs, prior constitution versions if embedded).
    - For governance dates: `RATIFICATION_DATE` is the original adoption date (if unknown ask or mark TODO), `LAST_AMENDED_DATE` is today if changes are made, otherwise keep previous.
    - `CONSTITUTION_VERSION` must increment according to semantic versioning rules:
-     - MAJOR: Backward incompatible governance/principle removals or redefinitions.
-     - MINOR: New principle/section added or materially expanded guidance.
-     - PATCH: Clarifications, wording, typo fixes, non-semantic refinements.
+     * MAJOR: Backward incompatible governance/principle removals or redefinitions.
+     * MINOR: New principle/section added or materially expanded guidance.
+     * PATCH: Clarifications, wording, typo fixes, non-semantic refinements.
    - If version bump type ambiguous, propose reasoning before finalizing.
 
 3. Draft the updated constitution content:
@@ -41,11 +42,31 @@ Follow this execution flow:
    - Ensure Governance section lists amendment procedure, versioning policy, and compliance review expectations.
 
 4. Consistency propagation checklist (convert prior checklist into active validations):
+
+   **Core Templates**:
    - Read `.specify/templates/plan-template.md` and ensure any "Constitution Check" or rules align with updated principles.
    - Read `.specify/templates/spec-template.md` for scope/requirements alignment—update if constitution adds/removes mandatory sections or constraints.
    - Read `.specify/templates/tasks-template.md` and ensure task categorization reflects new or removed principle-driven task types (e.g., observability, versioning, testing discipline).
-   - Read each command file in `.specify/templates/commands/*.md` (including this one) to verify no outdated references (agent-specific names like CLAUDE only) remain when generic guidance is required.
-   - Read any runtime guidance docs (e.g., `README.md`, `docs/quickstart.md`, or agent-specific guidance files if present). Update references to principles changed.
+
+   **SpecKit Workflow Commands** (check when Principles VII or VIII are modified):
+   - Read `.claude/commands/speckit.plan.md`:
+     - Verify Phase 1 Step 4 (Compliance Verification) aligns with Principle VII requirements
+     - Ensure mr-review-checks.yaml verification step is current and complete
+     - Validate implementation examples compliance checks match constitution requirements
+
+   - Read `.claude/commands/speckit.implement.md`:
+     - Verify Step 6 (Agent Delegation) aligns with Principle VIII mandates
+     - Ensure ios-developer agent requirements match constitution specifications
+     - Validate TDD and compliance check workflows are current
+
+   - Read `.claude/commands/speckit.tasks.md` if task generation rules changed
+   - Read `.claude/commands/speckit.analyze.md` if complexity assessment rules changed
+   - Read `.claude/commands/speckit.clarify.md` if specification clarification rules changed
+
+   **Documentation and Runtime Guidance**:
+   - Read each command file in `.claude/commands/*.md` to verify no outdated references remain when generic guidance is required.
+   - Read any runtime guidance docs (e.g., `README.md`, `docs/quickstart.md`, `CLAUDE.md`). Update references to principles changed.
+   - Read `.claude/configs/project-config.yaml` and `.claude/configs/mr-review-checks.yaml` if review requirements changed.
 
 5. Produce a Sync Impact Report (prepend as an HTML comment at top of the constitution file after update):
    - Version change: old → new
@@ -53,6 +74,10 @@ Follow this execution flow:
    - Added sections
    - Removed sections
    - Templates requiring updates (✅ updated / ⚠ pending) with file paths
+   - **SpecKit commands status** (if Principles VII or VIII were modified):
+     - speckit.plan.md: Alignment with Principle VII (✅ aligned / ⚠ requires update)
+     - speckit.implement.md: Alignment with Principle VIII (✅ aligned / ⚠ requires update)
+     - Other SpecKit commands if applicable
    - Follow-up TODOs if any placeholders intentionally deferred.
 
 6. Validation before final output:

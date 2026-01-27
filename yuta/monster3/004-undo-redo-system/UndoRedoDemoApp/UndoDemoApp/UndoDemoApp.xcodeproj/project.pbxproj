@@ -1,0 +1,561 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		090CFF237CB8A72B997BB041 /* ChangeFillColorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B286EE1F8DFCCA1AFF955AD /* ChangeFillColorCommand.swift */; };
+		16232422758E3BCE5724D417 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0477213A094E6093C91565F /* Line.swift */; };
+		16F7A6E00DE8F568256C2491 /* InsertTextCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7AF99C0DC96087E2B69D2E /* InsertTextCommand.swift */; };
+		19733BA25FBF4085E8400EBF /* CommandHistoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE14F5648AF408EA59AAAC9 /* CommandHistoryProtocol.swift */; };
+		1BF399CA99F88CCEFE8247B6 /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85102F5CB46A03E490CB8B4 /* Point.swift */; };
+		260E40505181EC245A3B0284 /* ResizeShapeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F8A26BD9BC8C0C95EA096B /* ResizeShapeCommand.swift */; };
+		2C1DA858378B775A3FA52398 /* CanvasMemento.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65BC0E6A647ED287A9DA499 /* CanvasMemento.swift */; };
+		325BE0784FF9A9E6D99ED19D /* UndoDemoAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3896CF582D4DFF62FD4C56D5 /* UndoDemoAppApp.swift */; };
+		33FE774772338BD4B9A47F36 /* MoveShapeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6A2EA39789739DA95FC59C /* MoveShapeCommand.swift */; };
+		350CA5BFF50673E4AF9491C7 /* Size+CoreGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A0B1DAEA3FD68257702502 /* Size+CoreGraphics.swift */; };
+		38FCBC20BC72AD75E314A1FF /* Memento.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E14F0FE7518E6B09BB2EA7 /* Memento.swift */; };
+		3CE9320AB98FC1136139A3AD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D234464A33E3E4C15492A87D /* Preview Assets.xcassets */; };
+		533F1E7584273C3FAAE39981 /* CanvasEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 720442DC2D33A77F3D351FEB /* CanvasEditorViewModel.swift */; };
+		6001728308A4613FA6AEF754 /* CanvasEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A016E7C917DEAAB7156A67 /* CanvasEditorView.swift */; };
+		60968A3F971B7163947A66B7 /* ChangeStrokeColorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DB14880DDB29A12F6FB6F0 /* ChangeStrokeColorCommand.swift */; };
+		66A166C45D26025039BD3933 /* CommandHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E91C24D48D29E5521563F6 /* CommandHistory.swift */; };
+		67DA1570E8841E0EBD0BCCE1 /* TextDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4912768E64A4059C41195A8 /* TextDocument.swift */; };
+		6C9B01515F452A232E6B4437 /* TextStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E3BF8145E09FD77CD3E6BE /* TextStyle.swift */; };
+		71CCDE653EF13625D36F2677 /* AddShapeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF511A4FE8FDEDCD03577DD /* AddShapeCommand.swift */; };
+		75FCFA6BB845D0E1641A4C4D /* DeleteShapeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C7592010FD5D3FF6348F1B /* DeleteShapeCommand.swift */; };
+		7CF35939896B487EE1EBD27A /* Size.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC02C79B9425D3EA02D353E2 /* Size.swift */; };
+		8530BEF06927C88E9302BD6F /* Point+CoreGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F85010056EFB105169C50C9 /* Point+CoreGraphics.swift */; };
+		BF9920D6B9692883BFA49916 /* ReplaceTextCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9647E4ABDCFD2E9B0ABFBB /* ReplaceTextCommand.swift */; };
+		C77F8456FAD16EB33DCBF3F0 /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF9A71F0A7370291BEC6E07 /* Canvas.swift */; };
+		C7F36FB8835C9227962B3DB7 /* Color+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = C845C9A115EF6DFAB9C168DC /* Color+UIKit.swift */; };
+		C9A023234565321A36216BA5 /* TextDocumentProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46B14EBF57F8CBBFD8E8350 /* TextDocumentProtocol.swift */; };
+		CAEA13D17EE852528B546C20 /* TextEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E26C06A9DED549E7D8784D3 /* TextEditorView.swift */; };
+		CEB3D59900FEB51B763AD471 /* DeleteTextCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9647CECBF9E5C30A5EB2E09 /* DeleteTextCommand.swift */; };
+		D07481FBC01F34E939C4247F /* CanvasEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC0939BDDA794DC200FD888 /* CanvasEditorViewController.swift */; };
+		DBC279B813EBD231AE2877F4 /* CanvasProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED28C27C7BF28F80A55E1B80 /* CanvasProtocol.swift */; };
+		DC2AA1E3707DDEA3CA1DE44A /* Rectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56CF46D9917FDCD5E6D401C2 /* Rectangle.swift */; };
+		E3F079FECA6B83A6B10A503C /* TextEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E90225A10255670F87F284 /* TextEditorViewModel.swift */; };
+		E992FC139AE7BE87C22C8E9A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FC91F9D365365612945920 /* ContentView.swift */; };
+		E9D9FAB478CCA6173889E12F /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D56879612A6A2562132F0A /* Circle.swift */; };
+		EE0C1C8AB7161377AD10B588 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = F225FFA68B2CCD5FF70C0F20 /* Command.swift */; };
+		F189DAFEF24F573BE50323E7 /* ApplyStyleCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD3BA3978A8E38F475ED726 /* ApplyStyleCommand.swift */; };
+		F75FEA712138628F9BAB174A /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = B708519C14570163325CFCE8 /* Color.swift */; };
+		FC280F472A02A967C7814C6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C261A25E695EB60FE6F66B0 /* Assets.xcassets */; };
+		FDDA4A711F3B5CE048A86B1C /* TextEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088C0BB829AFA7166E9B8A5 /* TextEditorViewController.swift */; };
+		FFC3AE967CCCB8CD9D52B7C3 /* Shape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B95DD80E7A25BABD6EE9A53 /* Shape.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		03F8A26BD9BC8C0C95EA096B /* ResizeShapeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeShapeCommand.swift; sourceTree = "<group>"; };
+		0B4E645FE759704CA0387C7B /* UndoDemoApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = UndoDemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		18DB14880DDB29A12F6FB6F0 /* ChangeStrokeColorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeStrokeColorCommand.swift; sourceTree = "<group>"; };
+		1AF511A4FE8FDEDCD03577DD /* AddShapeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddShapeCommand.swift; sourceTree = "<group>"; };
+		1F85010056EFB105169C50C9 /* Point+CoreGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Point+CoreGraphics.swift"; sourceTree = "<group>"; };
+		2C261A25E695EB60FE6F66B0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		37E14F0FE7518E6B09BB2EA7 /* Memento.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memento.swift; sourceTree = "<group>"; };
+		3896CF582D4DFF62FD4C56D5 /* UndoDemoAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoDemoAppApp.swift; sourceTree = "<group>"; };
+		4B286EE1F8DFCCA1AFF955AD /* ChangeFillColorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeFillColorCommand.swift; sourceTree = "<group>"; };
+		56CF46D9917FDCD5E6D401C2 /* Rectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle.swift; sourceTree = "<group>"; };
+		5FE14F5648AF408EA59AAAC9 /* CommandHistoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandHistoryProtocol.swift; sourceTree = "<group>"; };
+		6088C0BB829AFA7166E9B8A5 /* TextEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditorViewController.swift; sourceTree = "<group>"; };
+		60A0B1DAEA3FD68257702502 /* Size+CoreGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Size+CoreGraphics.swift"; sourceTree = "<group>"; };
+		6B95DD80E7A25BABD6EE9A53 /* Shape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shape.swift; sourceTree = "<group>"; };
+		6CF9A71F0A7370291BEC6E07 /* Canvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
+		720442DC2D33A77F3D351FEB /* CanvasEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEditorViewModel.swift; sourceTree = "<group>"; };
+		88E3BF8145E09FD77CD3E6BE /* TextStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStyle.swift; sourceTree = "<group>"; };
+		8E26C06A9DED549E7D8784D3 /* TextEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditorView.swift; sourceTree = "<group>"; };
+		A65BC0E6A647ED287A9DA499 /* CanvasMemento.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasMemento.swift; sourceTree = "<group>"; };
+		B46B14EBF57F8CBBFD8E8350 /* TextDocumentProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDocumentProtocol.swift; sourceTree = "<group>"; };
+		B5C9C8C2A3036B2D5EF4EDDD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B6E91C24D48D29E5521563F6 /* CommandHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandHistory.swift; sourceTree = "<group>"; };
+		B708519C14570163325CFCE8 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		B9647CECBF9E5C30A5EB2E09 /* DeleteTextCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteTextCommand.swift; sourceTree = "<group>"; };
+		BFD3BA3978A8E38F475ED726 /* ApplyStyleCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplyStyleCommand.swift; sourceTree = "<group>"; };
+		C2E90225A10255670F87F284 /* TextEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditorViewModel.swift; sourceTree = "<group>"; };
+		C845C9A115EF6DFAB9C168DC /* Color+UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+UIKit.swift"; sourceTree = "<group>"; };
+		C85102F5CB46A03E490CB8B4 /* Point.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
+		C9C7592010FD5D3FF6348F1B /* DeleteShapeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteShapeCommand.swift; sourceTree = "<group>"; };
+		CA7AF99C0DC96087E2B69D2E /* InsertTextCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsertTextCommand.swift; sourceTree = "<group>"; };
+		CE6A2EA39789739DA95FC59C /* MoveShapeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveShapeCommand.swift; sourceTree = "<group>"; };
+		D234464A33E3E4C15492A87D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		D4912768E64A4059C41195A8 /* TextDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDocument.swift; sourceTree = "<group>"; };
+		E2FC91F9D365365612945920 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E4A016E7C917DEAAB7156A67 /* CanvasEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEditorView.swift; sourceTree = "<group>"; };
+		E9D56879612A6A2562132F0A /* Circle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Circle.swift; sourceTree = "<group>"; };
+		ED28C27C7BF28F80A55E1B80 /* CanvasProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasProtocol.swift; sourceTree = "<group>"; };
+		EEC0939BDDA794DC200FD888 /* CanvasEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEditorViewController.swift; sourceTree = "<group>"; };
+		F0477213A094E6093C91565F /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
+		F225FFA68B2CCD5FF70C0F20 /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
+		FC02C79B9425D3EA02D353E2 /* Size.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Size.swift; sourceTree = "<group>"; };
+		FD9647E4ABDCFD2E9B0ABFBB /* ReplaceTextCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceTextCommand.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		101CBEBA2D835BE2686E3F43 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				E9D56879612A6A2562132F0A /* Circle.swift */,
+				B708519C14570163325CFCE8 /* Color.swift */,
+				F0477213A094E6093C91565F /* Line.swift */,
+				C85102F5CB46A03E490CB8B4 /* Point.swift */,
+				56CF46D9917FDCD5E6D401C2 /* Rectangle.swift */,
+				6B95DD80E7A25BABD6EE9A53 /* Shape.swift */,
+				FC02C79B9425D3EA02D353E2 /* Size.swift */,
+				88E3BF8145E09FD77CD3E6BE /* TextStyle.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		739A65EB627E69490DA6689E /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				D234464A33E3E4C15492A87D /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		8736C26CAFD68A10888FC8EC /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				C845C9A115EF6DFAB9C168DC /* Color+UIKit.swift */,
+				1F85010056EFB105169C50C9 /* Point+CoreGraphics.swift */,
+				60A0B1DAEA3FD68257702502 /* Size+CoreGraphics.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		9F3306A9AA09D5C91A9FFC2D /* Memento */ = {
+			isa = PBXGroup;
+			children = (
+				A65BC0E6A647ED287A9DA499 /* CanvasMemento.swift */,
+				37E14F0FE7518E6B09BB2EA7 /* Memento.swift */,
+			);
+			path = Memento;
+			sourceTree = "<group>";
+		};
+		A2AB5B4ABB125F8C2BC33822 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				DDACDDCEEA23445D06E6AB5C /* Command */,
+				101CBEBA2D835BE2686E3F43 /* Entities */,
+				9F3306A9AA09D5C91A9FFC2D /* Memento */,
+				C0B3BB0A9465E20AC83408E3 /* Protocols */,
+				B8F1217066E4408F1185321E /* Receivers */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AA4553C84722B9903E3D2339 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				EEC0939BDDA794DC200FD888 /* CanvasEditorViewController.swift */,
+				6088C0BB829AFA7166E9B8A5 /* TextEditorViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		B6C35F54B73CA91C4432D072 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E4A016E7C917DEAAB7156A67 /* CanvasEditorView.swift */,
+				E2FC91F9D365365612945920 /* ContentView.swift */,
+				8E26C06A9DED549E7D8784D3 /* TextEditorView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B8F1217066E4408F1185321E /* Receivers */ = {
+			isa = PBXGroup;
+			children = (
+				6CF9A71F0A7370291BEC6E07 /* Canvas.swift */,
+				D4912768E64A4059C41195A8 /* TextDocument.swift */,
+			);
+			path = Receivers;
+			sourceTree = "<group>";
+		};
+		C0B3BB0A9465E20AC83408E3 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				ED28C27C7BF28F80A55E1B80 /* CanvasProtocol.swift */,
+				F225FFA68B2CCD5FF70C0F20 /* Command.swift */,
+				5FE14F5648AF408EA59AAAC9 /* CommandHistoryProtocol.swift */,
+				B46B14EBF57F8CBBFD8E8350 /* TextDocumentProtocol.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		C8FE58B6CA354B63389DF88A = {
+			isa = PBXGroup;
+			children = (
+				D35BDC6B4000FF42B23124A9 /* UndoDemoApp */,
+				F048ED548AC17EA9D1CEBEE5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C91C9786B48704845F830088 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				720442DC2D33A77F3D351FEB /* CanvasEditorViewModel.swift */,
+				C2E90225A10255670F87F284 /* TextEditorViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		D35BDC6B4000FF42B23124A9 /* UndoDemoApp */ = {
+			isa = PBXGroup;
+			children = (
+				2C261A25E695EB60FE6F66B0 /* Assets.xcassets */,
+				B5C9C8C2A3036B2D5EF4EDDD /* Info.plist */,
+				3896CF582D4DFF62FD4C56D5 /* UndoDemoAppApp.swift */,
+				739A65EB627E69490DA6689E /* Preview Content */,
+				F934649E7955EF85156D813A /* UndoRedoSystem */,
+				B6C35F54B73CA91C4432D072 /* Views */,
+			);
+			path = UndoDemoApp;
+			sourceTree = "<group>";
+		};
+		DDACDDCEEA23445D06E6AB5C /* Command */ = {
+			isa = PBXGroup;
+			children = (
+				1AF511A4FE8FDEDCD03577DD /* AddShapeCommand.swift */,
+				BFD3BA3978A8E38F475ED726 /* ApplyStyleCommand.swift */,
+				4B286EE1F8DFCCA1AFF955AD /* ChangeFillColorCommand.swift */,
+				18DB14880DDB29A12F6FB6F0 /* ChangeStrokeColorCommand.swift */,
+				B6E91C24D48D29E5521563F6 /* CommandHistory.swift */,
+				C9C7592010FD5D3FF6348F1B /* DeleteShapeCommand.swift */,
+				B9647CECBF9E5C30A5EB2E09 /* DeleteTextCommand.swift */,
+				CA7AF99C0DC96087E2B69D2E /* InsertTextCommand.swift */,
+				CE6A2EA39789739DA95FC59C /* MoveShapeCommand.swift */,
+				FD9647E4ABDCFD2E9B0ABFBB /* ReplaceTextCommand.swift */,
+				03F8A26BD9BC8C0C95EA096B /* ResizeShapeCommand.swift */,
+			);
+			path = Command;
+			sourceTree = "<group>";
+		};
+		F048ED548AC17EA9D1CEBEE5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0B4E645FE759704CA0387C7B /* UndoDemoApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F934649E7955EF85156D813A /* UndoRedoSystem */ = {
+			isa = PBXGroup;
+			children = (
+				8736C26CAFD68A10888FC8EC /* Extensions */,
+				A2AB5B4ABB125F8C2BC33822 /* Models */,
+				AA4553C84722B9903E3D2339 /* ViewControllers */,
+				C91C9786B48704845F830088 /* ViewModels */,
+			);
+			path = UndoRedoSystem;
+			sourceTree = "<group>";
+		};
+		"TEMP_FF1197A7-D739-453D-B2A3-67B7999717F3" /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9F4433D0ACF011483EB05D51 /* UndoDemoApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 309BF51411AFF043AAF89463 /* Build configuration list for PBXNativeTarget "UndoDemoApp" */;
+			buildPhases = (
+				521621EB112C6F66583EEF53 /* Sources */,
+				6DF5F92019FB0CE309BD8169 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UndoDemoApp;
+			packageProductDependencies = (
+			);
+			productName = UndoDemoApp;
+			productReference = 0B4E645FE759704CA0387C7B /* UndoDemoApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9B5A85340849333EF39B60C0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					9F4433D0ACF011483EB05D51 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = CE5BD582E168DC504F9E0ED8 /* Build configuration list for PBXProject "UndoDemoApp" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = C8FE58B6CA354B63389DF88A;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9F4433D0ACF011483EB05D51 /* UndoDemoApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6DF5F92019FB0CE309BD8169 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC280F472A02A967C7814C6F /* Assets.xcassets in Resources */,
+				3CE9320AB98FC1136139A3AD /* Preview Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		521621EB112C6F66583EEF53 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				71CCDE653EF13625D36F2677 /* AddShapeCommand.swift in Sources */,
+				F189DAFEF24F573BE50323E7 /* ApplyStyleCommand.swift in Sources */,
+				C77F8456FAD16EB33DCBF3F0 /* Canvas.swift in Sources */,
+				6001728308A4613FA6AEF754 /* CanvasEditorView.swift in Sources */,
+				D07481FBC01F34E939C4247F /* CanvasEditorViewController.swift in Sources */,
+				533F1E7584273C3FAAE39981 /* CanvasEditorViewModel.swift in Sources */,
+				2C1DA858378B775A3FA52398 /* CanvasMemento.swift in Sources */,
+				DBC279B813EBD231AE2877F4 /* CanvasProtocol.swift in Sources */,
+				090CFF237CB8A72B997BB041 /* ChangeFillColorCommand.swift in Sources */,
+				60968A3F971B7163947A66B7 /* ChangeStrokeColorCommand.swift in Sources */,
+				E9D9FAB478CCA6173889E12F /* Circle.swift in Sources */,
+				C7F36FB8835C9227962B3DB7 /* Color+UIKit.swift in Sources */,
+				F75FEA712138628F9BAB174A /* Color.swift in Sources */,
+				EE0C1C8AB7161377AD10B588 /* Command.swift in Sources */,
+				66A166C45D26025039BD3933 /* CommandHistory.swift in Sources */,
+				19733BA25FBF4085E8400EBF /* CommandHistoryProtocol.swift in Sources */,
+				E992FC139AE7BE87C22C8E9A /* ContentView.swift in Sources */,
+				75FCFA6BB845D0E1641A4C4D /* DeleteShapeCommand.swift in Sources */,
+				CEB3D59900FEB51B763AD471 /* DeleteTextCommand.swift in Sources */,
+				16F7A6E00DE8F568256C2491 /* InsertTextCommand.swift in Sources */,
+				16232422758E3BCE5724D417 /* Line.swift in Sources */,
+				38FCBC20BC72AD75E314A1FF /* Memento.swift in Sources */,
+				33FE774772338BD4B9A47F36 /* MoveShapeCommand.swift in Sources */,
+				8530BEF06927C88E9302BD6F /* Point+CoreGraphics.swift in Sources */,
+				1BF399CA99F88CCEFE8247B6 /* Point.swift in Sources */,
+				DC2AA1E3707DDEA3CA1DE44A /* Rectangle.swift in Sources */,
+				BF9920D6B9692883BFA49916 /* ReplaceTextCommand.swift in Sources */,
+				260E40505181EC245A3B0284 /* ResizeShapeCommand.swift in Sources */,
+				FFC3AE967CCCB8CD9D52B7C3 /* Shape.swift in Sources */,
+				350CA5BFF50673E4AF9491C7 /* Size+CoreGraphics.swift in Sources */,
+				7CF35939896B487EE1EBD27A /* Size.swift in Sources */,
+				67DA1570E8841E0EBD0BCCE1 /* TextDocument.swift in Sources */,
+				C9A023234565321A36216BA5 /* TextDocumentProtocol.swift in Sources */,
+				CAEA13D17EE852528B546C20 /* TextEditorView.swift in Sources */,
+				FDDA4A711F3B5CE048A86B1C /* TextEditorViewController.swift in Sources */,
+				E3F079FECA6B83A6B10A503C /* TextEditorViewModel.swift in Sources */,
+				6C9B01515F452A232E6B4437 /* TextStyle.swift in Sources */,
+				325BE0784FF9A9E6D99ED19D /* UndoDemoAppApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B9309ED3D966AE3BA04A6FCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = UndoDemoApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.codemonster.UndoDemoApp;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C6DC0EE82EFDE2048FE2BD49 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = UndoDemoApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.codemonster.UndoDemoApp;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CA5E676E465D449FEB6D9924 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D3D1B6CED006BDC6A2150D24 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		309BF51411AFF043AAF89463 /* Build configuration list for PBXNativeTarget "UndoDemoApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B9309ED3D966AE3BA04A6FCA /* Debug */,
+				C6DC0EE82EFDE2048FE2BD49 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CE5BD582E168DC504F9E0ED8 /* Build configuration list for PBXProject "UndoDemoApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA5E676E465D449FEB6D9924 /* Debug */,
+				D3D1B6CED006BDC6A2150D24 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9B5A85340849333EF39B60C0 /* Project object */;
+}
