@@ -1,6 +1,6 @@
 ---
 name: pages-testing
-description: PAGEs 測試標準。Use when writing unit tests, naming test methods, structuring test cases with Given-When-Then, or creating mock implementations.
+description: PAGEs 測試標準。MUST load when planning, designing, writing, reviewing, or debugging tests. Covers test naming, Given-When-Then structure, mocking, coverage requirements. 任何涉及測試規劃、撰寫、審查的任務都必須載入此 skill。
 ---
 
 # PAGEs Testing Standards
