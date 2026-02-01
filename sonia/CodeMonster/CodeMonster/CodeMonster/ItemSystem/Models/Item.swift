@@ -53,6 +53,10 @@ final class Item: Codable, Equatable, Hashable, Identifiable {
     /// 當前等級（預設為 1，最大為 20）
     var level: Int
     
+    /// 詞條 Bitmask（用於 O(1) 複雜度的快速查詢）
+    /// FR-011: 系統 MUST 使用 Bitmask 支援詞條的快速查詢和組合判斷
+    var affixBitmask: AffixType
+    
     // MARK: - Initialization
     
     /// 從模板建立物品實例
@@ -69,6 +73,7 @@ final class Item: Codable, Equatable, Hashable, Identifiable {
         self.iconName = template.iconName
         self.setId = template.setId
         self.level = 1
+        self.affixBitmask = []
     }
     
     // MARK: - Equatable
@@ -93,5 +98,34 @@ extension Item {
     var totalStats: Stats {
         // 目前只回傳基礎數值，後續會加上詞條加成
         return baseStats
+    }
+}
+
+// MARK: - Affix Bitmask Query
+
+extension Item {
+    
+    /// 檢查物品是否擁有指定的詞條類型
+    /// - Parameter affixType: 要檢查的詞條類型
+    /// - Returns: 是否擁有該詞條
+    /// - Complexity: O(1)
+    func hasAffix(_ affixType: AffixType) -> Bool {
+        affixBitmask.contains(affixType)
+    }
+    
+    /// 檢查物品是否同時擁有所有指定的詞條類型
+    /// - Parameter affixTypes: 要檢查的詞條類型組合
+    /// - Returns: 是否同時擁有所有指定詞條
+    /// - Complexity: O(1)
+    func hasAllAffixes(_ affixTypes: AffixType) -> Bool {
+        affixBitmask.contains(affixTypes)
+    }
+    
+    /// 檢查物品是否擁有任一指定的詞條類型
+    /// - Parameter affixTypes: 要檢查的詞條類型組合
+    /// - Returns: 是否擁有任一指定詞條
+    /// - Complexity: O(1)
+    func hasAnyAffix(_ affixTypes: AffixType) -> Bool {
+        !affixBitmask.intersection(affixTypes).isEmpty
     }
 }

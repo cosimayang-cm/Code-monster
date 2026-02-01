@@ -154,4 +154,94 @@ final class ItemTests: XCTestCase {
         // Then
         XCTAssertEqual(uniqueIds.count, count, "所有 \(count) 個物品的 UUID 應該都是唯一的")
     }
+    
+    // MARK: - Phase 8: US6 - Bitmask Query Tests
+    
+    private func createItemWithAffixBitmask(_ bitmask: AffixType) -> Item {
+        let template = createTestTemplate()
+        let item = Item(template: template)
+        item.affixBitmask = bitmask
+        return item
+    }
+    
+    // MARK: - T084: testItemHasAffixWhenAffixPresentThenTrue
+    
+    /// 測試物品擁有特定詞條時 hasAffix 回傳 true
+    /// US6-Scenario1: 玩家使用「攻擊力」詞條搜尋，系統透過 Bitmask 找出所有含該詞條的裝備
+    func testItemHasAffixWhenAffixPresentThenTrue() {
+        // Given - 物品擁有攻擊力和防禦力詞條
+        let item = createItemWithAffixBitmask([.attack, .defense])
+        
+        // When & Then
+        XCTAssertTrue(item.hasAffix(.attack), "物品應該擁有攻擊力詞條")
+        XCTAssertTrue(item.hasAffix(.defense), "物品應該擁有防禦力詞條")
+    }
+    
+    /// 測試物品沒有特定詞條時 hasAffix 回傳 false
+    func testItemHasAffixWhenAffixAbsentThenFalse() {
+        // Given - 物品只擁有攻擊力詞條
+        let item = createItemWithAffixBitmask([.attack])
+        
+        // When & Then
+        XCTAssertFalse(item.hasAffix(.defense), "物品不應該擁有防禦力詞條")
+        XCTAssertFalse(item.hasAffix(.critRate), "物品不應該擁有暴擊率詞條")
+    }
+    
+    // MARK: - T085: testItemHasAllAffixesWhenAllPresentThenTrue
+    
+    /// 測試物品擁有所有指定詞條時 hasAllAffixes 回傳 true
+    /// US6-Scenario2: 玩家使用「攻擊力+暴擊率」組合搜尋，系統透過 Bitmask AND 運算快速找出同時擁有這兩種詞條的裝備
+    func testItemHasAllAffixesWhenAllPresentThenTrue() {
+        // Given - 物品擁有攻擊力、防禦力、暴擊率詞條
+        let item = createItemWithAffixBitmask([.attack, .defense, .critRate])
+        
+        // When & Then
+        XCTAssertTrue(item.hasAllAffixes([.attack, .defense]), "物品應該同時擁有攻擊力和防禦力")
+        XCTAssertTrue(item.hasAllAffixes([.attack, .critRate]), "物品應該同時擁有攻擊力和暴擊率")
+        XCTAssertTrue(item.hasAllAffixes([.attack, .defense, .critRate]), "物品應該同時擁有三種詞條")
+    }
+    
+    // MARK: - T086: testItemHasAllAffixesWhenSomeMissingThenFalse
+    
+    /// 測試物品缺少部分指定詞條時 hasAllAffixes 回傳 false
+    func testItemHasAllAffixesWhenSomeMissingThenFalse() {
+        // Given - 物品只擁有攻擊力詞條
+        let item = createItemWithAffixBitmask([.attack])
+        
+        // When & Then
+        XCTAssertFalse(item.hasAllAffixes([.attack, .defense]), "物品缺少防禦力詞條")
+        XCTAssertFalse(item.hasAllAffixes([.attack, .critRate]), "物品缺少暴擊率詞條")
+    }
+    
+    // MARK: - T087: testItemHasAnyAffixWhenOnePresentThenTrue
+    
+    /// 測試物品擁有任一指定詞條時 hasAnyAffix 回傳 true
+    func testItemHasAnyAffixWhenOnePresentThenTrue() {
+        // Given - 物品只擁有攻擊力詞條
+        let item = createItemWithAffixBitmask([.attack])
+        
+        // When & Then
+        XCTAssertTrue(item.hasAnyAffix([.attack, .defense]), "物品擁有攻擊力詞條，滿足任一條件")
+        XCTAssertTrue(item.hasAnyAffix([.attack, .critRate, .speed]), "物品擁有攻擊力詞條，滿足任一條件")
+    }
+    
+    /// 測試物品沒有任何指定詞條時 hasAnyAffix 回傳 false
+    func testItemHasAnyAffixWhenNonePresentThenFalse() {
+        // Given - 物品只擁有攻擊力詞條
+        let item = createItemWithAffixBitmask([.attack])
+        
+        // When & Then
+        XCTAssertFalse(item.hasAnyAffix([.defense, .critRate]), "物品沒有防禦力或暴擊率詞條")
+    }
+    
+    /// 測試空 bitmask 的查詢行為
+    func testItemBitmaskQueryWithEmptyBitmask() {
+        // Given - 物品沒有任何詞條
+        let item = createItemWithAffixBitmask([])
+        
+        // When & Then
+        XCTAssertFalse(item.hasAffix(.attack))
+        XCTAssertFalse(item.hasAllAffixes([.attack]))
+        XCTAssertFalse(item.hasAnyAffix([.attack]))
+    }
 }
