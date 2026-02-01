@@ -1,0 +1,162 @@
+[
+  {
+    "templateId": "helmet_royal_001",
+    "name": "宗室冠冕",
+    "description": "昔日宗室之儀的王冠，承載著古老的祝福",
+    "slot": "helmet",
+    "rarity": "legendary",
+    "levelRequirement": 40,
+    "maxLevel": 20,
+    "setId": "royal_set",
+    "baseStats": {
+      "attack": 0,
+      "defense": 50,
+      "maxHP": 200,
+      "maxMP": 0,
+      "critRate": 0,
+      "critDamage": 0,
+      "speed": 0
+    },
+    "attributes": []
+  },
+  {
+    "templateId": "body_royal_001",
+    "name": "宗室華服",
+    "description": "昔日宗室之儀的禮服，織入了神秘力量",
+    "slot": "body",
+    "rarity": "legendary",
+    "levelRequirement": 40,
+    "maxLevel": 20,
+    "setId": "royal_set",
+    "baseStats": {
+      "attack": 0,
+      "defense": 80,
+      "maxHP": 300,
+      "maxMP": 0,
+      "critRate": 0,
+      "critDamage": 0,
+      "speed": 0
+    },
+    "attributes": []
+  },
+  {
+    "templateId": "gloves_royal_001",
+    "name": "宗室手套",
+    "description": "昔日宗室之儀的手套，增強戰鬥力量",
+    "slot": "gloves",
+    "rarity": "legendary",
+    "levelRequirement": 40,
+    "maxLevel": 20,
+    "setId": "royal_set",
+    "baseStats": {
+      "attack": 30,
+      "defense": 30,
+      "maxHP": 0,
+      "maxMP": 0,
+      "critRate": 0,
+      "critDamage": 0,
+      "speed": 0
+    },
+    "attributes": []
+  },
+  {
+    "templateId": "boots_royal_001",
+    "name": "宗室長靴",
+    "description": "昔日宗室之儀的長靴，行動輕盈如風",
+    "slot": "boots",
+    "rarity": "legendary",
+    "levelRequirement": 40,
+    "maxLevel": 20,
+    "setId": "royal_set",
+    "baseStats": {
+      "attack": 0,
+      "defense": 40,
+      "maxHP": 0,
+      "maxMP": 0,
+      "critRate": 0,
+      "critDamage": 0,
+      "speed": 20
+    },
+    "attributes": []
+  },
+  {
+    "templateId": "helmet_gladiator_001",
+    "name": "角鬥士戰盔",
+    "description": "角鬥士的終幕禮，染血的戰盔",
+    "slot": "helmet",
+    "rarity": "epic",
+    "levelRequirement": 30,
+    "maxLevel": 20,
+    "setId": "gladiator_set",
+    "baseStats": {
+      "attack": 20,
+      "defense": 35,
+      "maxHP": 150,
+      "maxMP": 0,
+      "critRate": 0,
+      "critDamage": 0,
+      "speed": 0
+    },
+    "attributes": []
+  },
+  {
+    "templateId": "body_gladiator_001",
+    "name": "角鬥士胸甲",
+    "description": "角鬥士的終幕禮，刻滿傷痕的胸甲",
+    "slot": "body",
+    "rarity": "epic",
+    "levelRequirement": 30,
+    "maxLevel": 20,
+    "setId": "gladiator_set",
+    "baseStats": {
+      "attack": 25,
+      "defense": 60,
+      "maxHP": 250,
+      "maxMP": 0,
+      "critRate": 0,
+      "critDamage": 0,
+      "speed": 0
+    },
+    "attributes": []
+  },
+  {
+    "templateId": "helmet_basic_001",
+    "name": "學徒頭巾",
+    "description": "初學者使用的基礎頭巾",
+    "slot": "helmet",
+    "rarity": "common",
+    "levelRequirement": 1,
+    "maxLevel": 10,
+    "setId": null,
+    "baseStats": {
+      "attack": 0,
+      "defense": 5,
+      "maxHP": 20,
+      "maxMP": 0,
+      "critRate": 0,
+      "critDamage": 0,
+      "speed": 0
+    },
+    "attributes": []
+  },
+  {
+    "templateId": "body_basic_001",
+    "name": "學徒長袍",
+    "description": "初學者使用的基礎長袍",
+    "slot": "body",
+    "rarity": "common",
+    "levelRequirement": 1,
+    "maxLevel": 10,
+    "setId": null,
+    "baseStats": {
+      "attack": 0,
+      "defense": 10,
+      "maxHP": 30,
+      "maxMP": 0,
+      "critRate": 0,
+      "critDamage": 0,
+      "speed": 0
+    },
+    "attributes": []
+  }
+]
