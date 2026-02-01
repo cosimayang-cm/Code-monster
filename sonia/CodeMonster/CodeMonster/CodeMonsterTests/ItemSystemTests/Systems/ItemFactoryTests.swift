@@ -82,10 +82,11 @@ final class ItemFactoryTests: XCTestCase {
         XCTAssertNotNil(item.id)
     }
     
-    // MARK: - T030: testCreateItemFromTemplateIdWhenTemplateNotFoundThenReturnsError
+    // MARK: - T030/T102: testCreateItemFromTemplateIdWhenTemplateNotFoundThenReturnsError
     
     /// 測試從不存在的模板 ID 創建物品時回傳錯誤
     /// Edge Case: 生成物品時模板不存在會發生什麼？（系統應回傳錯誤或 nil）
+    /// T102: testItemFactoryWhenTemplateNotFoundThenTemplateNotFoundError
     func testCreateItemFromTemplateIdWhenTemplateNotFoundThenReturnsError() {
         // Given
         let nonExistentId = "non_existent_template"

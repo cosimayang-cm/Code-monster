@@ -161,6 +161,8 @@ final class AffixGeneratorTests: XCTestCase {
     }
     
     /// 測試空詞條池時回傳 nil
+    /// T101: testAffixGeneratorWhenEmptyPoolThenEmptyAffixPoolError
+    /// 設計決策：空池回傳 nil/空陣列而非拋錯誤，讓呼叫端決定處理方式
     func testEmptyPoolReturnsNil() {
         // Given
         let emptyPool = AffixPool(mainAffixes: [], subAffixes: [])

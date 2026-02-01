@@ -272,6 +272,7 @@ final class AvatarTests: XCTestCase {
     }
     
     /// 測試從背包裝備時替換舊裝備
+    /// T100: testAvatarEquipItemWhenReplacingThenOldItemGoesToInventory
     func testAvatarEquipFromInventoryReplacesOldItem() throws {
         // Given
         let oldHelmet = createTestItem(slot: .helmet)
