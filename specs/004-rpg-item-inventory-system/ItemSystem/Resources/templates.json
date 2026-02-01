@@ -1,0 +1,65 @@
+[
+  {
+    "templateId": "helmet_iron_001",
+    "name": "鐵製頭盔",
+    "description": "基礎的鐵製頭盔，提供基本防護。",
+    "slot": "helmet",
+    "rarity": "common",
+    "levelRequirement": 1,
+    "baseStats": {
+      "attack": 0,
+      "defense": 10,
+      "maxHP": 50,
+      "maxMP": 0,
+      "critRate": 0,
+      "critDamage": 0,
+      "speed": 0
+    },
+    "attributes": [],
+    "setId": null,
+    "iconAsset": "icon_helmet_iron",
+    "modelAsset": "model_helmet_iron"
+  },
+  {
+    "templateId": "noblesse_helmet",
+    "name": "宗室之儀・冠冕",
+    "description": "昔日宗室之儀套裝的頭部裝備。",
+    "slot": "helmet",
+    "rarity": "legendary",
+    "levelRequirement": 20,
+    "baseStats": {
+      "attack": 0,
+      "defense": 50,
+      "maxHP": 200,
+      "maxMP": 0,
+      "critRate": 0,
+      "critDamage": 0,
+      "speed": 0
+    },
+    "attributes": [],
+    "setId": "noblesse_oblige",
+    "iconAsset": "icon_noblesse_helmet",
+    "modelAsset": "model_noblesse_helmet"
+  },
+  {
+    "templateId": "noblesse_body",
+    "name": "宗室之儀・鎧甲",
+    "description": "昔日宗室之儀套裝的身體裝備。",
+    "slot": "body",
+    "rarity": "legendary",
+    "levelRequirement": 20,
+    "baseStats": {
+      "attack": 0,
+      "defense": 80,
+      "maxHP": 300,
+      "maxMP": 0,
+      "critRate": 0,
+      "critDamage": 0,
+      "speed": 0
+    },
+    "attributes": [],
+    "setId": "noblesse_oblige",
+    "iconAsset": "icon_noblesse_body",
+    "modelAsset": "model_noblesse_body"
+  }
+]
