@@ -17,7 +17,7 @@ import Foundation
 
 /// 背包
 /// 存放未穿戴物品的容器
-final class Inventory {
+final class Inventory: Codable {
     
     // MARK: - Properties
     
@@ -26,6 +26,28 @@ final class Inventory {
     
     /// 物品存儲（使用 Dictionary 以 O(1) 查詢）
     private var items: [UUID: Item] = [:]
+    
+    // MARK: - Codable
+    
+    private enum CodingKeys: String, CodingKey {
+        case capacity
+        case items
+    }
+    
+    /// 從 Decoder 解碼
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        capacity = try container.decode(Int.self, forKey: .capacity)
+        let itemsArray = try container.decode([Item].self, forKey: .items)
+        items = Dictionary(uniqueKeysWithValues: itemsArray.map { ($0.id, $0) })
+    }
+    
+    /// 編碼到 Encoder
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(capacity, forKey: .capacity)
+        try container.encode(Array(items.values), forKey: .items)
+    }
     
     // MARK: - Initialization
     

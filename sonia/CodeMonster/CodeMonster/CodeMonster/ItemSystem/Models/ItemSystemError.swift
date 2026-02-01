@@ -51,6 +51,11 @@ enum ItemSystemError: Error, Equatable {
     
     /// 反序列化失敗
     case deserializationFailed(reason: String)
+    
+    // MARK: - Resource Errors
+    
+    /// 資源檔案不存在
+    case resourceNotFound(name: String)
 }
 
 // MARK: - LocalizedError
@@ -85,6 +90,9 @@ extension ItemSystemError: LocalizedError {
             
         case .deserializationFailed(let reason):
             return "反序列化失敗：\(reason)"
+            
+        case .resourceNotFound(let name):
+            return "找不到資源檔案：\(name)"
         }
     }
 }

@@ -16,7 +16,7 @@ import Foundation
 
 /// 物品稀有度等級
 /// 決定物品的品質和副詞條數量
-enum Rarity: Int, CaseIterable, Codable, Comparable, Hashable {
+enum Rarity: Int, CaseIterable, Comparable, Hashable {
     /// 普通品質 - 0 條副詞條
     case common = 0
     
@@ -31,6 +31,31 @@ enum Rarity: Int, CaseIterable, Codable, Comparable, Hashable {
     
     /// 傳說品質 - 4 條副詞條
     case legendary = 4
+    
+    // MARK: - String Mapping
+    
+    /// 用於 JSON 序列化的字串識別碼
+    var stringValue: String {
+        switch self {
+        case .common: return "common"
+        case .uncommon: return "uncommon"
+        case .rare: return "rare"
+        case .epic: return "epic"
+        case .legendary: return "legendary"
+        }
+    }
+    
+    /// 從字串建立稀有度
+    init?(stringValue: String) {
+        switch stringValue.lowercased() {
+        case "common": self = .common
+        case "uncommon": self = .uncommon
+        case "rare": self = .rare
+        case "epic": self = .epic
+        case "legendary": self = .legendary
+        default: return nil
+        }
+    }
     
     // MARK: - Sub Affix Count
     
@@ -78,5 +103,48 @@ enum Rarity: Int, CaseIterable, Codable, Comparable, Hashable {
         case .epic: return "史詩"
         case .legendary: return "傳說"
         }
+    }
+}
+
+// MARK: - Codable
+
+extension Rarity: Codable {
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        
+        // 嘗試從字串解碼
+        if let stringValue = try? container.decode(String.self) {
+            guard let rarity = Rarity(stringValue: stringValue) else {
+                throw DecodingError.dataCorruptedError(
+                    in: container,
+                    debugDescription: "Invalid rarity string: \(stringValue)"
+                )
+            }
+            self = rarity
+            return
+        }
+        
+        // 嘗試從整數解碼
+        if let intValue = try? container.decode(Int.self) {
+            guard let rarity = Rarity(rawValue: intValue) else {
+                throw DecodingError.dataCorruptedError(
+                    in: container,
+                    debugDescription: "Invalid rarity value: \(intValue)"
+                )
+            }
+            self = rarity
+            return
+        }
+        
+        throw DecodingError.dataCorruptedError(
+            in: container,
+            debugDescription: "Expected String or Int for Rarity"
+        )
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(stringValue)
     }
 }
