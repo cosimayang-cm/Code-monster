@@ -15,7 +15,7 @@
 import Foundation
 
 /// 角色
-/// 玩家控制的角色，擁有基礎數值和裝備欄位
+/// 玩家控制的角色，擁有基礎數值、裝備欄位、背包
 final class Avatar {
     
     // MARK: - Properties
@@ -32,6 +32,9 @@ final class Avatar {
     /// 裝備欄位
     private let equipmentSlots: EquipmentSlots
     
+    /// 背包
+    let inventory: Inventory
+    
     // MARK: - Initialization
     
     /// 建立角色
@@ -39,11 +42,13 @@ final class Avatar {
     ///   - name: 角色名稱
     ///   - level: 角色等級
     ///   - baseStats: 基礎數值
-    init(name: String, level: Int, baseStats: Stats) {
+    ///   - inventoryCapacity: 背包容量（預設 100）
+    init(name: String, level: Int, baseStats: Stats, inventoryCapacity: Int = 100) {
         self.name = name
         self.level = level
         self.baseStats = baseStats
         self.equipmentSlots = EquipmentSlots()
+        self.inventory = Inventory(capacity: inventoryCapacity)
     }
     
     // MARK: - Equipment Query
@@ -98,6 +103,51 @@ final class Avatar {
     /// - Throws: `ItemSystemError.slotEmpty` 若欄位為空
     func unequip(from slot: EquipmentSlot) throws -> Item {
         try equipmentSlots.unequip(from: slot)
+    }
+    
+    /// 從指定欄位卸下裝備並放入背包
+    /// - Parameter slot: 要卸下的欄位
+    /// - Throws: `ItemSystemError.slotEmpty` 若欄位為空
+    /// - Throws: `ItemSystemError.inventoryFull` 若背包已滿
+    func unequipToInventory(from slot: EquipmentSlot) throws {
+        // Edge Case: 背包滿時卸下裝備：系統拒絕卸下並提示「背包已滿，請先清理空間」
+        guard !inventory.isFull else {
+            throw ItemSystemError.inventoryFull(capacity: inventory.capacity)
+        }
+        
+        let item = try equipmentSlots.unequip(from: slot)
+        try inventory.add(item)
+    }
+    
+    /// 從背包裝備物品
+    /// - Parameter itemId: 背包中物品的 ID
+    /// - Returns: 被替換的舊裝備（如果有的話，會放入背包）
+    /// - Throws: `ItemSystemError.itemNotFound` 若物品不在背包中
+    /// - Throws: `ItemSystemError.levelRequirementNotMet` 若等級不足
+    @discardableResult
+    func equipFromInventory(itemId: UUID) throws -> Item? {
+        guard let item = inventory.item(withId: itemId) else {
+            throw ItemSystemError.itemNotFound(itemId: itemId)
+        }
+        
+        // 驗證等級需求
+        guard level >= item.levelRequirement else {
+            throw ItemSystemError.levelRequirementNotMet(
+                required: item.levelRequirement,
+                current: level
+            )
+        }
+        
+        // 從背包移除
+        try inventory.remove(itemId: itemId)
+        
+        // 裝備物品，舊裝備放入背包
+        let previousItem = try equipmentSlots.equip(item, to: item.slot)
+        if let previous = previousItem {
+            try inventory.add(previous)
+        }
+        
+        return previousItem
     }
     
     // MARK: - Stats Calculation

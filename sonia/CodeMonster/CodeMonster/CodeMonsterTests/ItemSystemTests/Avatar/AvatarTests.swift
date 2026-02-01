@@ -222,4 +222,70 @@ final class AvatarTests: XCTestCase {
         XCTAssertEqual(statsWithHelmet.defense, 50 + 50) // 基礎 50 + 裝備 50
         XCTAssertEqual(statsWithoutHelmet.defense, 50) // 只剩基礎
     }
+    
+    // MARK: - T071: testAvatarUnequipWhenInventoryFullThenInventoryFullError
+    
+    /// 測試背包滿時卸下裝備拋出錯誤
+    /// Edge Case: 背包滿時卸下裝備：系統拒絕卸下並提示「背包已滿，請先清理空間」
+    func testAvatarUnequipWhenInventoryFullThenInventoryFullError() throws {
+        // Given - 建立背包容量為 2 的角色
+        let smallInventoryAvatar = Avatar(
+            name: "小背包角色",
+            level: 10,
+            baseStats: Stats.zero,
+            inventoryCapacity: 2
+        )
+        
+        // 裝備一件頭盔
+        let helmet = createTestItem(slot: .helmet)
+        try smallInventoryAvatar.equip(helmet)
+        
+        // 填滿背包
+        try smallInventoryAvatar.inventory.add(createTestItem(slot: .boots))
+        try smallInventoryAvatar.inventory.add(createTestItem(slot: .gloves))
+        
+        // When & Then - 嘗試卸下裝備到背包應該失敗
+        XCTAssertThrowsError(try smallInventoryAvatar.unequipToInventory(from: .helmet)) { error in
+            guard case ItemSystemError.inventoryFull(let capacity) = error else {
+                XCTFail("Expected inventoryFull error, got \(error)")
+                return
+            }
+            XCTAssertEqual(capacity, 2)
+        }
+        
+        // 確認裝備仍在身上
+        XCTAssertNotNil(smallInventoryAvatar.equippedItem(at: .helmet))
+    }
+    
+    /// 測試從背包裝備物品
+    func testAvatarEquipFromInventory() throws {
+        // Given
+        let helmet = createTestItem(slot: .helmet)
+        try sut.inventory.add(helmet)
+        
+        // When
+        try sut.equipFromInventory(itemId: helmet.id)
+        
+        // Then
+        XCTAssertEqual(sut.equippedItem(at: .helmet)?.id, helmet.id)
+        XCTAssertFalse(sut.inventory.contains(helmet))
+    }
+    
+    /// 測試從背包裝備時替換舊裝備
+    func testAvatarEquipFromInventoryReplacesOldItem() throws {
+        // Given
+        let oldHelmet = createTestItem(slot: .helmet)
+        let newHelmet = createTestItem(slot: .helmet)
+        try sut.equip(oldHelmet)
+        try sut.inventory.add(newHelmet)
+        
+        // When
+        let previousItem = try sut.equipFromInventory(itemId: newHelmet.id)
+        
+        // Then
+        XCTAssertEqual(previousItem?.id, oldHelmet.id)
+        XCTAssertEqual(sut.equippedItem(at: .helmet)?.id, newHelmet.id)
+        XCTAssertTrue(sut.inventory.contains(oldHelmet), "舊裝備應在背包中")
+        XCTAssertFalse(sut.inventory.contains(newHelmet), "新裝備應已從背包移除")
+    }
 }
