@@ -1,0 +1,107 @@
+[
+  {
+    "slot": "helmet",
+    "mainAffixPool": [
+      {
+        "type": 16,
+        "weight": 40,
+        "minValue": 500,
+        "maxValue": 1000,
+        "isPercentage": false
+      },
+      {
+        "type": 4,
+        "weight": 30,
+        "minValue": 50,
+        "maxValue": 100,
+        "isPercentage": false
+      },
+      {
+        "type": 8,
+        "weight": 30,
+        "minValue": 30,
+        "maxValue": 60,
+        "isPercentage": false
+      }
+    ],
+    "subAffixPool": [
+      {
+        "type": 1,
+        "weight": 20,
+        "minValue": 3,
+        "maxValue": 6,
+        "isPercentage": true
+      },
+      {
+        "type": 4,
+        "weight": 25,
+        "minValue": 10,
+        "maxValue": 20,
+        "isPercentage": true
+      },
+      {
+        "type": 8,
+        "weight": 25,
+        "minValue": 10,
+        "maxValue": 20,
+        "isPercentage": true
+      },
+      {
+        "type": 16,
+        "weight": 30,
+        "minValue": 5,
+        "maxValue": 10,
+        "isPercentage": true
+      }
+    ]
+  },
+  {
+    "slot": "body",
+    "mainAffixPool": [
+      {
+        "type": 8,
+        "weight": 50,
+        "minValue": 50,
+        "maxValue": 100,
+        "isPercentage": false
+      },
+      {
+        "type": 16,
+        "weight": 50,
+        "minValue": 300,
+        "maxValue": 600,
+        "isPercentage": false
+      }
+    ],
+    "subAffixPool": [
+      {
+        "type": 1,
+        "weight": 15,
+        "minValue": 2,
+        "maxValue": 5,
+        "isPercentage": true
+      },
+      {
+        "type": 4,
+        "weight": 20,
+        "minValue": 8,
+        "maxValue": 15,
+        "isPercentage": true
+      },
+      {
+        "type": 8,
+        "weight": 30,
+        "minValue": 10,
+        "maxValue": 20,
+        "isPercentage": true
+      },
+      {
+        "type": 16,
+        "weight": 35,
+        "minValue": 5,
+        "maxValue": 12,
+        "isPercentage": true
+      }
+    ]
+  }
+]
