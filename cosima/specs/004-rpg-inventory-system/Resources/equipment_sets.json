@@ -1,0 +1,59 @@
+[
+  {
+    "setId": "royal_set",
+    "name": "昔日宗室之儀",
+    "description": "古老宗室遺留的儀式套裝，蘊含神秘力量",
+    "pieces": [
+      "helmet_royal_001",
+      "body_royal_001",
+      "gloves_royal_001",
+      "boots_royal_001"
+    ],
+    "bonuses": [
+      {
+        "requiredPieces": 2,
+        "effect": {
+          "statBonus": {
+            "stat": "attack",
+            "value": 18,
+            "isPercentage": true
+          }
+        },
+        "description": "攻擊力提升18%"
+      },
+      {
+        "requiredPieces": 4,
+        "effect": {
+          "statBonus": {
+            "stat": "critDamage",
+            "value": 35,
+            "isPercentage": true
+          }
+        },
+        "description": "施放元素戰技後，暴擊傷害提升35%"
+      }
+    ]
+  },
+  {
+    "setId": "gladiator_set",
+    "name": "角鬥士的終幕禮",
+    "description": "傳說中角鬥士所穿戴的裝備，象徵勇氣與榮耀",
+    "pieces": [
+      "helmet_gladiator_001",
+      "body_gladiator_001"
+    ],
+    "bonuses": [
+      {
+        "requiredPieces": 2,
+        "effect": {
+          "statBonus": {
+            "stat": "attack",
+            "value": 15,
+            "isPercentage": true
+          }
+        },
+        "description": "攻擊力提升15%"
+      }
+    ]
+  }
+]
