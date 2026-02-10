@@ -10,6 +10,11 @@ import UIKit
 /// Custom table view cell for displaying post with interaction counts
 final class PostCell: UITableViewCell {
 
+    // MARK: - Callback
+
+    var onLikeTapped: (() -> Void)?
+    var onShareTapped: (() -> Void)?
+
     // MARK: - UI Components
 
     private let titleLabel: UILabel = {
@@ -29,12 +34,11 @@ final class PostCell: UITableViewCell {
         return label
     }()
 
-    private let likeCountLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 12)
-        label.textColor = .secondaryLabel
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private let likeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.titleLabel?.font = .systemFont(ofSize: 12)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
 
     private let commentCountLabel: UILabel = {
@@ -45,12 +49,11 @@ final class PostCell: UITableViewCell {
         return label
     }()
 
-    private let shareCountLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 12)
-        label.textColor = .secondaryLabel
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private let shareButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.titleLabel?.font = .systemFont(ofSize: 12)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
 
     private let interactionStackView: UIStackView = {
@@ -80,9 +83,9 @@ final class PostCell: UITableViewCell {
         contentView.addSubview(bodyPreviewLabel)
         contentView.addSubview(interactionStackView)
 
-        interactionStackView.addArrangedSubview(likeCountLabel)
+        interactionStackView.addArrangedSubview(likeButton)
         interactionStackView.addArrangedSubview(commentCountLabel)
-        interactionStackView.addArrangedSubview(shareCountLabel)
+        interactionStackView.addArrangedSubview(shareButton)
 
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
@@ -98,6 +101,19 @@ final class PostCell: UITableViewCell {
             interactionStackView.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -16),
             interactionStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
         ])
+
+        likeButton.addTarget(self, action: #selector(likeTapped), for: .touchUpInside)
+        shareButton.addTarget(self, action: #selector(shareTapped), for: .touchUpInside)
+    }
+
+    // MARK: - Actions
+
+    @objc private func likeTapped() {
+        onLikeTapped?()
+    }
+
+    @objc private func shareTapped() {
+        onShareTapped?()
     }
 
     // MARK: - Configuration
@@ -107,8 +123,9 @@ final class PostCell: UITableViewCell {
         bodyPreviewLabel.text = postWithInteraction.post.body
 
         let interaction = postWithInteraction.interaction
-        likeCountLabel.text = "❤️ \(interaction.likeCount)"
+        let icon = interaction.isLiked ? "❤️" : "🤍"
+        likeButton.setTitle("\(icon) \(interaction.likeCount)", for: .normal)
         commentCountLabel.text = "💬 \(interaction.commentCount)"
-        shareCountLabel.text = "↗️ \(interaction.shareCount)"
+        shareButton.setTitle("↗️ \(interaction.shareCount)", for: .normal)
     }
 }

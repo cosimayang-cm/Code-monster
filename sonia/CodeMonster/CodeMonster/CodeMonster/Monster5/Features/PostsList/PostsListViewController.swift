@@ -186,6 +186,12 @@ extension PostsListViewController: UITableViewDataSource {
 
         let post = store.posts[indexPath.row]
         cell.configure(with: post)
+        cell.onLikeTapped = { [weak self] in
+            self?.store.send(.likeTapped(postId: post.id))
+        }
+        cell.onShareTapped = { [weak self] in
+            self?.store.send(.shareTapped(postId: post.id))
+        }
         return cell
     }
 }

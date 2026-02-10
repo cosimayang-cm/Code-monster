@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import ComposableArchitecture
 
 /// Demo Hub - Undo/Redo 系統展示入口頁面
 /// FR-028: 展示入口頁面
@@ -57,8 +58,20 @@ final class UndoRedoDemoViewController: UIViewController {
         return button
     }()
 
+    private lazy var monster5Button: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("🏗️ Monster 5: TCA + UIKit", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
+        button.backgroundColor = .systemPurple
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 12
+        button.addTarget(self, action: #selector(monster5Tapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     private lazy var buttonStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [textEditorButton, canvasEditorButton])
+        let stack = UIStackView(arrangedSubviews: [textEditorButton, canvasEditorButton, monster5Button])
         stack.axis = .vertical
         stack.spacing = 16
         stack.distribution = .fillEqually
@@ -115,5 +128,14 @@ final class UndoRedoDemoViewController: UIViewController {
     @objc private func canvasEditorTapped() {
         let canvasEditorVC = CanvasEditorViewController()
         navigationController?.pushViewController(canvasEditorVC, animated: true)
+    }
+
+    @objc private func monster5Tapped() {
+        let store = Store(initialState: AppFeature.State()) {
+            AppFeature()
+        }
+        let coordinator = AppCoordinator(store: store)
+        coordinator.modalPresentationStyle = .fullScreen
+        present(coordinator, animated: true)
     }
 }

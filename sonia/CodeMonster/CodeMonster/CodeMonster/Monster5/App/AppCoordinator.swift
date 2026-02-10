@@ -30,78 +30,61 @@ final class AppCoordinator: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        delegate = self
 
         // Set initial login screen
-        let loginStore = store.scope(state: \.login, action: \.login)
-        let loginVC = LoginViewController(store: loginStore)
+        let loginVC = LoginViewController(
+            store: store.scope(state: \.login, action: \.login)
+        )
         setViewControllers([loginVC], animated: false)
 
-        // Observe navigation path changes
-        observeNavigationPath()
+        // Observe navigation state changes
+        observeNavigation()
     }
 
     // MARK: - Navigation Observation
 
-    private func observeNavigationPath() {
+    private func observeNavigation() {
         observe { [weak self] in
             guard let self else { return }
 
-            let pathCount = store.path.count
-            let vcCount = viewControllers.count
+            // Push posts list when logged in
+            if store.isLoggedIn && viewControllers.count == 1 {
+                let postsListVC = PostsListViewController(
+                    store: store.scope(state: \.postsList, action: \.postsList)
+                )
+                pushViewController(postsListVC, animated: true)
+            }
 
-            // Sync navigation stack with TCA path
-            if pathCount > vcCount - 1 {
-                // Push new screens
-                let newStates = Array(store.path.suffix(pathCount - (vcCount - 1)))
-                for pathState in newStates {
-                    let vc = makeViewController(for: pathState)
-                    pushViewController(vc, animated: true)
+            // Push/pop post detail based on optional state
+            if store.postDetail != nil {
+                if !(topViewController is PostDetailViewController) {
+                    if let detailStore = store.scope(state: \.postDetail, action: \.postDetail) {
+                        let detailVC = PostDetailViewController(store: detailStore)
+                        pushViewController(detailVC, animated: true)
+                    }
                 }
-            } else if pathCount < vcCount - 1 {
-                // Pop screens
-                let targetVC = viewControllers[pathCount]
-                popToViewController(targetVC, animated: true)
+            } else {
+                if topViewController is PostDetailViewController {
+                    popViewController(animated: true)
+                }
             }
         }
     }
+}
 
-    // MARK: - View Controller Factory
+// MARK: - UINavigationControllerDelegate
 
-    private func makeViewController(for pathState: AppFeature.Path.State) -> UIViewController {
-        switch pathState {
-        case let .postsList(state):
-            // Find the ID for this state in the path
-            guard let id = store.path.ids.first(where: { id in
-                if case .postsList = store.path[id: id] {
-                    return true
-                }
-                return false
-            }) else {
-                fatalError("Could not find posts list state in path")
-            }
-
-            let postsListStore = store.scope(
-                state: { _ in state },
-                action: { .path(.element(id: id, action: .postsList($0))) }
-            )
-            return PostsListViewController(store: postsListStore)
-
-        case let .postDetail(state):
-            // Find the ID for this state in the path
-            guard let id = store.path.ids.first(where: { id in
-                if case .postDetail = store.path[id: id] {
-                    return true
-                }
-                return false
-            }) else {
-                fatalError("Could not find post detail state in path")
-            }
-
-            let postDetailStore = store.scope(
-                state: { _ in state },
-                action: { .path(.element(id: id, action: .postDetail($0))) }
-            )
-            return PostDetailViewController(store: postDetailStore)
+extension AppCoordinator: UINavigationControllerDelegate {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        // When user navigates back from detail (back button or swipe),
+        // sync the final interaction state and clear postDetail
+        if store.postDetail != nil && !(topViewController is PostDetailViewController) {
+            store.send(.dismissPostDetail)
         }
     }
 }

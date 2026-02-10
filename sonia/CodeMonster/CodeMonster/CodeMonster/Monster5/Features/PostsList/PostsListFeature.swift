@@ -22,6 +22,8 @@ struct PostsListFeature {
         case postsResponse(Result<[Post], Error>)
         case retryTapped
         case postTapped(PostWithInteraction)
+        case likeTapped(postId: Int)
+        case shareTapped(postId: Int)
         case updateInteraction(PostInteraction)
     }
 
@@ -65,6 +67,21 @@ struct PostsListFeature {
 
             case .postTapped:
                 return .none // handled by parent AppFeature
+
+            case let .likeTapped(postId):
+                guard let index = state.posts.index(id: postId) else { return .none }
+                state.posts[index].interaction.isLiked.toggle()
+                state.posts[index].interaction.likeCount += state.posts[index].interaction.isLiked ? 1 : -1
+                return .run { [interaction = state.posts[index].interaction] _ in
+                    try storageClient.saveInteraction(interaction)
+                }
+
+            case let .shareTapped(postId):
+                guard let index = state.posts.index(id: postId) else { return .none }
+                state.posts[index].interaction.shareCount += 1
+                return .run { [interaction = state.posts[index].interaction] _ in
+                    try storageClient.saveInteraction(interaction)
+                }
 
             case let .updateInteraction(interaction):
                 if let index = state.posts.index(id: interaction.postId) {
