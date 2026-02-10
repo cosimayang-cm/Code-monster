@@ -9,12 +9,13 @@
 1. [TCA 核心概念](#1-tca-核心概念)
 2. [TCA vs MVVM](#2-tca-vs-mvvm)
 3. [Store 與 Scope](#3-store-與-scope)
-4. [observe 與效能](#4-observe-與效能)
+4. [observe 與效能](#4-observe-與-效能)
 5. [KeyPath 與 CaseKeyPath](#5-keypath-與-casekeypath)
 6. [Effect 與 Swift Concurrency](#6-effect-與-swift-concurrency)
 7. [Structured Concurrency 與自動取消](#7-structured-concurrency-與自動取消)
 8. [TestStore 測試](#8-teststore-測試)
 9. [實戰注意事項](#9-實戰注意事項)
+10. [為什麼 TCA 更適合 SwiftUI 而不是 UIKit？](#10-為什麼-tca-更適合-swiftui-而不是-uikit)
 
 ---
 
@@ -762,6 +763,225 @@ PostsListFeature Reducer:
  → tableView.reloadData()
  → 🤍 0  變成  ❤️ 1
 ```
+
+---
+
+## 10. 為什麼 TCA 更適合 SwiftUI 而不是 UIKit？
+
+TCA 本身對 SwiftUI 和 UIKit 都能用，但設計上天然偏向 SwiftUI。以下從五個面向比較。
+
+### 10.1 State 觀測：自動 vs 手動
+
+**SwiftUI — 完全自動**
+
+```swift
+struct PostsListView: View {
+    let store: StoreOf<PostsListFeature>
+
+    var body: some View {
+        // State 變了 → SwiftUI 自動重算 body → 畫面更新
+        // 不需要寫任何「觀測」程式碼
+        List(store.posts) { post in
+            Text(post.title)
+        }
+    }
+}
+```
+
+SwiftUI 的 `body` 是宣告式的——你只描述「State 長這樣，畫面該長那樣」，SwiftUI 自己 diff 更新。
+
+**UIKit — 你必須手動橋接**
+
+```swift
+final class PostsListViewController: UIViewController {
+    let store: StoreOf<PostsListFeature>
+
+    func viewDidLoad() {
+        // 你需要自己寫 observe 並且手動更新每一個 UI 元件
+        observe { [weak self] in
+            guard let self else { return }
+            let isLoading = store.isLoading
+            let posts = store.posts
+
+            if isLoading {
+                loadingIndicator.startAnimating()
+                tableView.isHidden = true
+            } else {
+                loadingIndicator.stopAnimating()
+                tableView.isHidden = false
+                tableView.reloadData()   // ← 手動 reload
+            }
+        }
+    }
+}
+```
+
+UIKit 的 `observe` 是 TCA 提供的「補丁」，讓命令式 UI 能反應狀態變化。但你要自己決定：哪個 State 對應哪個 UI 元件、怎麼更新、怎麼處理衝突。
+
+### 10.2 導覽（Navigation）：原生 vs 自己管
+
+**SwiftUI — TCA 原生支援**
+
+```swift
+// 在 Reducer 裡定義路由
+@Reducer
+struct AppFeature {
+    @ObservableState
+    struct State {
+        var path = StackState<Path.State>()  // TCA 的路由堆疊
+    }
+
+    @Reducer
+    enum Path {
+        case postsList(PostsListFeature)
+        case postDetail(PostDetailFeature)
+    }
+}
+
+// 在 SwiftUI 裡一行搞定
+NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+    LoginView(store: store.scope(state: \.login, action: \.login))
+} destination: { store in
+    switch store.case {
+    case let .postsList(store): PostsListView(store: store)
+    case let .postDetail(store): PostDetailView(store: store)
+    }
+}
+```
+
+push/pop 由 State 驅動，TCA 管路由，SwiftUI 自動跟著動。
+
+**UIKit — 需要自建 Coordinator**
+
+```swift
+// Monster5 的 AppCoordinator：自己管導覽
+final class AppCoordinator: UINavigationController, UINavigationControllerDelegate {
+    let store: StoreOf<AppFeature>
+
+    func observeNavigation() {
+        observe { [weak self] in
+            guard let self else { return }
+
+            // 自己判斷什麼時候 push
+            if store.isLoggedIn && viewControllers.count == 1 {
+                pushViewController(postsListVC, animated: true)
+            }
+
+            // 自己判斷什麼時候 push/pop detail
+            if store.postDetail != nil {
+                if !(topViewController is PostDetailViewController) {
+                    pushViewController(detailVC, animated: true)
+                }
+            } else {
+                if topViewController is PostDetailViewController {
+                    popViewController(animated: true)
+                }
+            }
+        }
+    }
+
+    // 還要處理使用者手動返回的同步
+    func navigationController(_ nav: UINavigationController,
+                              didShow vc: UIViewController, animated: Bool) {
+        if store.postDetail != nil && !(topViewController is PostDetailViewController) {
+            store.send(.dismissPostDetail)
+        }
+    }
+}
+```
+
+你得自己把 State 的變化翻譯成 push/pop，還要處理使用者按返回鍵或滑動返回時的狀態同步。
+
+### 10.3 雙向綁定（Binding）：一行 vs 不支援
+
+**SwiftUI — `$store` 一行搞定**
+
+```swift
+TextField("Username", text: $store.username.sending(\.usernameChanged))
+Toggle("Dark mode", isOn: $store.isDarkMode.sending(\.darkModeToggled))
+```
+
+TCA 的 `@BindableState` + SwiftUI 的 `$` 語法，完美搭配。
+
+**UIKit — 手動收發**
+
+```swift
+// 發送
+@objc func textChanged(_ sender: UITextField) {
+    store.send(.usernameChanged(sender.text ?? ""))
+}
+
+// 接收
+observe { [weak self] in
+    guard let self else { return }
+    if usernameField.text != store.username {
+        usernameField.text = store.username
+    }
+}
+```
+
+每個輸入元件都要寫收和發兩段邏輯，還要避免循環更新。
+
+### 10.4 列表（List）：精準更新 vs 全部 reload
+
+**SwiftUI — 自動 diff**
+
+```swift
+List(store.posts) { post in
+    PostRow(post: post)
+    // State 裡某一篇的 likeCount 變了 → SwiftUI 只更新那一行
+}
+```
+
+SwiftUI 搭配 `IdentifiedArray` 自動做 row-level diff。
+
+**UIKit — 你手動處理**
+
+```swift
+observe { [weak self] in
+    // 簡單做法（效能差）
+    self?.tableView.reloadData()
+
+    // 精準做法（你要自己算 diff）
+    // 1. 記住舊的 posts
+    // 2. 比對新的 posts
+    // 3. 用 performBatchUpdates 插入/刪除/移動
+}
+```
+
+Monster5 目前用 `reloadData()` 簡單處理。如果要精準更新，需要自己用 `UITableViewDiffableDataSource` + `NSDiffableDataSourceSnapshot`。
+
+### 10.5 TCA 內建工具的支援度
+
+| 功能 | SwiftUI | UIKit |
+|---|---|---|
+| `@ObservableState` 自動追蹤 | body 重算自動觸發 | 需要 `observe {}` 手動橋接 |
+| `NavigationStack` + `StackState` | 原生支援 | 不適用，要自己寫 Coordinator |
+| `$store.sending()` 雙向綁定 | 原生支援 | 不適用 |
+| `ForEach` + `IdentifiedArray` | 自動 row diff | 需要 DiffableDataSource |
+| `.alert` / `.confirmationDialog` | 宣告式一行 | 自己 present UIAlertController |
+| `.sheet` / `.fullScreenCover` | State 驅動 | 自己 present/dismiss |
+| `ifLet` scope for optional | 自動顯示/隱藏 | 自己 push/pop |
+| `.fileExporter` / `.popover` | 原生整合 | 自己管理 |
+
+### 10.6 那 UIKit 還該用 TCA 嗎？
+
+**該用的情況：**
+
+- 大型既有 UIKit 專案，不打算全面改寫成 SwiftUI
+- 團隊希望統一架構，未來逐步遷移到 SwiftUI
+- 複雜的狀態管理需求（多畫面共享狀態、複雜的副作用取消邏輯）
+- 需要 TestStore 帶來的嚴格可測試性
+
+**不建議的情況：**
+
+- 小型 UIKit 專案，用 MVVM 就夠了
+- 團隊不熟悉 TCA，學習成本太高
+- 沒有複雜的跨畫面狀態同步需求
+
+### 10.7 一句話總結
+
+> **TCA 跟 SwiftUI 像是兩塊拼圖，設計時就想好了怎麼嵌在一起。用在 UIKit 上也可以，但你要自己當翻譯官，把宣告式的 State 翻譯成命令式的 UI 指令。**
 
 ---
 
