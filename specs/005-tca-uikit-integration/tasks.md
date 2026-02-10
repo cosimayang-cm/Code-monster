@@ -34,9 +34,9 @@
 
 **Purpose**: Project initialization, TCA dependency, directory structure
 
-- [x] T001 Create Monster5 directory structure under sonia/CodeMonster/CodeMonster/Monster5/ with subdirectories: App/, Features/Login/, Features/PostsList/, Features/PostDetail/, Dependencies/, Models/, UI/
-- [x] T002 Create Monster5Tests directory at sonia/CodeMonster/CodeMonsterTests/Monster5Tests/
-- [x] T003 Add TCA Swift Package dependency (https://github.com/pointfreeco/swift-composable-architecture, version 1.7.0+) to CodeMonster.xcodeproj and set iOS deployment target to 16.0
+- [ ] T001 Create Monster5 directory structure under sonia/CodeMonster/CodeMonster/Monster5/ with subdirectories: App/, Features/Login/, Features/PostsList/, Features/PostDetail/, Dependencies/, Models/, UI/
+- [ ] T002 Create Monster5Tests directory at sonia/CodeMonster/CodeMonsterTests/Monster5Tests/
+- [ ] T003 Add TCA Swift Package dependency (https://github.com/pointfreeco/swift-composable-architecture, version 1.7.0+) to CodeMonster.xcodeproj and set iOS deployment target to 16.0
 
 ---
 
@@ -48,20 +48,20 @@
 
 ### Models
 
-- [x] T004 [P] [NEW] Create LoginResponse model (id, username, email, firstName, lastName, gender, image, accessToken, refreshToken) conforming to Codable, Equatable in sonia/CodeMonster/CodeMonster/Monster5/Models/User.swift
-- [x] T005 [P] [NEW] Create Post model (userId, id, title, body) conforming to Codable, Equatable, Identifiable in sonia/CodeMonster/CodeMonster/Monster5/Models/Post.swift
-- [x] T006 [P] [NEW] Create PostInteraction model (postId, isLiked, likeCount, commentCount, shareCount) conforming to Codable, Equatable in sonia/CodeMonster/CodeMonster/Monster5/Models/PostInteraction.swift
-- [x] T007 [NEW] Create PostWithInteraction composite struct (post: Post, interaction: PostInteraction) conforming to Equatable, Identifiable (id delegates to post.id) in sonia/CodeMonster/CodeMonster/Monster5/Models/PostInteraction.swift
+- [ ] T004 [P] [NEW] Create LoginResponse model (id, username, email, firstName, lastName, gender, image, accessToken, refreshToken) conforming to Codable, Equatable in sonia/CodeMonster/CodeMonster/Monster5/Models/User.swift
+- [ ] T005 [P] [NEW] Create Post model (userId, id, title, body) conforming to Codable, Equatable, Identifiable in sonia/CodeMonster/CodeMonster/Monster5/Models/Post.swift
+- [ ] T006 [P] [NEW] Create PostInteraction model (postId, isLiked, likeCount, commentCount, shareCount) conforming to Codable, Equatable in sonia/CodeMonster/CodeMonster/Monster5/Models/PostInteraction.swift
+- [ ] T007 [NEW] Create PostWithInteraction composite struct (post: Post, interaction: PostInteraction) conforming to Equatable, Identifiable (id delegates to post.id) in sonia/CodeMonster/CodeMonster/Monster5/Models/PostInteraction.swift
 
 ### Dependencies
 
-- [x] T008 [P] [NEW] Implement AuthClient @DependencyClient with login(username:password:) async throws -> LoginResponse, including liveValue (POST https://dummyjson.com/auth/login) and testValue in sonia/CodeMonster/CodeMonster/Monster5/Dependencies/AuthClient.swift
-- [x] T009 [P] [NEW] Implement PostsClient @DependencyClient with fetchPosts() async throws -> [Post], including liveValue (GET https://jsonplaceholder.typicode.com/posts) and testValue in sonia/CodeMonster/CodeMonster/Monster5/Dependencies/PostsClient.swift
-- [x] T010 [P] [NEW] [REUSE] Implement StorageClient @DependencyClient with saveInteraction(_:), loadInteraction(postId:), loadAllInteractions() methods using UserDefaults JSON encoding (adapt pattern from PopupChain UserDefaultsPopupStateRepository), including liveValue and testValue in sonia/CodeMonster/CodeMonster/Monster5/Dependencies/StorageClient.swift
+- [ ] T008 [P] [NEW] Implement AuthClient @DependencyClient with login(username:password:) async throws -> LoginResponse, including liveValue (POST https://dummyjson.com/auth/login) and testValue in sonia/CodeMonster/CodeMonster/Monster5/Dependencies/AuthClient.swift
+- [ ] T009 [P] [NEW] Implement PostsClient @DependencyClient with fetchPosts() async throws -> [Post], including liveValue (GET https://jsonplaceholder.typicode.com/posts) and testValue in sonia/CodeMonster/CodeMonster/Monster5/Dependencies/PostsClient.swift
+- [ ] T010 [P] [NEW] [REUSE] Implement StorageClient @DependencyClient with saveInteraction(_:), loadInteraction(postId:), loadAllInteractions() methods using UserDefaults JSON encoding (adapt pattern from PopupChain UserDefaultsPopupStateRepository), including liveValue and testValue in sonia/CodeMonster/CodeMonster/Monster5/Dependencies/StorageClient.swift
 
 ### Shared UI
 
-- [x] T011 [P] [NEW] Create ErrorToastView (UIView overlay, displays error message, auto-layout at top of screen) in sonia/CodeMonster/CodeMonster/Monster5/UI/ErrorToastView.swift
+- [ ] T011 [P] [NEW] Create ErrorToastView (UIView overlay, displays error message, auto-layout at top of screen) in sonia/CodeMonster/CodeMonster/Monster5/UI/ErrorToastView.swift
 
 **Checkpoint**: Foundation ready — all models, dependencies, and shared UI available for user stories
 
@@ -75,17 +75,17 @@
 
 ### Tests for User Story 1
 
-- [x] T012 [P] [US1] Write test: testLoginWhenFieldsEmptyThenButtonDisabled — verify login button disabled when username or password is empty in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/LoginFeatureTests.swift
-- [x] T013 [P] [US1] Write test: testLoginWhenValidCredentialsThenNavigatesToPostsList — verify successful login sets isLoading, receives success response, and signals navigation in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/LoginFeatureTests.swift
-- [x] T014 [P] [US1] Write test: testLoginWhenInvalidCredentialsThenShowsErrorAndAutoDismisses — verify failed login sets errorMessage and dismissError fires after 3s (use TestClock) in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/LoginFeatureTests.swift
-- [x] T015 [P] [US1] Write test: testLoginWhenLoadingThenButtonDisabled — verify isLoading disables login button in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/LoginFeatureTests.swift
+- [ ] T012 [P] [US1] Write test: testLoginWhenFieldsEmptyThenButtonDisabled — verify login button disabled when username or password is empty in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/LoginFeatureTests.swift
+- [ ] T013 [P] [US1] Write test: testLoginWhenValidCredentialsThenNavigatesToPostsList — verify successful login sets isLoading, receives success response, and signals navigation in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/LoginFeatureTests.swift
+- [ ] T014 [P] [US1] Write test: testLoginWhenInvalidCredentialsThenShowsErrorAndAutoDismisses — verify failed login sets errorMessage and dismissError fires after 3s (use TestClock) in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/LoginFeatureTests.swift
+- [ ] T015 [P] [US1] Write test: testLoginWhenLoadingThenButtonDisabled — verify isLoading disables login button in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/LoginFeatureTests.swift
 
 ### Implementation for User Story 1
 
-- [x] T016 [US1] [NEW] Implement LoginFeature @Reducer with @ObservableState State (username, password, isLoading, errorMessage, loginResponse), Actions (usernameChanged, passwordChanged, loginTapped, loginResponse, dismissError), @Dependency(\.authClient), and Effect.run for login API call + ContinuousClock for 3s error dismiss in sonia/CodeMonster/CodeMonster/Monster5/Features/Login/LoginFeature.swift
-- [x] T017 [US1] [NEW] [REUSE] Implement LoginViewController with StoreOf<LoginFeature>, setupUI (UITextField x2, UIButton, UIActivityIndicatorView), observe {} closure binding state to UI (button enabled/disabled, loading indicator, error toast show/hide), and store.send() for user actions (adapt UIViewController setup pattern from existing exercises) in sonia/CodeMonster/CodeMonster/Monster5/Features/Login/LoginViewController.swift
-- [x] T018 [US1] [NEW] Implement basic AppFeature @Reducer with @ObservableState State (login: LoginFeature.State, path: StackState<Path.State>), Path enum (postsList, postDetail), and Reduce handling login success → path.append(.postsList) in sonia/CodeMonster/CodeMonster/Monster5/App/AppFeature.swift
-- [x] T019 [US1] [NEW] Implement AppCoordinator (UINavigationController subclass) with StoreOf<AppFeature>, initial LoginViewController as root, observe {} for path changes syncing UINavigationController stack in sonia/CodeMonster/CodeMonster/Monster5/App/AppCoordinator.swift
+- [ ] T016 [US1] [NEW] Implement LoginFeature @Reducer with @ObservableState State (username, password, isLoading, errorMessage, loginResponse), Actions (usernameChanged, passwordChanged, loginTapped, loginResponse, dismissError), @Dependency(\.authClient), and Effect.run for login API call + ContinuousClock for 3s error dismiss in sonia/CodeMonster/CodeMonster/Monster5/Features/Login/LoginFeature.swift
+- [ ] T017 [US1] [NEW] [REUSE] Implement LoginViewController with StoreOf<LoginFeature>, setupUI (UITextField x2, UIButton, UIActivityIndicatorView), observe {} closure binding state to UI (button enabled/disabled, loading indicator, error toast show/hide), and store.send() for user actions (adapt UIViewController setup pattern from existing exercises) in sonia/CodeMonster/CodeMonster/Monster5/Features/Login/LoginViewController.swift
+- [ ] T018 [US1] [NEW] Implement basic AppFeature @Reducer with @ObservableState State (login: LoginFeature.State, path: StackState<Path.State>), Path enum (postsList, postDetail), and Reduce handling login success → path.append(.postsList) in sonia/CodeMonster/CodeMonster/Monster5/App/AppFeature.swift
+- [ ] T019 [US1] [NEW] Implement AppCoordinator (UINavigationController subclass) with StoreOf<AppFeature>, initial LoginViewController as root, observe {} for path changes syncing UINavigationController stack in sonia/CodeMonster/CodeMonster/Monster5/App/AppCoordinator.swift
 
 **Checkpoint**: Login screen fully functional — can authenticate and navigate to posts list (empty). Error toast works with 3s auto-dismiss.
 
@@ -99,17 +99,17 @@
 
 ### Tests for User Story 2
 
-- [x] T020 [P] [US2] Write test: testPostsListWhenOnAppearThenFetchesPosts — verify onAppear sets isLoading and receives posts response in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostsListFeatureTests.swift
-- [x] T021 [P] [US2] Write test: testPostsListWhenFetchFailsThenShowsError — verify error state with errorMessage set on failure in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostsListFeatureTests.swift
-- [x] T022 [P] [US2] Write test: testPostsListWhenRetryTappedThenRefetches — verify retry action clears error, sets isLoading, and re-triggers fetch in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostsListFeatureTests.swift
+- [ ] T020 [P] [US2] Write test: testPostsListWhenOnAppearThenFetchesPosts — verify onAppear sets isLoading and receives posts response in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostsListFeatureTests.swift
+- [ ] T021 [P] [US2] Write test: testPostsListWhenFetchFailsThenShowsError — verify error state with errorMessage set on failure in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostsListFeatureTests.swift
+- [ ] T022 [P] [US2] Write test: testPostsListWhenRetryTappedThenRefetches — verify retry action clears error, sets isLoading, and re-triggers fetch in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostsListFeatureTests.swift
 
 ### Implementation for User Story 2
 
-- [x] T023 [US2] [NEW] Implement PostsListFeature @Reducer with @ObservableState State (posts: IdentifiedArrayOf<PostWithInteraction>, isLoading, errorMessage), Actions (onAppear, postsResponse, retryTapped, postTapped), @Dependency(\.postsClient) and @Dependency(\.storageClient), Effect.run for fetch + merge with stored interactions in sonia/CodeMonster/CodeMonster/Monster5/Features/PostsList/PostsListFeature.swift
-- [x] T024 [US2] [NEW] Implement PostCell (UITableViewCell subclass) with titleLabel, bodyPreviewLabel (numberOfLines=2), likeCountLabel, commentCountLabel, shareButton, and configure(with:) method accepting PostWithInteraction in sonia/CodeMonster/CodeMonster/Monster5/Features/PostsList/PostCell.swift
-- [x] T025 [US2] [NEW] Implement PostsListViewController with StoreOf<PostsListFeature>, UITableView (dataSource + delegate), UIActivityIndicatorView, error state view with Retry button, observe {} for state binding, and store.send(.onAppear) in viewDidLoad in sonia/CodeMonster/CodeMonster/Monster5/Features/PostsList/PostsListViewController.swift
-- [x] T026 [US2] Update AppFeature to create PostsListViewController when path contains .postsList, scope store for postsList destination in sonia/CodeMonster/CodeMonster/Monster5/App/AppFeature.swift
-- [x] T027 [US2] Update AppCoordinator observe {} to push PostsListViewController when postsList is appended to path in sonia/CodeMonster/CodeMonster/Monster5/App/AppCoordinator.swift
+- [ ] T023 [US2] [NEW] Implement PostsListFeature @Reducer with @ObservableState State (posts: IdentifiedArrayOf<PostWithInteraction>, isLoading, errorMessage), Actions (onAppear, postsResponse, retryTapped, postTapped), @Dependency(\.postsClient) and @Dependency(\.storageClient), Effect.run for fetch + merge with stored interactions in sonia/CodeMonster/CodeMonster/Monster5/Features/PostsList/PostsListFeature.swift
+- [ ] T024 [US2] [NEW] Implement PostCell (UITableViewCell subclass) with titleLabel, bodyPreviewLabel (numberOfLines=2), likeCountLabel, commentCountLabel, shareButton, and configure(with:) method accepting PostWithInteraction in sonia/CodeMonster/CodeMonster/Monster5/Features/PostsList/PostCell.swift
+- [ ] T025 [US2] [NEW] Implement PostsListViewController with StoreOf<PostsListFeature>, UITableView (dataSource + delegate), UIActivityIndicatorView, error state view with Retry button, observe {} for state binding, and store.send(.onAppear) in viewDidLoad in sonia/CodeMonster/CodeMonster/Monster5/Features/PostsList/PostsListViewController.swift
+- [ ] T026 [US2] Update AppFeature to create PostsListViewController when path contains .postsList, scope store for postsList destination in sonia/CodeMonster/CodeMonster/Monster5/App/AppFeature.swift
+- [ ] T027 [US2] Update AppCoordinator observe {} to push PostsListViewController when postsList is appended to path in sonia/CodeMonster/CodeMonster/Monster5/App/AppCoordinator.swift
 
 **Checkpoint**: Full login → posts list flow works. 100 posts display with title, 2-line preview, interaction counts. Loading and error+retry states functional.
 
@@ -123,18 +123,18 @@
 
 ### Tests for User Story 3 + 4
 
-- [x] T028 [P] [US3] Write test: testPostDetailWhenLikeTappedThenTogglesLikeState — verify like toggles isLiked and increments/decrements likeCount in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostDetailFeatureTests.swift
-- [x] T029 [P] [US3] Write test: testPostDetailWhenCommentTappedThenIncrementsCount — verify comment action increments commentCount in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostDetailFeatureTests.swift
-- [x] T030 [P] [US3] Write test: testPostDetailWhenShareTappedThenIncrementsCount — verify share action increments shareCount in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostDetailFeatureTests.swift
-- [x] T031 [P] [US4] Write test: testPostsListWhenDetailInteractionChangedThenListSyncs — verify parent PostsListFeature updates its IdentifiedArray when child detail interaction changes in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/AppFeatureTests.swift
+- [ ] T028 [P] [US3] Write test: testPostDetailWhenLikeTappedThenTogglesLikeState — verify like toggles isLiked and increments/decrements likeCount in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostDetailFeatureTests.swift
+- [ ] T029 [P] [US3] Write test: testPostDetailWhenCommentTappedThenIncrementsCount — verify comment action increments commentCount in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostDetailFeatureTests.swift
+- [ ] T030 [P] [US3] Write test: testPostDetailWhenShareTappedThenIncrementsCount — verify share action increments shareCount in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostDetailFeatureTests.swift
+- [ ] T031 [P] [US4] Write test: testPostsListWhenDetailInteractionChangedThenListSyncs — verify parent PostsListFeature updates its IdentifiedArray when child detail interaction changes in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/AppFeatureTests.swift
 
 ### Implementation for User Story 3 + 4
 
-- [x] T032 [US3] [NEW] Implement PostDetailFeature @Reducer with @ObservableState State (post: Post, interaction: PostInteraction), Actions (likeTapped, commentTapped, shareTapped), Reduce toggling isLiked/likeCount, incrementing commentCount, incrementing shareCount in sonia/CodeMonster/CodeMonster/Monster5/Features/PostDetail/PostDetailFeature.swift
-- [x] T033 [US3] [NEW] Implement PostDetailViewController with StoreOf<PostDetailFeature>, full title + body labels, like button (with liked/unliked visual state), comment button, share button, like/comment/share count labels, observe {} for state binding in sonia/CodeMonster/CodeMonster/Monster5/Features/PostDetail/PostDetailViewController.swift
-- [x] T034 [US4] Update PostsListFeature to add postTapped action that stores selectedPostId, and add delegate action handling from PostDetailFeature to sync interaction state back into IdentifiedArrayOf<PostWithInteraction> in sonia/CodeMonster/CodeMonster/Monster5/Features/PostsList/PostsListFeature.swift
-- [x] T035 [US4] Update AppFeature Path to include .postDetail(PostDetailFeature.State), handle postsList postTapped → path.append(.postDetail), and intercept postDetail interaction actions to sync back to postsList state in sonia/CodeMonster/CodeMonster/Monster5/App/AppFeature.swift
-- [x] T036 [US4] Update AppCoordinator observe {} to push PostDetailViewController when postDetail is appended to path, scoping store for postDetail destination in sonia/CodeMonster/CodeMonster/Monster5/App/AppCoordinator.swift
+- [ ] T032 [US3] [NEW] Implement PostDetailFeature @Reducer with @ObservableState State (post: Post, interaction: PostInteraction), Actions (likeTapped, commentTapped, shareTapped), Reduce toggling isLiked/likeCount, incrementing commentCount, incrementing shareCount in sonia/CodeMonster/CodeMonster/Monster5/Features/PostDetail/PostDetailFeature.swift
+- [ ] T033 [US3] [NEW] Implement PostDetailViewController with StoreOf<PostDetailFeature>, full title + body labels, like button (with liked/unliked visual state), comment button, share button, like/comment/share count labels, observe {} for state binding in sonia/CodeMonster/CodeMonster/Monster5/Features/PostDetail/PostDetailViewController.swift
+- [ ] T034 [US4] Update PostsListFeature to add postTapped action that stores selectedPostId, and add delegate action handling from PostDetailFeature to sync interaction state back into IdentifiedArrayOf<PostWithInteraction> in sonia/CodeMonster/CodeMonster/Monster5/Features/PostsList/PostsListFeature.swift
+- [ ] T035 [US4] Update AppFeature Path to include .postDetail(PostDetailFeature.State), handle postsList postTapped → path.append(.postDetail), and intercept postDetail interaction actions to sync back to postsList state in sonia/CodeMonster/CodeMonster/Monster5/App/AppFeature.swift
+- [ ] T036 [US4] Update AppCoordinator observe {} to push PostDetailViewController when postDetail is appended to path, scoping store for postDetail destination in sonia/CodeMonster/CodeMonster/Monster5/App/AppCoordinator.swift
 
 **Checkpoint**: Full login → list → detail flow with like/comment/share. State syncs back to list on return. All interaction counts consistent across screens.
 
@@ -148,15 +148,15 @@
 
 ### Tests for User Story 5
 
-- [x] T037 [P] [US5] Write test: testStorageClientWhenSaveAndLoadThenDataPersists — verify StorageClient round-trip (save interaction, load by postId, verify equality) in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/StorageClientTests.swift
-- [x] T038 [P] [US5] Write test: testStorageClientWhenLoadAllThenReturnsAllInteractions — verify loadAllInteractions returns complete dictionary in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/StorageClientTests.swift
-- [x] T039 [P] [US5] Write test: testPostsListWhenOnAppearThenLoadsStoredInteractions — verify PostsListFeature merges stored interactions with fetched posts on appear in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostsListFeatureTests.swift
+- [ ] T037 [P] [US5] Write test: testStorageClientWhenSaveAndLoadThenDataPersists — verify StorageClient round-trip (save interaction, load by postId, verify equality) in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/StorageClientTests.swift
+- [ ] T038 [P] [US5] Write test: testStorageClientWhenLoadAllThenReturnsAllInteractions — verify loadAllInteractions returns complete dictionary in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/StorageClientTests.swift
+- [ ] T039 [P] [US5] Write test: testPostsListWhenOnAppearThenLoadsStoredInteractions — verify PostsListFeature merges stored interactions with fetched posts on appear in sonia/CodeMonster/CodeMonsterTests/Monster5Tests/PostsListFeatureTests.swift
 
 ### Implementation for User Story 5
 
-- [x] T040 [US5] Update PostsListFeature onAppear effect to call storageClient.loadAllInteractions() and merge stored interactions into IdentifiedArrayOf<PostWithInteraction> after fetching posts in sonia/CodeMonster/CodeMonster/Monster5/Features/PostsList/PostsListFeature.swift
-- [x] T041 [US5] Update PostDetailFeature to call storageClient.saveInteraction() via Effect after each interaction (like/comment/share) to persist changes immediately in sonia/CodeMonster/CodeMonster/Monster5/Features/PostDetail/PostDetailFeature.swift
-- [x] T042 [US5] Add @Dependency(\.storageClient) to PostDetailFeature and wire save effects for likeTapped, commentTapped, shareTapped actions in sonia/CodeMonster/CodeMonster/Monster5/Features/PostDetail/PostDetailFeature.swift
+- [ ] T040 [US5] Update PostsListFeature onAppear effect to call storageClient.loadAllInteractions() and merge stored interactions into IdentifiedArrayOf<PostWithInteraction> after fetching posts in sonia/CodeMonster/CodeMonster/Monster5/Features/PostsList/PostsListFeature.swift
+- [ ] T041 [US5] Update PostDetailFeature to call storageClient.saveInteraction() via Effect after each interaction (like/comment/share) to persist changes immediately in sonia/CodeMonster/CodeMonster/Monster5/Features/PostDetail/PostDetailFeature.swift
+- [ ] T042 [US5] Add @Dependency(\.storageClient) to PostDetailFeature and wire save effects for likeTapped, commentTapped, shareTapped actions in sonia/CodeMonster/CodeMonster/Monster5/Features/PostDetail/PostDetailFeature.swift
 
 **Checkpoint**: All interaction data persists. Full cycle: login → interact → close app → reopen → login → data intact.
 
@@ -166,11 +166,11 @@
 
 **Purpose**: Entry point wiring, edge cases, final validation
 
-- [x] T043 Wire up Monster5 entry point — add a button/menu item in existing sonia/CodeMonster/CodeMonster/ViewController.swift to launch AppCoordinator with Store(initialState: AppFeature.State()) { AppFeature() }
-- [x] T044 Handle edge case: empty posts list — show "No posts available" message when API returns empty array in PostsListViewController
-- [x] T045 Handle edge case: rapid like taps — ensure PostDetailFeature reducer handles rapid toggles correctly (each tap flips state, no debounce needed since it's synchronous)
-- [x] T046 [P] Run all TestStore tests and verify they pass on iPhone 16 Pro simulator
-- [x] T047 End-to-end manual validation: login (emilys/emilyspass) → browse 100 posts → tap post → like/comment/share → back → verify sync → close app → reopen → verify persistence
+- [ ] T043 Wire up Monster5 entry point — add a button/menu item in existing sonia/CodeMonster/CodeMonster/ViewController.swift to launch AppCoordinator with Store(initialState: AppFeature.State()) { AppFeature() }
+- [ ] T044 Handle edge case: empty posts list — show "No posts available" message when API returns empty array in PostsListViewController
+- [ ] T045 Handle edge case: rapid like taps — ensure PostDetailFeature reducer handles rapid toggles correctly (each tap flips state, no debounce needed since it's synchronous)
+- [ ] T046 [P] Run all TestStore tests and verify they pass on iPhone 16 Pro simulator
+- [ ] T047 End-to-end manual validation: login (emilys/emilyspass) → browse 100 posts → tap post → like/comment/share → back → verify sync → close app → reopen → verify persistence
 
 ---
 
