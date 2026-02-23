@@ -5,10 +5,12 @@
 //  Created by Claude on 2026/1/11.
 //
 import UIKit
+import ComposableArchitecture
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    private var monster5Coordinator: Monster5Coordinator?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -53,9 +55,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "doc.text.fill")
         )
 
-        tabBarController.viewControllers = [carVC, canvasNav, textNav]
+        // Tab 4: Monster5（TCA + UIKit 整合實戰）
+        let monster5Nav = createMonster5Tab()
+
+        tabBarController.viewControllers = [carVC, canvasNav, textNav, monster5Nav]
 
         return tabBarController
+    }
+
+    // MARK: - Monster5 Setup
+
+    private func createMonster5Tab() -> UINavigationController {
+        let store = Store(initialState: Monster5AppFeature.State()) {
+            Monster5AppFeature()
+        }
+        let coordinator = Monster5Coordinator(store: store)
+        self.monster5Coordinator = coordinator
+
+        coordinator.navigationController.tabBarItem = UITabBarItem(
+            title: "Monster5",
+            image: UIImage(systemName: "newspaper"),
+            selectedImage: UIImage(systemName: "newspaper.fill")
+        )
+        return coordinator.navigationController
     }
 
     private func createCarViewController() -> UIViewController {
