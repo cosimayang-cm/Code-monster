@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import ComposableArchitecture
 
 class ViewController: UIViewController {
     
@@ -86,6 +87,17 @@ class ViewController: UIViewController {
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
+
+    private let monster5Button: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("🍎 Monster 5: TCA + UIKit", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+        button.layer.cornerRadius = 12
+        button.backgroundColor = .systemBlue.withAlphaComponent(0.2)
+        button.setTitleColor(.systemBlue, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     
     // MARK: - Lifecycle
     
@@ -106,6 +118,7 @@ class ViewController: UIViewController {
         scrollView.addSubview(contentView)
         
         contentView.addSubview(titleLabel)
+        contentView.addSubview(monster5Button)
         contentView.addSubview(computerStatusLabel)
         contentView.addSubview(engineStatusLabel)
         contentView.addSubview(computerButton)
@@ -116,6 +129,7 @@ class ViewController: UIViewController {
         // Setup buttons
         computerButton.addTarget(self, action: #selector(computerButtonTapped), for: .touchUpInside)
         engineButton.addTarget(self, action: #selector(engineButtonTapped), for: .touchUpInside)
+        monster5Button.addTarget(self, action: #selector(monster5ButtonTapped), for: .touchUpInside)
         
         // Create feature buttons
         createFeatureButtons()
@@ -136,8 +150,13 @@ class ViewController: UIViewController {
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            
-            computerStatusLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+
+            monster5Button.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+            monster5Button.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            monster5Button.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            monster5Button.heightAnchor.constraint(equalToConstant: 50),
+
+            computerStatusLabel.topAnchor.constraint(equalTo: monster5Button.bottomAnchor, constant: 20),
             computerStatusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             computerStatusLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             
@@ -205,6 +224,15 @@ class ViewController: UIViewController {
         } else {
             car.startEngine()
         }
+    }
+
+    @objc private func monster5ButtonTapped() {
+        let appStore = Store(initialState: AppFeature.State()) {
+            AppFeature()
+        }
+        let coordinator = AppCoordinator(store: appStore)
+        coordinator.modalPresentationStyle = .fullScreen
+        present(coordinator, animated: true)
     }
     
     @objc private func featureButtonTapped(_ sender: UIButton) {

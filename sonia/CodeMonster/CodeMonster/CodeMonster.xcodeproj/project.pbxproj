@@ -125,6 +125,7 @@
 			);
 			name = CodeMonster;
 			packageProductDependencies = (
+				CAFAFB252F3AE2D60085B5F4 /* ComposableArchitecture */,
 			);
 			productName = CodeMonster;
 			productReference = 6DF96DFD2F1008BB00282F5F /* CodeMonster.app */;
@@ -208,6 +209,9 @@
 			);
 			mainGroup = 6DF96DF42F1008BB00282F5F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CAFAFB242F3AE2D60085B5F4 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6DF96DFE2F1008BB00282F5F /* Products */;
 			projectDirPath = "";
@@ -569,6 +573,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CAFAFB242F3AE2D60085B5F4 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.23.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CAFAFB252F3AE2D60085B5F4 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CAFAFB242F3AE2D60085B5F4 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6DF96DF52F1008BB00282F5F /* Project object */;
 }
