@@ -1,0 +1,7 @@
+## Xcode auto-generated
+xcuserdata/
+project.xcworkspace/
+
+## SPM
+.build/
+Package.resolved
