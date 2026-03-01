@@ -2,32 +2,59 @@ import Foundation
 
 // MARK: - TicTacToeGame
 // 井字棋遊戲邏輯，conform to BoardGame。
-// TODO: T2-3 實作
 
 struct TicTacToeGame: BoardGame {
     typealias Move = TicTacToeMove
 
-    // TODO: state, currentPlayer, board
+    private(set) var board = TicTacToeBoard()
     var state: GameState = .waiting
     var currentPlayer: Player = .human
 
+    // MARK: - BoardGame
+
     mutating func apply(move: TicTacToeMove) throws {
-        // TODO: 驗證空格、下子、換手、checkWinner
+        guard state == .playing else { throw BoardGameError.gameAlreadyOver }
+        guard board[move.row, move.col] == nil else { throw BoardGameError.cellAlreadyOccupied }
+
+        board[move.row, move.col] = currentPlayer
+
+        if let winner = checkWinner() {
+            state = .won(winner)
+        } else if board.isFull {
+            state = .draw
+        } else {
+            currentPlayer = (currentPlayer == .human) ? .ai : .human
+        }
     }
 
     mutating func restart() {
-        // TODO: 重置棋盤與狀態
+        board = TicTacToeBoard()
+        state = .playing
+        currentPlayer = .human
     }
 
     func validMoves() -> [TicTacToeMove] {
-        // TODO: 返回所有空格座標
-        return []
+        guard state == .playing else { return [] }
+        return board.emptyCells.map { TicTacToeMove(row: $0.row, col: $0.col) }
     }
 
     // MARK: - Private
 
     private func checkWinner() -> Player? {
-        // TODO: 橫 3 種、直 3 種、斜 2 種
+        let lines: [([(Int, Int)])] = [
+            // 橫
+            [(0,0),(0,1),(0,2)], [(1,0),(1,1),(1,2)], [(2,0),(2,1),(2,2)],
+            // 直
+            [(0,0),(1,0),(2,0)], [(0,1),(1,1),(2,1)], [(0,2),(1,2),(2,2)],
+            // 斜
+            [(0,0),(1,1),(2,2)], [(0,2),(1,1),(2,0)]
+        ]
+        for line in lines {
+            let players = line.map { board[$0.0, $0.1] }
+            if players[0] != nil && players[0] == players[1] && players[1] == players[2] {
+                return players[0]
+            }
+        }
         return nil
     }
 }

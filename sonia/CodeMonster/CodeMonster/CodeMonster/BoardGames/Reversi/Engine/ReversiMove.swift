@@ -1,9 +1,9 @@
 import Foundation
 
 // MARK: - ReversiMove
-// 黑白棋走步（row、col 座標）。
-// TODO: T4-2 實作
+// 黑白棋走步（row/col 0-indexed）。
 
 struct ReversiMove: Equatable {
-    // TODO: row: Int（A=0...H=7）, col: Int（1=0...8=7）
+    let row: Int  // 0...7
+    let col: Int  // 0...7
 }

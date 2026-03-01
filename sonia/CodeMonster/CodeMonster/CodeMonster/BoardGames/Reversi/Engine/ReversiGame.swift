@@ -2,26 +2,52 @@ import Foundation
 
 // MARK: - ReversiGame
 // 黑白棋遊戲邏輯，conform to BoardGame。
-// 特殊機制：8 方向翻轉、跳過回合（Pass）、雙方都不能下時結束。
-// TODO: T4-3 實作
 
 struct ReversiGame: BoardGame {
     typealias Move = ReversiMove
 
+    private(set) var board = ReversiBoard()
     var state: GameState = .waiting
     var currentPlayer: Player = .human
 
+    // MARK: - BoardGame
+
     mutating func apply(move: ReversiMove) throws {
-        // TODO: 驗證至少能翻轉 1 顆、flipPieces、換手、checkGameOver
+        guard state == .playing else { throw BoardGameError.gameAlreadyOver }
+        let flips = board.flips(at: move.row, col: move.col, for: currentPlayer)
+        guard !flips.isEmpty else { throw BoardGameError.noFlipsAvailable }
+
+        board.place(at: move.row, col: move.col, player: currentPlayer)
+
+        let opponent: Player = currentPlayer == .human ? .ai : .human
+
+        // 換手：對手有子可下就換，否則看自己，都沒有就結束
+        if !validMovesFor(opponent).isEmpty {
+            currentPlayer = opponent
+        } else if !validMovesFor(currentPlayer).isEmpty {
+            // 對手無子，自己繼續（不換手）
+        } else {
+            // 雙方都無子 → 遊戲結束
+            let humanCount = board.count(for: .human)
+            let aiCount = board.count(for: .ai)
+            if humanCount > aiCount {
+                state = .won(.human)
+            } else if aiCount > humanCount {
+                state = .won(.ai)
+            } else {
+                state = .draw
+            }
+        }
     }
 
     mutating func restart() {
-        // TODO: 重置為初始盤面
+        board = ReversiBoard()
+        state = .playing
+        currentPlayer = .human
     }
 
     func validMoves() -> [ReversiMove] {
-        // TODO: 當前玩家所有合法位置（至少能翻轉 1 顆）
-        return []
+        validMovesFor(currentPlayer)
     }
 
     /// 當前玩家是否無子可下（需要 Pass）
@@ -29,15 +55,17 @@ struct ReversiGame: BoardGame {
         return validMoves().isEmpty && state == .playing
     }
 
-    /// 雙方都無子可下 → 遊戲結束
-    func isGameOver() -> Bool {
-        // TODO: 雙方 validMoves 都為空
-        return false
-    }
+    // MARK: - Private
 
-    /// 計算勝者（子數多者勝）
-    private func countWinner() -> Player? {
-        // TODO: 計算黑子數與白子數
-        return nil
+    private func validMovesFor(_ player: Player) -> [ReversiMove] {
+        var moves: [ReversiMove] = []
+        for r in 0..<8 {
+            for c in 0..<8 {
+                if !board.flips(at: r, col: c, for: player).isEmpty {
+                    moves.append(ReversiMove(row: r, col: c))
+                }
+            }
+        }
+        return moves
     }
 }

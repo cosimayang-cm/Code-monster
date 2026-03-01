@@ -2,15 +2,28 @@ import Foundation
 
 // MARK: - TicTacToeAI
 // Minimax 演算法，完美對弈，永不輸。
-// 搜尋空間小（最多 9 格），不需 Alpha-Beta Pruning。
-// TODO: T2-4 實作
 
 struct TicTacToeAI: GameAI {
     typealias Game = TicTacToeGame
 
     func bestMove(for game: TicTacToeGame) -> TicTacToeMove? {
-        // TODO: Minimax 搜尋，返回 AI 最佳走步
-        return nil
+        guard game.state == .playing else { return nil }
+        let moves = game.validMoves()
+        guard !moves.isEmpty else { return nil }
+
+        var bestScore = Int.min
+        var bestMove: TicTacToeMove?
+
+        for move in moves {
+            var g = game
+            try? g.apply(move: move)
+            let score = minimax(game: g, isMaximizing: false)
+            if score > bestScore {
+                bestScore = score
+                bestMove = move
+            }
+        }
+        return bestMove
     }
 
     // MARK: - Private
@@ -18,7 +31,28 @@ struct TicTacToeAI: GameAI {
     /// Minimax 遞迴
     /// - Returns: 局面分數（+1 AI 勝，-1 Human 勝，0 平手）
     private func minimax(game: TicTacToeGame, isMaximizing: Bool) -> Int {
-        // TODO
-        return 0
+        switch game.state {
+        case .won(let winner): return winner == .ai ? 1 : -1
+        case .draw: return 0
+        default: break
+        }
+
+        if isMaximizing {
+            var best = Int.min
+            for move in game.validMoves() {
+                var g = game
+                try? g.apply(move: move)
+                best = max(best, minimax(game: g, isMaximizing: false))
+            }
+            return best
+        } else {
+            var best = Int.max
+            for move in game.validMoves() {
+                var g = game
+                try? g.apply(move: move)
+                best = min(best, minimax(game: g, isMaximizing: true))
+            }
+            return best
+        }
     }
 }
