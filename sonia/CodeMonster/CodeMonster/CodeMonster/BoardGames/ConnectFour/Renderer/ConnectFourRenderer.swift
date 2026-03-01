@@ -5,12 +5,20 @@ import Foundation
 
 struct ConnectFourRenderer: BoardRenderer {
     let game: ConnectFourGame
+    /// 游標欄位（0-indexed，僅人類回合顯示）
+    var cursor: Int? = nil
 
     func render() -> String {
         var lines: [String] = []
-        lines.append("🎮 Connect Four")
+        lines.append("=== Connect Four ===")
         lines.append(String(repeating: "─", count: 29))
-        lines.append(" 1   2   3   4   5   6   7")
+        // 動態欄位標題：游標欄顯示 [N]，其餘顯示  N
+        var colLine = ""
+        for c in 0..<ConnectFourBoard.cols {
+            let n = c + 1
+            colLine += (cursor == c) ? "[\(n)] " : " \(n)  "
+        }
+        lines.append(colLine)
         lines.append("┌───┬───┬───┬───┬───┬───┬───┐")
 
         // 從頂部往底部顯示（row 5 在槽頂）
@@ -19,8 +27,8 @@ struct ConnectFourRenderer: BoardRenderer {
             for col in 0..<ConnectFourBoard.cols {
                 let cell: String
                 switch game.board[row, col] {
-                case .human: cell = "🔴"
-                case .ai:    cell = "🟡"
+                case .human: cell = "R"
+                case .ai:    cell = "Y"
                 case nil:    cell = " "
                 }
                 line += " \(cell)│"
@@ -32,13 +40,13 @@ struct ConnectFourRenderer: BoardRenderer {
 
         switch game.state {
         case .playing:
-            let symbol = game.currentPlayer == .human ? "🔴" : "🟡"
-            lines.append("當前: \(symbol) (\(game.currentPlayer == .human ? "You" : "AI"))")
+            let symbol = game.currentPlayer == .human ? "R" : "Y"
+            lines.append("Turn: [\(symbol)] \(game.currentPlayer == .human ? "You" : "AI")")
         case .won(let p):
-            let symbol = p == .human ? "🔴" : "🟡"
-            lines.append("🏆 \(symbol) \(p == .human ? "You win!" : "AI wins!")")
+            let symbol = p == .human ? "R" : "Y"
+            lines.append("*** [\(symbol)] \(p == .human ? "You win!" : "AI wins!") ***")
         case .draw:
-            lines.append("🤝 Draw!")
+            lines.append("*** Draw! ***")
         default:
             break
         }

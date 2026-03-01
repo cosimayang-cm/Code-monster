@@ -1,36 +1,46 @@
+//
+//  TicTacToeViewController.swift
+//  CodeMonster
+//
+//  Created by Sonia Wu on 2026/3/1.
+//
+
 import UIKit
 
 // MARK: - TicTacToeViewController
 // 井字棋 UIKit 輸入層。
-// VC = Input Only：3×3 UIButton grid。每次操作後 print(renderer.render()) 到 Console。
+// VC = 搖桿輸入：↑↓←→ 移動游標，✓ 放子。遊戲狀態透過 print(renderer.render()) 輸出至 Xcode console。
 
 final class TicTacToeViewController: UIViewController {
 
-    // MARK: - Properties
+    // MARK: - State
 
     private var game = TicTacToeGame()
-    private var renderer: TicTacToeRenderer { TicTacToeRenderer(game: game) }
+    private var cursor = (row: 0, col: 0)
     private let ai = TicTacToeAI()
 
-    // MARK: - UI Components
+    private var renderer: TicTacToeRenderer {
+        let showCursor = game.state == .playing && game.currentPlayer == .human
+        return TicTacToeRenderer(game: game, cursor: showCursor ? cursor : nil)
+    }
 
-    private let gridStack: UIStackView = {
-        let s = UIStackView()
-        s.axis = .vertical
-        s.spacing = 8
-        s.distribution = .fillEqually
-        s.translatesAutoresizingMaskIntoConstraints = false
-        return s
-    }()
+    // MARK: - UI
 
-    private var cellButtons: [[UIButton]] = []
+    private let upButton     = TicTacToeViewController.makeDPad("↑", tag: 0)
+    private let downButton   = TicTacToeViewController.makeDPad("↓", tag: 1)
+    private let leftButton   = TicTacToeViewController.makeDPad("←", tag: 2)
+    private let rightButton  = TicTacToeViewController.makeDPad("→", tag: 3)
 
-    private let statusLabel: UILabel = {
-        let l = UILabel()
-        l.textAlignment = .center
-        l.font = .systemFont(ofSize: 18, weight: .medium)
-        l.translatesAutoresizingMaskIntoConstraints = false
-        return l
+    private let confirmButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.setTitle("✓", for: .normal)
+        b.titleLabel?.font = .systemFont(ofSize: 24, weight: .bold)
+        b.backgroundColor = .systemGreen.withAlphaComponent(0.2)
+        b.setTitleColor(.systemGreen, for: .normal)
+        b.layer.cornerRadius = 30
+        b.tag = 4
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
     }()
 
     private let newGameButton: UIButton = {
@@ -45,6 +55,17 @@ final class TicTacToeViewController: UIViewController {
         return b
     }()
 
+    private static func makeDPad(_ title: String, tag: Int) -> UIButton {
+        let b = UIButton(type: .system)
+        b.setTitle(title, for: .normal)
+        b.titleLabel?.font = .systemFont(ofSize: 22, weight: .medium)
+        b.backgroundColor = .secondarySystemBackground
+        b.layer.cornerRadius = 10
+        b.tag = tag
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
+    }
+
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
@@ -58,124 +79,107 @@ final class TicTacToeViewController: UIViewController {
     // MARK: - Setup
 
     private func setupUI() {
-        view.addSubview(statusLabel)
-        view.addSubview(gridStack)
+        // D-pad: 上中下三列
+        let dpad = makeDPadStack()
+        view.addSubview(dpad)
         view.addSubview(newGameButton)
 
-        // Build 3×3 grid
-        for row in 0..<3 {
-            let rowStack = UIStackView()
-            rowStack.axis = .horizontal
-            rowStack.spacing = 8
-            rowStack.distribution = .fillEqually
-
-            var rowButtons: [UIButton] = []
-            for col in 0..<3 {
-                let button = UIButton(type: .system)
-                button.tag = row * 3 + col
-                button.titleLabel?.font = .systemFont(ofSize: 36)
-                button.backgroundColor = .secondarySystemBackground
-                button.layer.cornerRadius = 12
-                button.addTarget(self, action: #selector(cellButtonTapped(_:)), for: .touchUpInside)
-                rowStack.addArrangedSubview(button)
-                rowButtons.append(button)
-            }
-            cellButtons.append(rowButtons)
-            gridStack.addArrangedSubview(rowStack)
+        [upButton, downButton, leftButton, rightButton, confirmButton].forEach {
+            $0.addTarget(self, action: #selector(dpadTapped(_:)), for: .touchUpInside)
+            NSLayoutConstraint.activate([
+                $0.widthAnchor.constraint(equalToConstant: 60),
+                $0.heightAnchor.constraint(equalToConstant: 60)
+            ])
         }
-
         newGameButton.addTarget(self, action: #selector(newGameTapped), for: .touchUpInside)
 
         NSLayoutConstraint.activate([
-            statusLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            statusLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            statusLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            dpad.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            dpad.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-            gridStack.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 24),
-            gridStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            gridStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            gridStack.heightAnchor.constraint(equalTo: gridStack.widthAnchor),
-
-            newGameButton.topAnchor.constraint(equalTo: gridStack.bottomAnchor, constant: 32),
+            newGameButton.bottomAnchor.constraint(equalTo: dpad.topAnchor, constant: -16),
             newGameButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             newGameButton.widthAnchor.constraint(equalToConstant: 160),
-            newGameButton.heightAnchor.constraint(equalToConstant: 48)
+            newGameButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
 
+    private func makeDPadStack() -> UIStackView {
+        func row(_ buttons: [UIButton?]) -> UIStackView {
+            let s = UIStackView()
+            s.axis = .horizontal; s.spacing = 8; s.alignment = .center
+            for b in buttons {
+                if let b {
+                    s.addArrangedSubview(b)
+                } else {
+                    let sp = UIView()
+                    NSLayoutConstraint.activate([
+                        sp.widthAnchor.constraint(equalToConstant: 60),
+                        sp.heightAnchor.constraint(equalToConstant: 60)
+                    ])
+                    s.addArrangedSubview(sp)
+                }
+            }
+            return s
+        }
+        let s = UIStackView(arrangedSubviews: [
+            row([nil, upButton, nil]),
+            row([leftButton, confirmButton, rightButton]),
+            row([nil, downButton, nil])
+        ])
+        s.axis = .vertical; s.spacing = 8; s.translatesAutoresizingMaskIntoConstraints = false
+        return s
+    }
+
+    // MARK: - Game
+
     private func startGame() {
         game.restart()
+        cursor = (row: 0, col: 0)
         updateUI()
         print(renderer.render())
     }
 
-    // MARK: - Update UI
-
     private func updateUI() {
-        // Update cell buttons
-        for row in 0..<3 {
-            for col in 0..<3 {
-                let button = cellButtons[row][col]
-                switch game.board[row, col] {
-                case .human:
-                    button.setTitle("❌", for: .normal)
-                    button.isEnabled = false
-                case .ai:
-                    button.setTitle("⭕", for: .normal)
-                    button.isEnabled = false
-                case nil:
-                    button.setTitle("", for: .normal)
-                    button.isEnabled = (game.state == .playing)
-                }
-            }
-        }
-
-        // Status label
-        switch game.state {
-        case .playing:
-            statusLabel.text = game.currentPlayer == .human ? "Your turn ❌" : "AI thinking... ⭕"
-        case .won(let p):
-            statusLabel.text = p == .human ? "🏆 You win!" : "🤖 AI wins!"
-        case .draw:
-            statusLabel.text = "🤝 Draw!"
-        default:
-            statusLabel.text = ""
-        }
-
-        // New Game button
-        let isOver = game.state != .playing
-        newGameButton.isHidden = !isOver
+        let isHumanTurn = game.state == .playing && game.currentPlayer == .human
+        [upButton, downButton, leftButton, rightButton, confirmButton].forEach { $0.isEnabled = isHumanTurn }
+        newGameButton.isHidden = game.state == .playing
     }
 
     // MARK: - Actions
 
-    @objc private func cellButtonTapped(_ sender: UIButton) {
-        let row = sender.tag / 3
-        let col = sender.tag % 3
-        guard game.state == .playing else { return }
-
-        do {
-            try game.apply(move: TicTacToeMove(row: row, col: col))
-            updateUI()
-            print(renderer.render())
-        } catch {
-            return
+    @objc private func dpadTapped(_ sender: UIButton) {
+        guard game.state == .playing, game.currentPlayer == .human else { return }
+        switch sender.tag {
+        case 0: cursor.row = max(0, cursor.row - 1)        // ↑
+        case 1: cursor.row = min(2, cursor.row + 1)        // ↓
+        case 2: cursor.col = max(0, cursor.col - 1)        // ←
+        case 3: cursor.col = min(2, cursor.col + 1)        // →
+        case 4:                                             // ✓ place
+            do {
+                try game.apply(move: TicTacToeMove(row: cursor.row, col: cursor.col))
+                updateUI()
+                print(renderer.render())
+                triggerAIIfNeeded()
+                return
+            } catch { }
+        default: break
         }
-
-        // AI turn
-        guard game.state == .playing else { return }
         updateUI()
+        print(renderer.render())
+    }
+
+    private func triggerAIIfNeeded() {
+        guard game.state == .playing, game.currentPlayer == .ai else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             guard let self else { return }
-            if let aiMove = self.ai.bestMove(for: self.game) {
-                try? self.game.apply(move: aiMove)
+            if let move = self.ai.bestMove(for: self.game) {
+                try? self.game.apply(move: move)
                 self.updateUI()
                 print(self.renderer.render())
             }
         }
     }
 
-    @objc private func newGameTapped() {
-        startGame()
-    }
+    @objc private func newGameTapped() { startGame() }
 }

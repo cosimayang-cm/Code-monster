@@ -5,10 +5,12 @@ import Foundation
 
 struct TicTacToeRenderer: BoardRenderer {
     let game: TicTacToeGame
+    /// 游標位置（僅人類回合顯示）
+    var cursor: (row: Int, col: Int)? = nil
 
     func render() -> String {
         var lines: [String] = []
-        lines.append("🎮 Tic-Tac-Toe")
+        lines.append("=== Tic-Tac-Toe ===")
         lines.append(String(repeating: "─", count: 14))
         lines.append("  1   2   3")
         lines.append("┌───┬───┬───┐")
@@ -19,9 +21,14 @@ struct TicTacToeRenderer: BoardRenderer {
             for c in 0..<3 {
                 let cell: String
                 switch game.board[r, c] {
-                case .human: cell = "❌"
-                case .ai:    cell = "⭕"
-                case nil:    cell = " "
+                case .human: cell = "X"
+                case .ai:    cell = "O"
+                case nil:
+                    if let cur = cursor, cur.row == r, cur.col == c {
+                        cell = "+"  // 游標位置
+                    } else {
+                        cell = " "
+                    }
                 }
                 row += " \(cell) │"
             }
@@ -31,15 +38,20 @@ struct TicTacToeRenderer: BoardRenderer {
         }
         lines.append("└───┴───┴───┘")
 
+        if let cur = cursor, game.state == .playing, game.currentPlayer == .human {
+            let colLabel = ["A", "B", "C"][cur.row]
+            lines.append("▸ \(colLabel)\(cur.col + 1)")
+        }
+
         switch game.state {
         case .playing:
-            let symbol = game.currentPlayer == .human ? "❌" : "⭕"
-            lines.append("當前: \(symbol) (\(game.currentPlayer == .human ? "You" : "AI"))")
+            let symbol = game.currentPlayer == .human ? "X" : "O"
+            lines.append("Turn: [\(symbol)] \(game.currentPlayer == .human ? "You" : "AI")")
         case .won(let p):
-            let symbol = p == .human ? "❌" : "⭕"
-            lines.append("🏆 \(symbol) \(p == .human ? "You win!" : "AI wins!")")
+            let symbol = p == .human ? "X" : "O"
+            lines.append("*** [\(symbol)] \(p == .human ? "You win!" : "AI wins!") ***")
         case .draw:
-            lines.append("🤝 Draw!")
+            lines.append("*** Draw! ***")
         default:
             break
         }

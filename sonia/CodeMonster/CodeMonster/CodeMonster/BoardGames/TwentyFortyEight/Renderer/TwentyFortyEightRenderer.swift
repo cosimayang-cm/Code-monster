@@ -15,7 +15,7 @@ struct TwentyFortyEightRenderer: BoardRenderer {
         let middle = "├" + [sep, sep, sep, sep].joined(separator: "┼") + "┤"
         let bottom = "└" + [sep, sep, sep, sep].joined(separator: "┴") + "┘"
 
-        var lines = ["🎮 2048", top]
+        var lines = ["=== 2048 ===", top]
         let n = TwentyFortyEightBoard.size
         for r in 0..<n {
             let row = (0..<n).map { c -> String in
@@ -32,8 +32,8 @@ struct TwentyFortyEightRenderer: BoardRenderer {
         lines.append("Score: \(formatted)  Max: \(game.board.maxTile)")
 
         switch game.state {
-        case .wonCanContinue: lines.append("🏆 You reached 2048! Keep going!")
-        case .draw:           lines.append("💀 No moves left. Game over!")
+        case .wonCanContinue: lines.append("*** You reached 2048! Keep going! ***")
+        case .draw:           lines.append("*** No moves left. Game over! ***")
         default: break
         }
         return lines.joined(separator: "\n")

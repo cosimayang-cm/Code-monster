@@ -1,50 +1,55 @@
+//
+//  ReversiViewController.swift
+//  CodeMonster
+//
+//  Created by Sonia Wu on 2026/3/1.
+//
+
 import UIKit
 
 // MARK: - ReversiViewController
 // 黑白棋 UIKit 輸入層。
-// 8×8 UIButton grid + Pass 按鈕（有子可下時 hidden）。
+// VC = 搖桿輸入：↑↓←→ 移動游標，✓ 放子，Pass 跳過。遊戲狀態透過 print(renderer.render()) 輸出至 Xcode console。
 
 final class ReversiViewController: UIViewController {
 
+    // MARK: - State
+
     private var game = ReversiGame()
-    private var renderer: ReversiRenderer { ReversiRenderer(game: game) }
+    private var cursor = (row: 3, col: 3)
     private let ai = ReversiAI()
 
-    // MARK: - UI Components
+    private var renderer: ReversiRenderer {
+        let showCursor = game.state == .playing && game.currentPlayer == .human
+        return ReversiRenderer(game: game, cursor: showCursor ? cursor : nil)
+    }
 
-    private let statusLabel: UILabel = {
-        let l = UILabel()
-        l.textAlignment = .center
-        l.font = .systemFont(ofSize: 17, weight: .medium)
-        l.translatesAutoresizingMaskIntoConstraints = false
-        return l
-    }()
+    // MARK: - UI
 
-    private let scoreLabel: UILabel = {
-        let l = UILabel()
-        l.textAlignment = .center
-        l.font = .systemFont(ofSize: 15)
-        l.translatesAutoresizingMaskIntoConstraints = false
-        return l
-    }()
+    private let upButton    = ReversiViewController.makeDPad("↑", tag: 0)
+    private let downButton  = ReversiViewController.makeDPad("↓", tag: 1)
+    private let leftButton  = ReversiViewController.makeDPad("←", tag: 2)
+    private let rightButton = ReversiViewController.makeDPad("→", tag: 3)
 
-    private var cellButtons: [[UIButton]] = []
-    private let boardGrid: UIStackView = {
-        let s = UIStackView()
-        s.axis = .vertical
-        s.spacing = 2
-        s.distribution = .fillEqually
-        s.translatesAutoresizingMaskIntoConstraints = false
-        return s
+    private let confirmButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.setTitle("✓", for: .normal)
+        b.titleLabel?.font = .systemFont(ofSize: 22, weight: .bold)
+        b.backgroundColor = .systemGreen.withAlphaComponent(0.2)
+        b.setTitleColor(.systemGreen, for: .normal)
+        b.layer.cornerRadius = 26
+        b.tag = 4
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
     }()
 
     private let passButton: UIButton = {
         let b = UIButton(type: .system)
         b.setTitle("Pass ⏭", for: .normal)
-        b.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        b.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
         b.backgroundColor = .systemOrange.withAlphaComponent(0.15)
         b.setTitleColor(.systemOrange, for: .normal)
-        b.layer.cornerRadius = 12
+        b.layer.cornerRadius = 10
         b.isHidden = true
         b.translatesAutoresizingMaskIntoConstraints = false
         return b
@@ -53,14 +58,25 @@ final class ReversiViewController: UIViewController {
     private let newGameButton: UIButton = {
         let b = UIButton(type: .system)
         b.setTitle("New Game", for: .normal)
-        b.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        b.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
         b.backgroundColor = .systemBlue.withAlphaComponent(0.15)
         b.setTitleColor(.systemBlue, for: .normal)
-        b.layer.cornerRadius = 12
+        b.layer.cornerRadius = 10
         b.isHidden = true
         b.translatesAutoresizingMaskIntoConstraints = false
         return b
     }()
+
+    private static func makeDPad(_ title: String, tag: Int) -> UIButton {
+        let b = UIButton(type: .system)
+        b.setTitle(title, for: .normal)
+        b.titleLabel?.font = .systemFont(ofSize: 20, weight: .medium)
+        b.backgroundColor = .secondarySystemBackground
+        b.layer.cornerRadius = 10
+        b.tag = tag
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
+    }
 
     // MARK: - Lifecycle
 
@@ -72,163 +88,124 @@ final class ReversiViewController: UIViewController {
         startGame()
     }
 
-    // MARK: - Setup
-
     private func setupUI() {
-        view.addSubview(statusLabel)
-        view.addSubview(scoreLabel)
-        view.addSubview(boardGrid)
-        view.addSubview(passButton)
-        view.addSubview(newGameButton)
+        let dpad = makeDPadStack()
+        let bottomRow = UIStackView(arrangedSubviews: [passButton, newGameButton])
+        bottomRow.axis = .horizontal; bottomRow.spacing = 12
+        bottomRow.distribution = .fillEqually
+        bottomRow.translatesAutoresizingMaskIntoConstraints = false
 
-        for row in 0..<8 {
-            let rowStack = UIStackView()
-            rowStack.axis = .horizontal
-            rowStack.spacing = 2
-            rowStack.distribution = .fillEqually
-            var rowButtons: [UIButton] = []
-            for col in 0..<8 {
-                let b = UIButton(type: .system)
-                b.tag = row * 8 + col
-                b.titleLabel?.font = .systemFont(ofSize: 18)
-                b.backgroundColor = UIColor(red: 0.1, green: 0.5, blue: 0.2, alpha: 1)
-                b.layer.cornerRadius = 2
-                b.addTarget(self, action: #selector(cellTapped(_:)), for: .touchUpInside)
-                rowButtons.append(b)
-                rowStack.addArrangedSubview(b)
-            }
-            cellButtons.append(rowButtons)
-            boardGrid.addArrangedSubview(rowStack)
+        view.addSubview(dpad)
+        view.addSubview(bottomRow)
+
+        [upButton, downButton, leftButton, rightButton, confirmButton].forEach {
+            $0.addTarget(self, action: #selector(dpadTapped(_:)), for: .touchUpInside)
+            NSLayoutConstraint.activate([
+                $0.widthAnchor.constraint(equalToConstant: 52),
+                $0.heightAnchor.constraint(equalToConstant: 52)
+            ])
         }
-
         passButton.addTarget(self, action: #selector(passTapped), for: .touchUpInside)
         newGameButton.addTarget(self, action: #selector(newGameTapped), for: .touchUpInside)
 
         NSLayoutConstraint.activate([
-            statusLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
-            statusLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            statusLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            bottomRow.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12),
+            bottomRow.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            bottomRow.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            bottomRow.heightAnchor.constraint(equalToConstant: 40),
 
-            scoreLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 4),
-            scoreLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            scoreLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-
-            boardGrid.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor, constant: 12),
-            boardGrid.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            boardGrid.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            boardGrid.heightAnchor.constraint(equalTo: boardGrid.widthAnchor),
-
-            passButton.topAnchor.constraint(equalTo: boardGrid.bottomAnchor, constant: 20),
-            passButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            passButton.widthAnchor.constraint(equalToConstant: 160),
-            passButton.heightAnchor.constraint(equalToConstant: 44),
-
-            newGameButton.topAnchor.constraint(equalTo: passButton.bottomAnchor, constant: 12),
-            newGameButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            newGameButton.widthAnchor.constraint(equalToConstant: 160),
-            newGameButton.heightAnchor.constraint(equalToConstant: 44)
+            dpad.bottomAnchor.constraint(equalTo: bottomRow.topAnchor, constant: -12),
+            dpad.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
 
+    private func makeDPadStack() -> UIStackView {
+        func row(_ buttons: [UIButton?]) -> UIStackView {
+            let s = UIStackView(); s.axis = .horizontal; s.spacing = 6; s.alignment = .center
+            for b in buttons {
+                if let b { s.addArrangedSubview(b) } else {
+                    let sp = UIView()
+                    NSLayoutConstraint.activate([
+                        sp.widthAnchor.constraint(equalToConstant: 52),
+                        sp.heightAnchor.constraint(equalToConstant: 52)
+                    ])
+                    s.addArrangedSubview(sp)
+                }
+            }
+            return s
+        }
+        let s = UIStackView(arrangedSubviews: [
+            row([nil, upButton, nil]),
+            row([leftButton, confirmButton, rightButton]),
+            row([nil, downButton, nil])
+        ])
+        s.axis = .vertical; s.spacing = 6; s.translatesAutoresizingMaskIntoConstraints = false
+        return s
+    }
+
+    // MARK: - Game
+
     private func startGame() {
         game.restart()
+        cursor = (row: 3, col: 3)
         updateUI()
         print(renderer.render())
     }
 
-    // MARK: - Update UI
-
     private func updateUI() {
-        let validMoves = game.validMoves()
-        let validSet = Set(validMoves.map { $0.row * 8 + $0.col })
         let isHumanTurn = game.state == .playing && game.currentPlayer == .human
-
-        for row in 0..<8 {
-            for col in 0..<8 {
-                let b = cellButtons[row][col]
-                let key = row * 8 + col
-                switch game.board[row, col] {
-                case .black:
-                    b.setTitle("⚫", for: .normal)
-                    b.isEnabled = false
-                case .white:
-                    b.setTitle("⚪", for: .normal)
-                    b.isEnabled = false
-                case .empty:
-                    if validSet.contains(key) && isHumanTurn {
-                        b.setTitle("·", for: .normal)
-                        b.isEnabled = true
-                    } else {
-                        b.setTitle("", for: .normal)
-                        b.isEnabled = false
-                    }
-                }
-            }
-        }
-
-        let black = game.board.count(for: .human)
-        let white = game.board.count(for: .ai)
-        scoreLabel.text = "⚫ \(black)  ⚪ \(white)"
-
-        switch game.state {
-        case .playing:
-            statusLabel.text = game.currentPlayer == .human ? "Your turn ⚫" : "AI thinking... ⚪"
-        case .won(let p):
-            statusLabel.text = p == .human ? "🏆 You win!" : "🤖 AI wins!"
-        case .draw:
-            statusLabel.text = "🤝 Draw!"
-        default:
-            statusLabel.text = ""
-        }
-
+        [upButton, downButton, leftButton, rightButton, confirmButton].forEach { $0.isEnabled = isHumanTurn }
         passButton.isHidden = !(isHumanTurn && game.isPassRequired())
         newGameButton.isHidden = game.state == .playing
     }
 
     // MARK: - Actions
 
-    @objc private func cellTapped(_ sender: UIButton) {
-        let row = sender.tag / 8
-        let col = sender.tag % 8
+    @objc private func dpadTapped(_ sender: UIButton) {
         guard game.state == .playing, game.currentPlayer == .human else { return }
-
-        do {
-            try game.apply(move: ReversiMove(row: row, col: col))
-            updateUI()
-            print(renderer.render())
-        } catch { return }
-
-        triggerAIIfNeeded()
+        switch sender.tag {
+        case 0: cursor.row = max(0, cursor.row - 1)    // ↑
+        case 1: cursor.row = min(7, cursor.row + 1)    // ↓
+        case 2: cursor.col = max(0, cursor.col - 1)    // ←
+        case 3: cursor.col = min(7, cursor.col + 1)    // →
+        case 4:                                         // ✓ place
+            do {
+                try game.apply(move: ReversiMove(row: cursor.row, col: cursor.col))
+                updateUI()
+                print(renderer.render())
+                triggerAIIfNeeded()
+                return
+            } catch { }
+        default: break
+        }
+        updateUI()
+        print(renderer.render())
     }
 
     @objc private func passTapped() {
-        // Pass: force switch player by attempting the game's pass logic
-        // Since apply throws on noFlipsAvailable, we handle pass by switching currentPlayer:
-        game.restart()  // Not ideal — replace with proper pass mechanism via game state
-        // Proper approach: create a "pass" move. Here we re-use app logic by
-        // switching in game — actually ReversiGame handles auto-pass in apply,
-        // so manual pass just means the human has no moves. Trigger AI.
+        try? game.pass()
+        updateUI()
+        print(renderer.render())
         triggerAIIfNeeded()
-    }
-
-    @objc private func newGameTapped() {
-        startGame()
     }
 
     private func triggerAIIfNeeded() {
         guard game.state == .playing, game.currentPlayer == .ai else { return }
-        statusLabel.text = "AI thinking... ⚪"
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
             guard let self else { return }
-            if let aiMove = self.ai.bestMove(for: self.game) {
-                try? self.game.apply(move: aiMove)
+            if let move = self.ai.bestMove(for: self.game) {
+                try? self.game.apply(move: move)
+            } else {
+                try? self.game.pass()  // AI無子可下，跳過
             }
             self.updateUI()
             print(self.renderer.render())
-            // If AI pass is needed, trigger again (rare)
+            // AI 仍輪到自己（對手也無子）則繼續
             if self.game.state == .playing && self.game.currentPlayer == .ai {
                 self.triggerAIIfNeeded()
             }
         }
     }
+
+    @objc private func newGameTapped() { startGame() }
 }

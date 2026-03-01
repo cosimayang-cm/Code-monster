@@ -55,6 +55,23 @@ struct ReversiGame: BoardGame {
         return validMoves().isEmpty && state == .playing
     }
 
+    /// 當前玩家跳過一手（僅 isPassRequired() == true 時有效）。
+    mutating func pass() throws {
+        guard state == .playing else { throw BoardGameError.gameAlreadyOver }
+        guard validMovesFor(currentPlayer).isEmpty else { throw BoardGameError.noFlipsAvailable }
+        let opponent: Player = currentPlayer == .human ? .ai : .human
+        if !validMovesFor(opponent).isEmpty {
+            currentPlayer = opponent
+        } else {
+            // 雙方無子 → 結算
+            let humanCount = board.count(for: .human)
+            let aiCount    = board.count(for: .ai)
+            if      humanCount > aiCount { state = .won(.human) }
+            else if aiCount > humanCount { state = .won(.ai) }
+            else                         { state = .draw }
+        }
+    }
+
     // MARK: - Private
 
     private func validMovesFor(_ player: Player) -> [ReversiMove] {
