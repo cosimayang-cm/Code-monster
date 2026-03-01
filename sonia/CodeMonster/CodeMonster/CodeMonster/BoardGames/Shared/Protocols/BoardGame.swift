@@ -1,3 +1,10 @@
+//
+//  BoardGame.swift
+//  CodeMonster
+//
+//  Created by Sonia Wu on 2026/3/1.
+//
+
 import Foundation
 
 // MARK: - BoardGame Protocol
