@@ -109,21 +109,44 @@ extension ReversiViewController: UICollectionViewDataSource, UICollectionViewDel
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
         let row = indexPath.item / 8
         let col = indexPath.item % 8
-        let rowLabel = String(UnicodeScalar(65 + row)!)
-        let label = "\(rowLabel)\(col + 1)"
+        let cellState = currentBoard.cells[row][col]
 
         cell.contentView.subviews.forEach { $0.removeFromSuperview() }
-        let textLabel = UILabel()
-        textLabel.text = label
-        textLabel.font = .systemFont(ofSize: 10)
-        textLabel.textAlignment = .center
-        textLabel.translatesAutoresizingMaskIntoConstraints = false
-        cell.contentView.addSubview(textLabel)
-        NSLayoutConstraint.activate([
-            textLabel.centerXAnchor.constraint(equalTo: cell.contentView.centerXAnchor),
-            textLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor)
-        ])
-        cell.backgroundColor = .systemGray6
+        cell.backgroundColor = UIColor(red: 0.0, green: 0.55, blue: 0.15, alpha: 1.0) // 棋盤綠
+
+        switch cellState {
+        case .empty:
+            // 顯示可下點提示
+            let legalMoves = currentBoard.legalMoves()
+            if legalMoves.contains(where: { $0.row == row && $0.col == col }) {
+                let dot = UIView()
+                dot.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+                dot.layer.cornerRadius = 6
+                dot.translatesAutoresizingMaskIntoConstraints = false
+                cell.contentView.addSubview(dot)
+                NSLayoutConstraint.activate([
+                    dot.centerXAnchor.constraint(equalTo: cell.contentView.centerXAnchor),
+                    dot.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                    dot.widthAnchor.constraint(equalToConstant: 12),
+                    dot.heightAnchor.constraint(equalToConstant: 12)
+                ])
+            }
+        case .black, .white:
+            let piece = UIView()
+            piece.backgroundColor = cellState == .black ? .black : .white
+            piece.layer.cornerRadius = 16
+            piece.layer.borderWidth = cellState == .white ? 0.5 : 0
+            piece.layer.borderColor = UIColor.lightGray.cgColor
+            piece.translatesAutoresizingMaskIntoConstraints = false
+            cell.contentView.addSubview(piece)
+            NSLayoutConstraint.activate([
+                piece.centerXAnchor.constraint(equalTo: cell.contentView.centerXAnchor),
+                piece.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                piece.widthAnchor.constraint(equalToConstant: 32),
+                piece.heightAnchor.constraint(equalToConstant: 32)
+            ])
+        }
+
         return cell
     }
 
@@ -149,6 +172,7 @@ extension ReversiViewController: GameEngineDelegate {
     }
 
     func gameEngineDidUpdateBoard(_ boardString: String) {
-        print(boardString)
+        currentBoard = engine.board
+        collectionView.reloadData()
     }
 }

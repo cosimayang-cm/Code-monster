@@ -43,8 +43,6 @@ final class TicTacToeViewController: UIViewController {
         gridStackView.alignment = .center
         gridStackView.translatesAutoresizingMaskIntoConstraints = false
 
-        let labels = ["A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3"]
-
         for row in 0..<3 {
             let rowStack = UIStackView()
             rowStack.axis = .horizontal
@@ -53,8 +51,8 @@ final class TicTacToeViewController: UIViewController {
             for col in 0..<3 {
                 let index = row * 3 + col
                 let button = UIButton(type: .system)
-                button.setTitle(labels[index], for: .normal)
-                button.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
+                button.setTitle("", for: .normal)
+                button.titleLabel?.font = .systemFont(ofSize: 36, weight: .bold)
                 button.backgroundColor = .systemGray5
                 button.layer.cornerRadius = 8
                 button.tag = index
@@ -109,6 +107,7 @@ final class TicTacToeViewController: UIViewController {
         gridStackView.isHidden = false
         endGameStackView.isHidden = true
         for button in buttons {
+            button.setTitle("", for: .normal)
             button.isEnabled = true
         }
         engine.startGame()
@@ -130,6 +129,19 @@ extension TicTacToeViewController: GameEngineDelegate {
     }
 
     func gameEngineDidUpdateBoard(_ boardString: String) {
-        print(boardString)
+        let cells = engine.board.cells
+        for (index, button) in buttons.enumerated() {
+            switch cells[index] {
+            case .empty:
+                button.setTitle("", for: .normal)
+                button.isEnabled = true
+            case .x:
+                button.setTitle("❌", for: .normal)
+                button.isEnabled = false
+            case .o:
+                button.setTitle("⭕", for: .normal)
+                button.isEnabled = false
+            }
+        }
     }
 }
