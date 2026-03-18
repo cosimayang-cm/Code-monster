@@ -4,358 +4,96 @@
 //
 //  Created by Sonia Wu on 2026/1/8.
 //
+//  CodeMonster Hub — 六個任務的入口頁面。
+//
 
 import UIKit
 import ComposableArchitecture
 
-class ViewController: UIViewController {
-    
-    // MARK: - Properties
-    
-    private let car = Car()
-    private var featureButtons: [Feature: UIButton] = [:]
-    
+final class ViewController: UIViewController {
+
+    // MARK: - Data
+
+    private struct MonsterItem {
+        let title: String
+        let color: UIColor
+    }
+
+    private let monsters: [MonsterItem] = [
+        MonsterItem(title: "🚗  Monster 1：Car System",           color: .systemOrange),
+        MonsterItem(title: "💬  Monster 2：Popup Response Chain",  color: .systemTeal),
+        MonsterItem(title: "↩️  Monster 3：Undo / Redo System",    color: .systemGreen),
+        MonsterItem(title: "⚔️  Monster 4：RPG Item System",       color: .systemRed),
+        MonsterItem(title: "🍎  Monster 5：TCA + UIKit",           color: .systemBlue),
+        MonsterItem(title: "🎮  Monster 6：Board Games",           color: .systemPurple)
+    ]
+
     // MARK: - UI Components
-    
-    private let scrollView: UIScrollView = {
-        let scroll = UIScrollView()
-        scroll.translatesAutoresizingMaskIntoConstraints = false
-        return scroll
-    }()
-    
-    private let contentView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "🚗 Car Control Panel"
-        label.font = .systemFont(ofSize: 28, weight: .bold)
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let computerStatusLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let engineStatusLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let computerButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Central Computer", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
-        button.layer.cornerRadius = 12
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    private let engineButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Engine", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
-        button.layer.cornerRadius = 12
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    private let featuresLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Features"
-        label.font = .systemFont(ofSize: 20, weight: .bold)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let featuresStackView: UIStackView = {
+
+    private let stackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = 12
+        stack.spacing = 14
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
 
-    private let monster5Button: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("🍎 Monster 5: TCA + UIKit", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
-        button.layer.cornerRadius = 12
-        button.backgroundColor = .systemBlue.withAlphaComponent(0.2)
-        button.setTitleColor(.systemBlue, for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
     // MARK: - Lifecycle
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
-        setupObserver()
-        updateAllUI()
-    }
-    
-    // MARK: - Setup
-    
-    private func setupUI() {
+        title = "🧟 CodeMonster"
         view.backgroundColor = .systemBackground
-        
-        // Add subviews
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(monster5Button)
-        contentView.addSubview(computerStatusLabel)
-        contentView.addSubview(engineStatusLabel)
-        contentView.addSubview(computerButton)
-        contentView.addSubview(engineButton)
-        contentView.addSubview(featuresLabel)
-        contentView.addSubview(featuresStackView)
-        
-        // Setup buttons
-        computerButton.addTarget(self, action: #selector(computerButtonTapped), for: .touchUpInside)
-        engineButton.addTarget(self, action: #selector(engineButtonTapped), for: .touchUpInside)
-        monster5Button.addTarget(self, action: #selector(monster5ButtonTapped), for: .touchUpInside)
-        
-        // Create feature buttons
-        createFeatureButtons()
-        
-        // Layout
+        setupUI()
+    }
+
+    // MARK: - Setup
+
+    private func setupUI() {
+        view.addSubview(stackView)
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-
-            monster5Button.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
-            monster5Button.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            monster5Button.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            monster5Button.heightAnchor.constraint(equalToConstant: 50),
-
-            computerStatusLabel.topAnchor.constraint(equalTo: monster5Button.bottomAnchor, constant: 20),
-            computerStatusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            computerStatusLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            
-            engineStatusLabel.topAnchor.constraint(equalTo: computerStatusLabel.bottomAnchor, constant: 8),
-            engineStatusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            engineStatusLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            
-            computerButton.topAnchor.constraint(equalTo: engineStatusLabel.bottomAnchor, constant: 20),
-            computerButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            computerButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            computerButton.heightAnchor.constraint(equalToConstant: 50),
-            
-            engineButton.topAnchor.constraint(equalTo: computerButton.bottomAnchor, constant: 12),
-            engineButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            engineButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            engineButton.heightAnchor.constraint(equalToConstant: 50),
-            
-            featuresLabel.topAnchor.constraint(equalTo: engineButton.bottomAnchor, constant: 30),
-            featuresLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            featuresLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            
-            featuresStackView.topAnchor.constraint(equalTo: featuresLabel.bottomAnchor, constant: 12),
-            featuresStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            featuresStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            featuresStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
+            stackView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
         ])
-    }
-    
-    private func createFeatureButtons() {
-        let features = car.getInstalledFeatures()
-        
-        for feature in features {
+
+        for (index, item) in monsters.enumerated() {
             let button = UIButton(type: .system)
-            button.setTitle(feature.displayName, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+            button.setTitle(item.title, for: .normal)
+            button.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
             button.contentHorizontalAlignment = .left
-            button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-            button.layer.cornerRadius = 10
-            button.heightAnchor.constraint(equalToConstant: 44).isActive = true
-            button.tag = feature.hashValue
-            button.addTarget(self, action: #selector(featureButtonTapped(_:)), for: .touchUpInside)
-            
-            featureButtons[feature] = button
-            featuresStackView.addArrangedSubview(button)
+            button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+            button.layer.cornerRadius = 14
+            button.backgroundColor = item.color.withAlphaComponent(0.15)
+            button.setTitleColor(item.color, for: .normal)
+            button.heightAnchor.constraint(equalToConstant: 54).isActive = true
+            button.tag = index
+            button.addTarget(self, action: #selector(monsterButtonTapped(_:)), for: .touchUpInside)
+            stackView.addArrangedSubview(button)
         }
     }
-    
-    private func setupObserver() {
-        car.addObserver(self)
-    }
-    
+
     // MARK: - Actions
-    
-    @objc private func computerButtonTapped() {
-        if car.isCentralComputerOn {
-            car.turnOffCentralComputer()
-        } else {
-            car.turnOnCentralComputer()
-        }
-    }
-    
-    @objc private func engineButtonTapped() {
-        if car.isEngineRunning {
-            car.stopEngine()
-        } else {
-            car.startEngine()
-        }
-    }
 
-    @objc private func monster5ButtonTapped() {
-        let appStore = Store(initialState: AppFeature.State()) {
-            AppFeature()
-        }
-        let coordinator = AppCoordinator(store: appStore)
-        coordinator.modalPresentationStyle = .fullScreen
-        present(coordinator, animated: true)
-    }
-    
-    @objc private func featureButtonTapped(_ sender: UIButton) {
-        guard let feature = featureButtons.first(where: { $0.value == sender })?.key else { return }
-        
-        if car.isFeatureEnabled(feature) {
-            _ = car.disableFeature(feature)
-        } else {
-            let result = car.enableFeature(feature)
-            if case .failure(let error) = result {
-                showAlert(title: "Cannot Enable", message: error.localizedDescription)
-            }
-        }
-    }
-    
-    // MARK: - UI Updates
-    
-    private func updateAllUI() {
-        updateComputerUI()
-        updateEngineUI()
-        updateAllFeatureButtons()
-    }
-    
-    private func updateComputerUI() {
-        let isOn = car.isCentralComputerOn
-        computerStatusLabel.text = "💻 Central Computer: \(isOn ? "ON" : "OFF")"
-        computerStatusLabel.textColor = isOn ? .systemGreen : .systemRed
-        
-        computerButton.setTitle(isOn ? "Turn OFF Computer" : "Turn ON Computer", for: .normal)
-        computerButton.backgroundColor = isOn ? .systemRed.withAlphaComponent(0.2) : .systemGreen.withAlphaComponent(0.2)
-        computerButton.setTitleColor(isOn ? .systemRed : .systemGreen, for: .normal)
-        
-        // 更新引擎按鈕狀態（引擎依賴中控電腦）
-        updateEngineUI()
-    }
-    
-    private func updateEngineUI() {
-        let isRunning = car.isEngineRunning
-        let computerOn = car.isCentralComputerOn
-        
-        engineStatusLabel.text = "🏃 Engine: \(isRunning ? "RUNNING" : "STOPPED")"
-        engineStatusLabel.textColor = isRunning ? .systemGreen : .systemRed
-        
-        engineButton.setTitle(isRunning ? "Stop Engine" : "Start Engine", for: .normal)
-        engineButton.backgroundColor = isRunning ? .systemRed.withAlphaComponent(0.2) : .systemGreen.withAlphaComponent(0.2)
-        engineButton.setTitleColor(isRunning ? .systemRed : .systemGreen, for: .normal)
-        
-        // 中控電腦關閉時，引擎按鈕不可用
-        engineButton.isEnabled = computerOn || isRunning
-        engineButton.alpha = (computerOn || isRunning) ? 1.0 : 0.5
-    }
-    
-    private func updateAllFeatureButtons() {
-        for (feature, button) in featureButtons {
-            updateFeatureButton(feature: feature, button: button)
-        }
-    }
-    
-    private func updateFeatureButton(feature: Feature, button: UIButton) {
-        let isEnabled = car.isFeatureEnabled(feature)
-        let isAvailable = car.isFeatureAvailable(feature)
-        
-        // 更新按鈕標題
-        let title = isEnabled ? "✓ \(feature.displayName)" : feature.displayName
-        button.setTitle(title, for: .normal)
-        
-        // 更新按鈕顏色
-        if isEnabled {
-            button.backgroundColor = .systemGreen.withAlphaComponent(0.3)
-            button.setTitleColor(.systemGreen, for: .normal)
-        } else if isAvailable {
-            button.backgroundColor = .systemGray6
-            button.setTitleColor(.label, for: .normal)
-        } else {
-            button.backgroundColor = .systemGray6
-            button.setTitleColor(.systemGray, for: .normal)
-        }
-        
-        // 更新按鈕可點擊狀態
-        button.isEnabled = isAvailable || isEnabled
-        button.alpha = (isAvailable || isEnabled) ? 1.0 : 0.5
-    }
-    
-    private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
-    }
-}
-
-// MARK: - CarEventObserver
-
-extension ViewController: CarEventObserver {
-    
-    func carDidChangeState(_ event: CarEvent) {
-        switch event {
-        case .featureEnabled:
-            updateAllFeatureButtons()
-            
-        case .featureDisabled:
-            updateAllFeatureButtons()
-            
-        case .featuresCascadeDisabled(let features):
-            updateAllFeatureButtons()
-            let featureNames = features.map { $0.displayName }.joined(separator: "\n")
-            showAlert(title: "Features Cascade Disabled", message: "The following features were disabled:\n\n\(featureNames)")
-            
-        case .centralComputerTurnedOn:
-            updateComputerUI()
-            updateAllFeatureButtons()
-            
-        case .centralComputerTurnedOff:
-            updateComputerUI()
-            updateAllFeatureButtons()
-            
-        case .engineStarted:
-            updateEngineUI()
-            updateAllFeatureButtons()
-            
-        case .engineStopped:
-            updateEngineUI()
-            updateAllFeatureButtons()
+    @objc private func monsterButtonTapped(_ sender: UIButton) {
+        switch sender.tag {
+        case 0:
+            navigationController?.pushViewController(CarSystemViewController(), animated: true)
+        case 1:
+            navigationController?.pushViewController(PopupDebugViewController(), animated: true)
+        case 2:
+            navigationController?.pushViewController(UndoRedoDemoViewController(), animated: true)
+        case 3:
+            navigationController?.pushViewController(ItemSystemViewController(), animated: true)
+        case 4:
+            let store = Store(initialState: AppFeature.State()) { AppFeature() }
+            let coordinator = AppCoordinator(store: store)
+            coordinator.modalPresentationStyle = .fullScreen
+            present(coordinator, animated: true)
+        case 5:
+            navigationController?.pushViewController(MenuViewController(), animated: true)
+        default:
+            break
         }
     }
 }
-

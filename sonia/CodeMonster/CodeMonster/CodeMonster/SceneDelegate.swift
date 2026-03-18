@@ -18,8 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // 創建 window
         let window = UIWindow(windowScene: windowScene)
         
-        // 設置根 ViewController - Undo/Redo Demo Hub
-        let viewController = UndoRedoDemoViewController()
+        // 設置根 ViewController - CodeMonster Hub
+        let viewController = ViewController()
         let navigationController = UINavigationController(rootViewController: viewController)
         window.rootViewController = navigationController
         
