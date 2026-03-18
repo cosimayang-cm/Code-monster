@@ -5,13 +5,11 @@
 //  Created by Claude on 2026/1/11.
 //
 import UIKit
-import ComposableArchitecture
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    private var monster5Coordinator: Monster5Coordinator?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // 建立 Window
@@ -82,28 +80,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             selectedImage: UIImage(systemName: "doc.text.fill")
         )
 
-        // Tab 4: Monster5（TCA + UIKit 整合實戰）
-        let monster5Nav = createMonster5Tab()
+        // Tab 4: Monster6（Console Board Game 棋盤遊戲）
+        let gameMenuVC = GameMenuViewController()
+        let monster6Nav = UINavigationController(rootViewController: gameMenuVC)
+        monster6Nav.tabBarItem = UITabBarItem(
+            title: "Monster6",
+            image: UIImage(systemName: "gamecontroller"),
+            selectedImage: UIImage(systemName: "gamecontroller.fill")
+        )
 
-        tabBarController.viewControllers = [carVC, canvasNav, textNav, monster5Nav]
+        tabBarController.viewControllers = [carVC, canvasNav, textNav, monster6Nav]
 
         return tabBarController
     }
 
-    // MARK: - Monster5 Setup
-
-    private func createMonster5Tab() -> UINavigationController {
-        let store = Store(initialState: Monster5AppFeature.State()) {
-            Monster5AppFeature()
-        }
-        let coordinator = Monster5Coordinator(store: store)
-        self.monster5Coordinator = coordinator
-
-        coordinator.navigationController.tabBarItem = UITabBarItem(
-            title: "Monster5",
-            image: UIImage(systemName: "newspaper"),
-            selectedImage: UIImage(systemName: "newspaper.fill")
-        )
-        return coordinator.navigationController
-    }
 }
