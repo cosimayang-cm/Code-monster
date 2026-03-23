@@ -157,25 +157,7 @@ CREATE INDEX idx_users_is_active ON users(is_active);
 CREATE INDEX idx_users_created_at ON users(created_at);
 ```
 
-### 0002_create_oauth_accounts.sql
-
-```sql
-CREATE TABLE IF NOT EXISTS oauth_accounts (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    provider TEXT NOT NULL,
-    provider_id TEXT NOT NULL,
-    provider_email TEXT,
-    created_at TEXT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE(provider, provider_id)
-);
-
-CREATE INDEX idx_oauth_user_id ON oauth_accounts(user_id);
-CREATE INDEX idx_oauth_provider_id ON oauth_accounts(provider, provider_id);
-```
-
-### 0003_create_login_history.sql
+### 0002_create_login_history.sql
 
 ```sql
 CREATE TABLE IF NOT EXISTS login_history (
@@ -191,6 +173,24 @@ CREATE TABLE IF NOT EXISTS login_history (
 CREATE INDEX idx_login_history_user_id ON login_history(user_id);
 CREATE INDEX idx_login_history_created_at ON login_history(created_at);
 CREATE INDEX idx_login_history_method ON login_history(method);
+```
+
+### 0003_create_oauth_accounts.sql
+
+```sql
+CREATE TABLE IF NOT EXISTS oauth_accounts (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    provider TEXT NOT NULL,
+    provider_id TEXT NOT NULL,
+    provider_email TEXT,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(provider, provider_id)
+);
+
+CREATE INDEX idx_oauth_user_id ON oauth_accounts(user_id);
+CREATE INDEX idx_oauth_provider_id ON oauth_accounts(provider, provider_id);
 ```
 
 ---

@@ -118,8 +118,8 @@ monster7-member/
 │   ├── .dev.vars                    # Local secrets (不進 git)
 │   ├── migrations/
 │   │   ├── 0001_create_users.sql
-│   │   ├── 0002_create_oauth_accounts.sql
-│   │   └── 0003_create_login_history.sql
+│   │   ├── 0002_create_login_history.sql
+│   │   └── 0003_create_oauth_accounts.sql
 │   ├── src/
 │   │   ├── index.ts                 # Hono app entry
 │   │   ├── types.ts                 # Env bindings type
