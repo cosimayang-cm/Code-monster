@@ -1,0 +1,43 @@
+{
+  "name": "monster7-member-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:staging": "wrangler d1 migrations apply DB --remote",
+    "db:migrate:production": "wrangler d1 migrations apply DB --env production --remote",
+    "seed:print": "set -a; [ -f ./.dev.vars ] && . ./.dev.vars; set +a; tsx seed/seed.ts",
+    "seed:local": "mkdir -p .wrangler/tmp && set -a; [ -f ./.dev.vars ] && . ./.dev.vars; set +a; tsx seed/seed.ts > .wrangler/tmp/admin-seed.sql && wrangler d1 execute DB --local --file .wrangler/tmp/admin-seed.sql",
+    "seed:staging": "mkdir -p .wrangler/tmp && tsx seed/seed.ts > .wrangler/tmp/admin-seed.sql && wrangler d1 execute DB --remote --file .wrangler/tmp/admin-seed.sql",
+    "seed:production": "mkdir -p .wrangler/tmp && tsx seed/seed.ts > .wrangler/tmp/admin-seed.sql && wrangler d1 execute DB --env production --remote --file .wrangler/tmp/admin-seed.sql",
+    "deploy:staging": "wrangler deploy",
+    "deploy:production": "wrangler deploy --env production",
+    "cf-typegen": "wrangler types"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "hono",
+    "monster7"
+  ],
+  "author": "",
+  "license": "MIT",
+  "description": "Cloudflare Worker API for the Monster7 member system.",
+  "dependencies": {
+    "arctic": "^3.7.0",
+    "hono": "^4.12.8",
+    "jose": "^6.2.2",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260317.1",
+    "@types/node": "^25.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0",
+    "wrangler": "^4.76.0"
+  }
+}
