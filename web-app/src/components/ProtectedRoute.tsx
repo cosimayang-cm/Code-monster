@@ -3,10 +3,10 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
 export const ProtectedRoute = ({ requireAdmin = false }: { requireAdmin?: boolean }) => {
-  const { initializing, isAuthenticated, user } = useAuth()
+  const { initializing, isAuthenticated, tokens, user } = useAuth()
   const location = useLocation()
 
-  if (initializing) {
+  if (initializing || (tokens?.accessToken && !user)) {
     return (
       <div className="mx-auto flex min-h-screen max-w-5xl items-center justify-center px-6 py-16">
         <div className="glass-panel rounded-3xl px-8 py-6 text-center shadow-panel">

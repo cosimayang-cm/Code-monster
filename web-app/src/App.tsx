@@ -19,7 +19,18 @@ import { UserDetailPage } from './pages/admin/UserDetailPage'
 import { UsersPage } from './pages/admin/UsersPage'
 
 const RootRedirect = () => {
-  const { isAuthenticated, user } = useAuth()
+  const { initializing, isAuthenticated, user } = useAuth()
+
+  if (initializing || (isAuthenticated && !user)) {
+    return (
+      <div className="mx-auto flex min-h-screen max-w-5xl items-center justify-center px-6 py-16">
+        <div className="glass-panel rounded-3xl px-8 py-6 text-center shadow-panel">
+          <p className="text-sm uppercase tracking-[0.35em] text-slate-500">Loading</p>
+          <h1 className="mt-3 text-2xl font-semibold text-slate-900">正在建立會員工作階段</h1>
+        </div>
+      </div>
+    )
+  }
 
   if (!isAuthenticated) {
     return <HomePage />
