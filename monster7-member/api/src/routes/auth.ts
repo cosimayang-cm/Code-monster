@@ -82,18 +82,27 @@ authRoutes.post("/reset-password", async (context) => {
 authRoutes.get("/oauth/:provider", async (context) => {
   const provider = getOAuthProvider(context.req.param("provider"));
   const mode = context.req.query("mode") === "link" ? "link" : "login";
-  const auth = mode === "link" ? await authenticateRequest(context) : null;
-  const { url } = await createOAuthAuthorization(context.env, {
-    provider,
-    mode,
-    userId: auth?.userId ?? null,
-  });
+  try {
+    const auth = mode === "link" ? await authenticateRequest(context) : null;
+    const { url } = await createOAuthAuthorization(context.env, {
+      provider,
+      mode,
+      userId: auth?.userId ?? null,
+    });
 
-  if (mode === "link") {
-    return jsonSuccess(context, { authorizationUrl: url });
+    if (mode === "link") {
+      return jsonSuccess(context, { authorizationUrl: url });
+    }
+
+    return context.redirect(url, 302);
+  } catch (error) {
+    if (mode === "login") {
+      const code = error instanceof ApiError ? error.code : "OAUTH_FAILED";
+      return context.redirect(getOAuthErrorRedirectUrl(context.env, code), 302);
+    }
+
+    throw error;
   }
-
-  return context.redirect(url, 302);
 });
 
 authRoutes.get("/oauth/:provider/callback", async (context) => {

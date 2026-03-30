@@ -9,10 +9,10 @@ This project uses two public environments:
 
 Recommended public URLs:
 
-- Staging web: `https://main.<pages-project>.pages.dev`
-- Staging API: `https://monster7-member-api.<workers-subdomain>.workers.dev`
-- Production web: `https://monster7-member.pages.dev`
-- Production API: `https://monster7-member-api-production.<workers-subdomain>.workers.dev`
+- Staging web: `https://main.monster7-member-dfm.pages.dev`
+- Staging API: `https://monster7-member-api.cosima-monster7.workers.dev`
+- Production web: `https://monster7-member-dfm.pages.dev`
+- Production API: `https://monster7-member-api-production.cosima-monster7.workers.dev`
 
 ## Current Branch Strategy
 
@@ -47,6 +47,8 @@ npx wrangler secret put GOOGLE_CLIENT_SECRET --env production
 npx wrangler secret put GITHUB_CLIENT_ID --env production
 npx wrangler secret put GITHUB_CLIENT_SECRET --env production
 ```
+
+For exact Google / GitHub app registration values, see [OAUTH_SETUP.md](./OAUTH_SETUP.md).
 
 ## Worker Deployment
 

@@ -18,7 +18,7 @@ interface AuthContextValue {
   register: (email: string, password: string) => Promise<User>
   logout: () => void
   refreshUser: () => Promise<User>
-  completeOAuthLogin: (tokens: AuthTokens) => Promise<User>
+  completeOAuthLogin: (tokens: AuthTokens) => void
 }
 
 const STORAGE_KEY = 'monster7-member-auth'
@@ -87,8 +87,22 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
     const bootstrap = async () => {
       if (!tokensRef.current) {
-        setInitializing(false)
+        if (active) {
+          setUser(null)
+          setInitializing(false)
+        }
         return
+      }
+
+      if (user) {
+        if (active) {
+          setInitializing(false)
+        }
+        return
+      }
+
+      if (active) {
+        setInitializing(true)
       }
 
       try {
@@ -114,7 +128,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     return () => {
       active = false
     }
-  }, [])
+  }, [tokens?.accessToken, user])
 
   const applySession = (session: AuthResponse) => {
     setTokens({
@@ -142,11 +156,12 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     setUser(null)
   }
 
-  const completeOAuthLogin = async (nextTokens: AuthTokens) => {
+  const completeOAuthLogin = (nextTokens: AuthTokens) => {
+    tokensRef.current = nextTokens
+    persistTokens(nextTokens)
     setTokens(nextTokens)
-    const currentUser = await apiClient.getCurrentUser()
-    setUser(currentUser)
-    return currentUser
+    setUser(null)
+    setInitializing(true)
   }
 
   return (
@@ -154,7 +169,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       value={{
         user,
         tokens,
-        isAuthenticated: Boolean(user && tokens?.accessToken),
+        isAuthenticated: Boolean(tokens?.accessToken),
         initializing,
         login,
         register,
