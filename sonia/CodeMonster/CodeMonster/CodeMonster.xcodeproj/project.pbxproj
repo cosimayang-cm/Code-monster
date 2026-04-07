@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		6D2E56692F5402320062CDBF /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = CAFAFB252F3AE2D60085B5F4 /* ComposableArchitecture */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		6DF96E142F1008BC00282F5F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -69,7 +65,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D2E56692F5402320062CDBF /* ComposableArchitecture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,7 +211,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CAFAFB242F3AE2D60085B5F4 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
-				CAFAFB262F3AE2D60085B5F4 /* XCRemoteSwiftPackageReference "swift-navigation" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6DF96DFE2F1008BB00282F5F /* Products */;
@@ -585,16 +579,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
 			requirement = {
-				kind = exactVersion;
-				version = 1.17.1;
-			};
-		};
-		CAFAFB262F3AE2D60085B5F4 /* XCRemoteSwiftPackageReference "swift-navigation" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-navigation";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 2.6.0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.23.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

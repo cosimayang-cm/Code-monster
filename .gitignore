@@ -60,10 +60,3 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
-
-# Monster7 member system
-monster7-member/**/node_modules/
-monster7-member/**/dist/
-monster7-member/**/.wrangler/
-monster7-member/api/.dev.vars
-monster7-member/web-app/.env.local
