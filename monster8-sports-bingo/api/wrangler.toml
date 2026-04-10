@@ -4,7 +4,7 @@ compatibility_date = "2026-04-10"
 workers_dev = true
 
 [vars]
-WEB_APP_ORIGIN = "https://main.monster8-2xbet.pages.dev"
+WEB_APP_ORIGIN = "https://staging.velocabet.com,https://main.monster8-2xbet.pages.dev"
 SPORTS_API_BASE_URL = "https://api.sportsgameodds.com/v2"
 SUPER_NUMBER_MULTIPLIER = "2"
 
@@ -21,7 +21,7 @@ id = "674ae75a20e14f82a8c437740e8a468a"
 name = "monster8-sports-bingo-api-production"
 
 [env.production.vars]
-WEB_APP_ORIGIN = "https://monster8-2xbet.pages.dev"
+WEB_APP_ORIGIN = "https://velocabet.com,https://monster8-2xbet.pages.dev"
 SPORTS_API_BASE_URL = "https://api.sportsgameodds.com/v2"
 SUPER_NUMBER_MULTIPLIER = "2"
 

@@ -15,12 +15,17 @@ app.use(
   "*",
   cors({
     origin: (origin, c) => {
+      const configuredOrigins = (c.env.WEB_APP_ORIGIN ?? "http://localhost:5173")
+        .split(",")
+        .map((item: string) => item.trim())
+        .filter(Boolean);
+      const fallbackOrigin = configuredOrigins[0] ?? "http://localhost:5173";
       const allowed = new Set([
-        c.env.WEB_APP_ORIGIN ?? "http://localhost:5173",
+        ...configuredOrigins,
         "http://localhost:5173",
         "http://127.0.0.1:5173"
       ]);
-      return allowed.has(origin) ? origin : c.env.WEB_APP_ORIGIN ?? "http://localhost:5173";
+      return allowed.has(origin) ? origin : fallbackOrigin;
     },
     allowHeaders: ["Content-Type", "x-user-id"],
     allowMethods: ["GET", "POST", "OPTIONS"],
