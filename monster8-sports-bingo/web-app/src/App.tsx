@@ -204,7 +204,7 @@ const depositMethodConfigs: Array<{
     details: [
       { label: "銀行代碼", value: "812 台新銀行" },
       { label: "虛擬帳號", value: "9688-888-770001" },
-      { label: "收款戶名", value: "Velobet Wallet" }
+      { label: "收款戶名", value: "Velocabet Wallet" }
     ]
   },
   {
@@ -214,7 +214,7 @@ const depositMethodConfigs: Array<{
     meta: "模擬即時入帳",
     summary: "適合手機支付，模擬完成授權後立即回寫錢包餘額。",
     details: [
-      { label: "付款商戶", value: "Velobet Wallet" },
+      { label: "付款商戶", value: "Velocabet Wallet" },
       { label: "付款方式", value: "LINE Pay Balance / Card" },
       { label: "說明", value: "完成授權後 5 秒內更新餘額" }
     ]
@@ -914,7 +914,7 @@ export default function App() {
     <div className="dashboard-shell">
       <header className="top-header">
         <div className="brand-block">
-          <img alt="Velobet" className="brand-wordmark brand-wordmark-header" src="/brand-wordmark.svg" />
+          <img alt="Velocabet" className="brand-wordmark brand-wordmark-header" src="/brand-wordmark.svg" />
         </div>
         <nav className="header-nav">
           {tabs.map((item) => (
@@ -937,7 +937,7 @@ export default function App() {
         <section className="hero-grid">
           <div className="hero-panel">
             <div className="hero-copy">
-              <img alt="Velobet" className="brand-wordmark brand-wordmark-hero" src="/brand-wordmark.svg" />
+              <img alt="Velocabet" className="brand-wordmark brand-wordmark-hero" src="/brand-wordmark.svg" />
               <p className="hero-description">
                 提供公開運動賽事瀏覽、Bingo Bingo 大廳、快速下注、錢包與歷史統計，整理成一個可操作的桌面版產品面板。
               </p>
