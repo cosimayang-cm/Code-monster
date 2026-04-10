@@ -1,0 +1,14 @@
+{
+  "name": "monster8-sports-bingo",
+  "private": true,
+  "workspaces": [
+    "api",
+    "web-app"
+  ],
+  "scripts": {
+    "dev:api": "npm --workspace api run dev",
+    "dev:web": "npm --workspace web-app run dev",
+    "build": "npm --workspace api run typecheck && npm --workspace web-app run build",
+    "test": "npm --workspace api run test"
+  }
+}

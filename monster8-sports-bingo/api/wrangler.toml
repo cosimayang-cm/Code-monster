@@ -1,0 +1,38 @@
+name = "monster8-sports-bingo-api"
+main = "src/index.ts"
+compatibility_date = "2026-04-10"
+workers_dev = true
+
+[vars]
+WEB_APP_ORIGIN = "https://main.monster8-2xbet.pages.dev"
+SPORTS_API_BASE_URL = "https://api.sportsgameodds.com/v2"
+SUPER_NUMBER_MULTIPLIER = "2"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "monster8-db-staging"
+database_id = "3a9c7e60-7ffe-488c-a973-4879c0b8a0fd"
+
+[[kv_namespaces]]
+binding = "SPORTS_CACHE"
+id = "674ae75a20e14f82a8c437740e8a468a"
+
+[env.production]
+name = "monster8-sports-bingo-api-production"
+
+[env.production.vars]
+WEB_APP_ORIGIN = "https://monster8-2xbet.pages.dev"
+SPORTS_API_BASE_URL = "https://api.sportsgameodds.com/v2"
+SUPER_NUMBER_MULTIPLIER = "2"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "monster8-db-production"
+database_id = "edb9a6bb-8e68-449e-ada2-5bdae8ddfb12"
+
+[[env.production.kv_namespaces]]
+binding = "SPORTS_CACHE"
+id = "27a0b9134e9e4cdab3ee31915043e440"
+
+[triggers]
+crons = ["*/5 * * * *"]
