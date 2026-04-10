@@ -363,7 +363,7 @@ export default function App() {
     }
 
     const syncCountdown = () => {
-      const drawAt = new Date(current.currentRound.draw_time).getTime();
+      const drawAt = parseAppDateTime(current.currentRound.draw_time).getTime();
       const nextValue = Math.max(0, Math.ceil((drawAt - Date.now()) / 1000));
       setCountdownValue(nextValue);
     };
@@ -372,6 +372,18 @@ export default function App() {
     const timer = window.setInterval(syncCountdown, 1000);
     return () => window.clearInterval(timer);
   }, [current?.currentRound.draw_time]);
+
+  useEffect(() => {
+    if (!current?.currentRound.draw_time || countdownValue !== 0) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      void refreshDashboard(true);
+    }, 1200);
+
+    return () => window.clearTimeout(timer);
+  }, [countdownValue, current?.currentRound.draw_time]);
 
   useEffect(() => {
     try {
@@ -914,7 +926,7 @@ export default function App() {
     <div className="dashboard-shell">
       <header className="top-header">
         <div className="brand-block">
-          <img alt="Velocabet" className="brand-wordmark brand-wordmark-header" src="/brand-wordmark.svg" />
+          <img alt="Velocabet" className="brand-wordmark brand-wordmark-header" src="/brand-wordmark.svg?v=20260410-velocabet-2" />
         </div>
         <nav className="header-nav">
           {tabs.map((item) => (
@@ -937,7 +949,7 @@ export default function App() {
         <section className="hero-grid">
           <div className="hero-panel">
             <div className="hero-copy">
-              <img alt="Velocabet" className="brand-wordmark brand-wordmark-hero" src="/brand-wordmark.svg" />
+              <img alt="Velocabet" className="brand-wordmark brand-wordmark-hero" src="/brand-wordmark.svg?v=20260410-velocabet-2" />
               <p className="hero-description">
                 提供公開運動賽事瀏覽、Bingo Bingo 大廳、快速下注、錢包與歷史統計，整理成一個可操作的桌面版產品面板。
               </p>
@@ -2067,8 +2079,13 @@ function getSportsStartsAfter(): string {
   return startOfDay.toISOString();
 }
 
+function parseAppDateTime(value: string): Date {
+  const normalized = value.includes("T") ? value : value.replace(" ", "T");
+  return new Date(normalized);
+}
+
 function formatDateTime(value: string): string {
-  const parsed = new Date(value);
+  const parsed = parseAppDateTime(value);
   if (Number.isNaN(parsed.getTime())) {
     return value;
   }
