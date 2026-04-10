@@ -1,25 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" role="img" aria-labelledby="title desc">
-  <title id="title">2xbet wordmark</title>
-  <desc id="desc">Clean 2xbet brand wordmark with orange kicker and navy main logo.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" role="img" aria-labelledby="title desc">
+  <title id="title">Velobet wordmark</title>
+  <desc id="desc">Velobet brand wordmark with orange kicker, speed accents, and navy main logo.</desc>
   <defs>
-    <linearGradient id="wordBlue" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2b4d79" />
+    <linearGradient id="veloBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2f5d96" />
       <stop offset="100%" stop-color="#17385f" />
     </linearGradient>
-    <linearGradient id="wordOrange" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffac4a" />
-      <stop offset="100%" stop-color="#ff7f30" />
+    <linearGradient id="veloOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffb55b" />
+      <stop offset="100%" stop-color="#ff7c2c" />
     </linearGradient>
   </defs>
 
-  <text x="8" y="22" fill="url(#wordOrange)" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="900" letter-spacing="5">
-    2XBET
+  <text x="12" y="22" fill="url(#veloOrange)" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="900" letter-spacing="6">
+    VELOBET
   </text>
 
-  <text x="8" y="96" fill="url(#wordBlue)" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="88" font-style="italic" font-weight="900" letter-spacing="-4">
-    2xbet
+  <g transform="translate(8 32)">
+    <path d="M20 18h52" fill="none" stroke="url(#veloOrange)" stroke-linecap="round" stroke-width="7" />
+    <path d="M24 30h35" fill="none" stroke="url(#veloOrange)" stroke-linecap="round" stroke-width="5" />
+    <path d="M18 6h28" fill="none" stroke="#7ea8dc" stroke-linecap="round" stroke-width="4" opacity="0.95" />
+  </g>
+
+  <text x="10" y="100" fill="url(#veloBlue)" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="84" font-style="italic" font-weight="900" letter-spacing="-3">
+    Velobet
   </text>
 
-  <path d="M88 62c10-14 22-21 36-21s26 7 36 21" fill="none" stroke="url(#wordOrange)" stroke-linecap="round" stroke-width="8" />
-  <path d="M104 49c7 5 13 11 20 20M145 49c-7 5-13 11-20 20" fill="none" stroke="url(#wordOrange)" stroke-linecap="round" stroke-width="6" />
+  <path d="M118 78c12-12 26-18 41-18 12 0 24 4 36 12" fill="none" stroke="url(#veloOrange)" stroke-linecap="round" stroke-width="8" />
+  <path d="M120 84c10 4 18 10 26 18" fill="none" stroke="url(#veloOrange)" stroke-linecap="round" stroke-width="6" />
 </svg>
