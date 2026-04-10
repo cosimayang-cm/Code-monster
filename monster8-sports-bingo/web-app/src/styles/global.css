@@ -54,21 +54,23 @@ button {
 .brand-block {
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
 .brand-wordmark {
   display: block;
-  width: auto;
+  width: 100%;
   max-width: 100%;
+  height: auto;
 }
 
 .brand-wordmark-header {
-  height: 52px;
+  width: clamp(170px, 17vw, 252px);
 }
 
 .brand-wordmark-hero {
-  height: clamp(80px, 11vw, 126px);
-  margin-bottom: 6px;
+  width: min(100%, 620px);
+  margin-bottom: 14px;
 }
 
 .header-nav {

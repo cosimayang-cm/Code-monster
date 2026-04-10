@@ -4,6 +4,7 @@ import {
   formatDateTime,
   getCountdownSeconds,
   getCutoffTime,
+  parseDateTime,
   getRecentScheduledDrawTimes,
   getRoundId,
   getUpcomingDrawTime
@@ -78,6 +79,35 @@ export async function depositWallet(
         "INSERT INTO wallet_transactions (owner_type, owner_id, type, amount, reference_id, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
       )
       .bind(actor.type, actor.id, "deposit", amount, actor.id, "Manual trial deposit", timestamp)
+  ]);
+
+  return ensureWallet(db, actor);
+}
+
+export async function debitWallet(
+  db: D1Database,
+  actor: Actor,
+  amount: number,
+  type: string,
+  referenceId: string,
+  description: string
+): Promise<WalletRow> {
+  const wallet = await ensureWallet(db, actor);
+  if (wallet.balance < amount) {
+    throw new Error("INSUFFICIENT_BALANCE");
+  }
+
+  const timestamp = nowSql();
+
+  await db.batch([
+    db
+      .prepare("UPDATE user_wallets SET balance = balance - ?, updated_at = ? WHERE id = ?")
+      .bind(amount, timestamp, wallet.id),
+    db
+      .prepare(
+        "INSERT INTO wallet_transactions (owner_type, owner_id, type, amount, reference_id, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
+      )
+      .bind(actor.type, actor.id, type, -amount, referenceId, description, timestamp)
   ]);
 
   return ensureWallet(db, actor);
@@ -246,13 +276,7 @@ export async function syncDrawTimeline(
   await ensureUpcomingRound(db, now);
 }
 
-export async function getLatestDraws(
-  db: D1Database,
-  limit: number,
-  now: Date,
-  superNumberMultiplier: number
-): Promise<DrawRoundRow[]> {
-  await syncDrawTimeline(db, now, superNumberMultiplier, Math.max(limit, 120));
+async function readSettledDraws(db: D1Database, limit: number): Promise<DrawRoundRow[]> {
   const result = await db
     .prepare(
       "SELECT id, round_id, draw_time, numbers, super_number, status, created_at, updated_at FROM draw_rounds WHERE status IN ('drawn', 'settled') AND round_id NOT LIKE 'NaN%' ORDER BY draw_time DESC LIMIT ?"
@@ -261,6 +285,16 @@ export async function getLatestDraws(
     .all<DrawRoundRow>();
 
   return result.results ?? [];
+}
+
+export async function getLatestDraws(
+  db: D1Database,
+  limit: number,
+  now: Date,
+  superNumberMultiplier: number
+): Promise<DrawRoundRow[]> {
+  await syncDrawTimeline(db, now, superNumberMultiplier, Math.max(limit, 12));
+  return readSettledDraws(db, limit);
 }
 
 export async function getRoundById(db: D1Database, roundId: string): Promise<DrawRoundRow | null> {
@@ -273,15 +307,20 @@ export async function getRoundById(db: D1Database, roundId: string): Promise<Dra
   );
 }
 
-export async function getCurrentState(db: D1Database, now: Date): Promise<{
+export async function getCurrentState(
+  db: D1Database,
+  now: Date,
+  superNumberMultiplier: number
+): Promise<{
   activeRound: DrawRoundRow;
   latestDraw: DrawRoundRow | null;
   countdownSeconds: number;
   cutoffAt: string;
 }> {
+  await syncDrawTimeline(db, now, superNumberMultiplier, 12);
   const activeRound = await ensureUpcomingRound(db, now);
-  const latestDraws = await getLatestDraws(db, 1, now, 2);
-  const drawTime = new Date(activeRound.draw_time.replace(" ", "T"));
+  const latestDraws = await readSettledDraws(db, 1);
+  const drawTime = parseDateTime(activeRound.draw_time);
 
   return {
     activeRound,

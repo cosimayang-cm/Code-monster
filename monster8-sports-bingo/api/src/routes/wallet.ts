@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 
 import { resolveActor } from "../lib/auth";
-import { depositWallet, ensureWallet, listWalletTransactions } from "../lib/db";
+import { debitWallet, depositWallet, ensureWallet, listWalletTransactions } from "../lib/db";
 import { fail, ok } from "../lib/json";
 import type { AppVariables, EnvBindings } from "../types/env";
 
@@ -44,6 +44,60 @@ wallet.post("/deposit", async (c) => {
     actor,
     balance: current.balance,
     deposited: amount
+  });
+});
+
+wallet.post("/sports-bet", async (c) => {
+  const actor = resolveActor(c);
+  let body: {
+    amount?: number;
+    eventId?: string;
+    matchup?: string;
+    marketLabel?: string;
+    pickLabel?: string;
+  } = {};
+
+  try {
+    body = await c.req.json<{
+      amount?: number;
+      eventId?: string;
+      matchup?: string;
+      marketLabel?: string;
+      pickLabel?: string;
+    }>();
+  } catch {
+    return fail("INVALID_JSON", "Request body must be valid JSON");
+  }
+
+  const amount = Number(body.amount);
+  if (!Number.isInteger(amount) || amount <= 0) {
+    return fail("INVALID_AMOUNT", "Bet amount must be a positive integer");
+  }
+
+  const eventId = body.eventId?.trim();
+  const matchup = body.matchup?.trim() || "Sports event";
+  const marketLabel = body.marketLabel?.trim() || "熱門";
+  const pickLabel = body.pickLabel?.trim() || "選項";
+  const current = await ensureWallet(c.env.DB, actor);
+
+  if (current.balance < amount) {
+    return fail("INSUFFICIENT_BALANCE", "Insufficient balance");
+  }
+
+  const description = `${matchup} / ${marketLabel} / ${pickLabel}`.slice(0, 180);
+  const updated = await debitWallet(
+    c.env.DB,
+    actor,
+    amount,
+    "sports_bet",
+    eventId ? `sports:${eventId}` : `sports:${actor.id}`,
+    description
+  );
+
+  return ok({
+    actor,
+    balance: updated.balance,
+    debited: amount
   });
 });
 

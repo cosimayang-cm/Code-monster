@@ -14,7 +14,7 @@ import {
   placeBet
 } from "../lib/db";
 import { fail, ok } from "../lib/json";
-import { getCutoffTime } from "../lib/schedule";
+import { getCutoffTime, parseDateTime } from "../lib/schedule";
 import type { AppVariables, EnvBindings } from "../types/env";
 
 const bingo = new Hono<{ Bindings: EnvBindings; Variables: AppVariables }>();
@@ -85,7 +85,11 @@ function validateBetPayload(body: {
 }
 
 bingo.get("/current", async (c) => {
-  const state = await getCurrentState(c.env.DB, new Date());
+  const state = await getCurrentState(
+    c.env.DB,
+    new Date(),
+    Number.parseFloat(c.env.SUPER_NUMBER_MULTIPLIER ?? "2") || 2
+  );
   return ok({
     currentRound: state.activeRound,
     latestDraw: state.latestDraw,
@@ -211,7 +215,7 @@ bingo.post("/bet", async (c) => {
     return fail("ROUND_CLOSED", "This round is no longer accepting bets");
   }
 
-  const drawTime = new Date(currentRound.draw_time.replace(" ", "T"));
+  const drawTime = parseDateTime(currentRound.draw_time);
   const cutoff = getCutoffTime(drawTime);
   if (Date.now() >= cutoff.getTime()) {
     return fail("BETTING_CLOSED", "Betting is closed for this round");

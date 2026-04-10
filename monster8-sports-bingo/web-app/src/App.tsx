@@ -119,6 +119,12 @@ type SportsBetHistoryRecord = {
   eventStatus?: "live" | "upcoming" | "final";
 };
 
+type SportsBetSubmissionResult = {
+  actor: Actor;
+  balance: number;
+  debited: number;
+};
+
 type WalletBetRecord = {
   id: string;
   source: "sports" | "bingo";
@@ -686,11 +692,29 @@ export default function App() {
     if (!silent) {
       setLoading(true);
     }
-    const results = await Promise.allSettled([
+
+    const criticalResults = await Promise.allSettled([
       apiRequest<{ actor: Actor }>("/api/viewer"),
       apiRequest<WalletBalance>("/api/wallet/balance"),
+      apiRequest<CurrentState>("/api/bingo/current")
+    ]);
+
+    if (criticalResults[0].status === "fulfilled") {
+      setViewer(criticalResults[0].value.actor);
+    }
+    if (criticalResults[1].status === "fulfilled") {
+      setWallet(criticalResults[1].value);
+    }
+    if (criticalResults[2].status === "fulfilled") {
+      setCurrent(criticalResults[2].value);
+    }
+
+    if (!silent) {
+      setLoading(false);
+    }
+
+    const secondaryResults = await Promise.allSettled([
       apiRequest<{ transactions: WalletTransaction[] }>("/api/wallet/transactions?page=1&pageSize=10"),
-      apiRequest<CurrentState>("/api/bingo/current"),
       apiRequest<{ draws: DrawRound[] }>("/api/bingo/draws/latest?limit=6"),
       apiRequest<{ draws: DrawRound[] }>("/api/bingo/draws/history?page=1&pageSize=10"),
       apiRequest<{ bets: BetRecord[] }>("/api/bingo/bets/me?page=1&pageSize=10"),
@@ -699,38 +723,26 @@ export default function App() {
       apiRequest<DrawStats>("/api/bingo/stats/odd-even?limit=120")
     ]);
 
-    if (results[0].status === "fulfilled") {
-      setViewer(results[0].value.actor);
+    if (secondaryResults[0].status === "fulfilled") {
+      setTransactions(secondaryResults[0].value.transactions);
     }
-    if (results[1].status === "fulfilled") {
-      setWallet(results[1].value);
+    if (secondaryResults[1].status === "fulfilled") {
+      setDraws(secondaryResults[1].value.draws);
     }
-    if (results[2].status === "fulfilled") {
-      setTransactions(results[2].value.transactions);
+    if (secondaryResults[2].status === "fulfilled") {
+      setDrawHistory(secondaryResults[2].value.draws);
     }
-    if (results[3].status === "fulfilled") {
-      setCurrent(results[3].value);
+    if (secondaryResults[3].status === "fulfilled") {
+      setBets(secondaryResults[3].value.bets);
     }
-    if (results[4].status === "fulfilled") {
-      setDraws(results[4].value.draws);
+    if (secondaryResults[4].status === "fulfilled") {
+      setNumberStats(secondaryResults[4].value);
     }
-    if (results[5].status === "fulfilled") {
-      setDrawHistory(results[5].value.draws);
+    if (secondaryResults[5].status === "fulfilled") {
+      setBigSmallStats(secondaryResults[5].value);
     }
-    if (results[6].status === "fulfilled") {
-      setBets(results[6].value.bets);
-    }
-    if (results[7].status === "fulfilled") {
-      setNumberStats(results[7].value);
-    }
-    if (results[8].status === "fulfilled") {
-      setBigSmallStats(results[8].value);
-    }
-    if (results[9].status === "fulfilled") {
-      setOddEvenStats(results[9].value);
-    }
-    if (!silent) {
-      setLoading(false);
+    if (secondaryResults[6].status === "fulfilled") {
+      setOddEvenStats(secondaryResults[6].value);
     }
   }
 
@@ -922,11 +934,62 @@ export default function App() {
     }
   }
 
+  async function submitSportsBet(): Promise<void> {
+    if (!selectedSportsPick) {
+      setFeedback("請先挑選一個運動賽事盤口。");
+      return;
+    }
+
+    if (!selectedSportsDraft) {
+      setFeedback("請先選擇一個可投注的盤口。");
+      return;
+    }
+
+    setFeedback("");
+
+    try {
+      const result = await apiRequest<SportsBetSubmissionResult>("/api/wallet/sports-bet", {
+        method: "POST",
+        body: JSON.stringify({
+          amount: sportsStakeValue,
+          eventId: selectedSportsDraft.eventId,
+          matchup: selectedSportsDraft.matchup,
+          marketLabel: selectedSportsDraft.marketLabel,
+          pickLabel: selectedSportsDraft.pickLabel
+        })
+      });
+
+      const finalizedRecord: SportsBetHistoryRecord = {
+        ...selectedSportsDraft,
+        id: `${selectedSportsDraft.eventId}-${Date.now()}`,
+        ticketNo: createTicketNo("SP"),
+        amount: sportsStakeValue,
+        createdAt: new Date().toISOString()
+      };
+
+      setSportsBetHistory((currentHistory) => [finalizedRecord, ...currentHistory].slice(0, 30));
+      setSelectedWalletBetId(`sports-${finalizedRecord.id}`);
+      setWallet((currentWallet) =>
+        currentWallet
+          ? {
+              ...currentWallet,
+              balance: result.balance
+            }
+          : currentWallet
+      );
+      setFeedback(`已投注 ${sportsStakeValue.toLocaleString()} 元：${selectedSportsPick}`);
+      setTab("wallet");
+      await refreshDashboard(true);
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : "運動投注失敗");
+    }
+  }
+
   return (
     <div className="dashboard-shell">
       <header className="top-header">
         <div className="brand-block">
-          <img alt="Velocabet" className="brand-wordmark brand-wordmark-header" src="/brand-wordmark.svg?v=20260410-velocabet-2" />
+          <img alt="Velocabet" className="brand-wordmark brand-wordmark-header" src="/brand-wordmark.svg?v=20260410-velocabet-3" />
         </div>
         <nav className="header-nav">
           {tabs.map((item) => (
@@ -949,7 +1012,7 @@ export default function App() {
         <section className="hero-grid">
           <div className="hero-panel">
             <div className="hero-copy">
-              <img alt="Velocabet" className="brand-wordmark brand-wordmark-hero" src="/brand-wordmark.svg?v=20260410-velocabet-2" />
+              <img alt="Velocabet" className="brand-wordmark brand-wordmark-hero" src="/brand-wordmark.svg?v=20260410-velocabet-3" />
               <p className="hero-description">
                 提供公開運動賽事瀏覽、Bingo Bingo 大廳、快速下注、錢包與歷史統計，整理成一個可操作的桌面版產品面板。
               </p>
@@ -1298,24 +1361,7 @@ export default function App() {
                       <button
                         className="primary-button sports-submit-button"
                         onClick={() => {
-                          if (!selectedSportsPick) {
-                            setFeedback("請先挑選一個運動賽事盤口。");
-                            return;
-                          }
-                          setFeedback(`已選擇盤口：${selectedSportsPick}`);
-                          if (!selectedSportsDraft) {
-                            return;
-                          }
-                          const finalizedRecord: SportsBetHistoryRecord = {
-                            ...selectedSportsDraft,
-                            id: `${selectedSportsDraft.eventId}-${Date.now()}`,
-                            ticketNo: createTicketNo("SP"),
-                            createdAt: new Date().toISOString()
-                          };
-                          setSportsBetHistory((currentHistory) => [finalizedRecord, ...currentHistory].slice(0, 30));
-                          setSelectedWalletBetId(`sports-${finalizedRecord.id}`);
-                          setFeedback(`已加入最近投注：${selectedSportsPick}`);
-                          setTab("wallet");
+                          void submitSportsBet();
                         }}
                         disabled={!selectedSportsPick}
                         type="button"
