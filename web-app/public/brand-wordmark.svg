@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 180" preserveAspectRatio="xMinYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">Velocabet wordmark</title>
+  <desc id="desc">Velocabet logo with a blue-orange velocity mark and italic navy wordmark.</desc>
+  <defs>
+    <linearGradient id="veloBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#163a66" />
+    </linearGradient>
+    <linearGradient id="veloOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffba52" />
+      <stop offset="100%" stop-color="#ff7a21" />
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(22 36)">
+    <path d="M10 64 52 18h28L38 64Z" fill="url(#veloBlue)" />
+    <path d="M48 64 90 18h28L76 64Z" fill="url(#veloOrange)" />
+    <path d="M26 86h64" fill="none" stroke="#8bb8ff" stroke-linecap="round" stroke-width="7" />
+    <path d="M42 100h50" fill="none" stroke="#d8e8ff" stroke-linecap="round" stroke-width="5" />
+  </g>
+
+  <text x="150" y="114" fill="#17385f" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="90" font-style="italic" font-weight="900" letter-spacing="-4">
+    Velocabet
+  </text>
+
+  <text x="156" y="40" fill="url(#veloOrange)" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="900" letter-spacing="5">
+    SPORTS BETTING HUB
+  </text>
+
+  <path d="M360 58c13-10 27-15 40-15 16 0 31 6 46 18" fill="none" stroke="url(#veloOrange)" stroke-linecap="round" stroke-width="7" />
+</svg>

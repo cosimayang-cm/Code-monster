@@ -1,111 +1,71 @@
-# Deployment Guide
+# Monster8 Deployment Guide
 
-## Target Environments
+所有 Cloudflare 資源以 `wrangler` CLI 建立與管理。
 
-This project uses two public environments:
-
-- `staging`: smoke test / acceptance environment
-- `production`: public release environment
-
-Recommended public URLs:
-
-- Staging web: `https://main.monster7-member-dfm.pages.dev`
-- Staging API: `https://monster7-member-api.cosima-monster7.workers.dev`
-- Production web: `https://monster7-member-dfm.pages.dev`
-- Production API: `https://monster7-member-api-production.cosima-monster7.workers.dev`
-
-## Current Branch Strategy
-
-- `main` branch: staging
-- `staging` branch: production
-
-For Pages, set the production branch to `staging`. The `main` branch will then stay on the preview/staging URL.
-
-## Prerequisites
-
-1. Install Node.js 20
-2. Login to Cloudflare:
+## 1. 建立 D1
 
 ```bash
-cd api
-npx wrangler login
+cd /Users/a01-0225-0624/CodeMonster/monster8-sports-bingo/api
+
+npx wrangler d1 create monster8-db-staging
+npx wrangler d1 create monster8-db-production
 ```
 
-3. Prepare Worker secrets for both environments:
+把回傳的 `database_id` 填回 [wrangler.toml](/Users/a01-0225-0624/CodeMonster/monster8-sports-bingo/api/wrangler.toml)。
+
+## 2. 建立 KV
 
 ```bash
-cd api
-npx wrangler secret put JWT_SECRET
-npx wrangler secret put GOOGLE_CLIENT_ID
-npx wrangler secret put GOOGLE_CLIENT_SECRET
-npx wrangler secret put GITHUB_CLIENT_ID
-npx wrangler secret put GITHUB_CLIENT_SECRET
-
-npx wrangler secret put JWT_SECRET --env production
-npx wrangler secret put GOOGLE_CLIENT_ID --env production
-npx wrangler secret put GOOGLE_CLIENT_SECRET --env production
-npx wrangler secret put GITHUB_CLIENT_ID --env production
-npx wrangler secret put GITHUB_CLIENT_SECRET --env production
+npx wrangler kv namespace create SPORTS_CACHE
+npx wrangler kv namespace create SPORTS_CACHE --env production
 ```
 
-For exact Google / GitHub app registration values, see [OAUTH_SETUP.md](./OAUTH_SETUP.md).
+把回傳的 namespace id 填回 [wrangler.toml](/Users/a01-0225-0624/CodeMonster/monster8-sports-bingo/api/wrangler.toml)。
 
-## Worker Deployment
-
-Wrangler 4.45+ can auto-provision D1 / KV / R2 bindings from `wrangler.toml`, so the repo does not need committed resource IDs.
-
-Deploy staging:
+## 3. 設定 secrets
 
 ```bash
-cd api
-npm ci
-npm run deploy:staging
-npm run db:migrate:staging
-export ADMIN_SEED_PASSWORD='your-staging-admin-password'
-npm run seed:staging
+npx wrangler secret put SPORTSGAMEODDS_API_KEY
+npx wrangler secret put SPORTSGAMEODDS_API_KEY --env production
 ```
 
-Deploy production:
+## 4. 套 migration
 
 ```bash
-cd api
-npm ci
-npm run deploy:production
-npm run db:migrate:production
-export ADMIN_SEED_PASSWORD='your-production-admin-password'
-npm run seed:production
+npm run db:migrate:local
+npm run db:migrate:remote
+npx wrangler d1 migrations apply DB --env production --remote
 ```
 
-## Pages Deployment
+## 5. 部署 API
 
-Create a Pages project with:
+```bash
+npm run deploy
+npx wrangler deploy --env production
+```
 
-- Root directory: `monster7-member/web-app`
-- Build command: `npm ci && npm run build:pages`
-- Build output directory: `dist`
-- Production branch: `staging`
+## 6. 建置前端
 
-The branch-aware build script behaves like this:
+```bash
+cd /Users/a01-0225-0624/CodeMonster/monster8-sports-bingo/web-app
+cp .env.example .env.local
+npm run build
+```
 
-- `CF_PAGES_BRANCH=main` -> `npm run build:staging`
-- `CF_PAGES_BRANCH=staging` -> `npm run build:production`
+若要串 Cloudflare Pages，可將 `VITE_API_BASE_URL` 分別設成 staging / production Worker URL。
 
-## Frontend Environment Values
+## 7. 本地 smoke test
 
-Update these tracked non-secret files before the first real deployment:
+```bash
+cd /Users/a01-0225-0624/CodeMonster/monster8-sports-bingo/api
+cp .dev.vars.example .dev.vars
+npm run dev
+```
 
-- `web-app/.env.staging`
-- `web-app/.env.production`
+另開終端機：
 
-Set `VITE_API_BASE_URL` to the actual Worker URLs created in your account.
-
-## Verification Checklist
-
-After staging deploy:
-
-1. Open the staging web URL
-2. Register a test user
-3. Login and load `/profile`
-4. Verify forgot-password returns a staging reset link
-5. Login as seeded admin and verify `/admin/dashboard`
-6. Confirm staging data is isolated from production
+```bash
+curl http://localhost:8787/health
+curl http://localhost:8787/api/bingo/current
+curl -c /tmp/m8.cookies http://localhost:8787/api/wallet/balance
+```

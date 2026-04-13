@@ -1,51 +1,42 @@
-name = "monster7-member-api"
+name = "monster8-sports-bingo-api"
 main = "src/index.ts"
-compatibility_date = "2026-03-20"
+compatibility_date = "2026-04-10"
 workers_dev = true
 
 [vars]
-ENVIRONMENT = "staging"
-APP_URL = "https://main.monster7-member-dfm.pages.dev"
-API_URL = "https://monster7-member-api.cosima-monster7.workers.dev"
-R2_PUBLIC_URL = "https://pub-4d2519ac922146d59e00a76faa46513e.r2.dev"
-ALLOWED_ORIGINS = "https://main.monster7-member-dfm.pages.dev,http://localhost:5173,http://127.0.0.1:5173"
+WEB_APP_ORIGIN = "https://staging.velocabet.com,https://main.monster8-2xbet.pages.dev"
+SPORTS_API_BASE_URL = "https://api.sportsgameodds.com/v2"
+SUPER_NUMBER_MULTIPLIER = "2"
+APP_URL = "https://staging.velocabet.com"
+API_URL = "https://monster8-sports-bingo-api.cosima-monster7.workers.dev"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "monster7-db-staging"
-database_id = "92cf3771-9e87-477c-a55c-d6fe71ffc25f"
-migrations_dir = "./migrations"
+database_name = "monster8-db-staging"
+database_id = "3a9c7e60-7ffe-488c-a973-4879c0b8a0fd"
 
 [[kv_namespaces]]
-binding = "KV"
-id = "e52a179805b444c9b56ac37710c24786"
-
-[[r2_buckets]]
-binding = "BUCKET"
-bucket_name = "monster7-bucket-staging"
-preview_bucket_name = "monster7-bucket-staging"
+binding = "SPORTS_CACHE"
+id = "674ae75a20e14f82a8c437740e8a468a"
 
 [env.production]
-name = "monster7-member-api-production"
+name = "monster8-sports-bingo-api-production"
 
 [env.production.vars]
-ENVIRONMENT = "production"
-APP_URL = "https://monster7-member-dfm.pages.dev"
-API_URL = "https://monster7-member-api-production.cosima-monster7.workers.dev"
-R2_PUBLIC_URL = "https://pub-8b0b658cebf647dc9791fe51d7f406ba.r2.dev"
-ALLOWED_ORIGINS = "https://monster7-member-dfm.pages.dev"
+WEB_APP_ORIGIN = "https://velocabet.com,https://monster8-2xbet.pages.dev"
+SPORTS_API_BASE_URL = "https://api.sportsgameodds.com/v2"
+SUPER_NUMBER_MULTIPLIER = "2"
+APP_URL = "https://velocabet.com"
+API_URL = "https://monster8-sports-bingo-api-production.cosima-monster7.workers.dev"
 
 [[env.production.d1_databases]]
 binding = "DB"
-database_name = "monster7-db-production"
-database_id = "7b080645-cf2f-400a-84b6-c1394103f7e1"
-migrations_dir = "./migrations"
+database_name = "monster8-db-production"
+database_id = "edb9a6bb-8e68-449e-ada2-5bdae8ddfb12"
 
 [[env.production.kv_namespaces]]
-binding = "KV"
-id = "34bc3de8bb5f48269f24048594c5baa8"
+binding = "SPORTS_CACHE"
+id = "27a0b9134e9e4cdab3ee31915043e440"
 
-[[env.production.r2_buckets]]
-binding = "BUCKET"
-bucket_name = "monster7-bucket-production"
-preview_bucket_name = "monster7-bucket-production"
+[triggers]
+crons = ["*/5 * * * *"]

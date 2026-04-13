@@ -1,153 +1,103 @@
 import { Hono } from "hono";
-import { z } from "zod";
+import type { Context } from "hono";
 
-import { authenticateRequest } from "../middleware/auth";
+import { ApiError } from "../lib/errors";
+import { fail, ok } from "../lib/json";
+import { getClientIp, getUserAgent } from "../lib/request";
 import {
-  createPasswordReset,
   loginAfterOAuth,
   loginWithPassword,
   refreshAccessToken,
-  registerWithPassword,
-  resetPasswordWithToken,
-} from "../services/auth";
+  registerWithPassword
+} from "../lib/member-auth";
 import {
   createOAuthAuthorization,
+  getConfiguredProviders,
   getOAuthErrorRedirectUrl,
+  getOAuthProvider,
   getOAuthRedirectUrl,
-  handleOAuthCallback,
-} from "../services/oauth";
-import { jsonSuccess, parseJsonBody, ApiError, getClientIp, getUserAgent } from "../utils/http";
-import { getOAuthProvider } from "../utils/validation";
+  handleOAuthCallback
+} from "../lib/oauth";
+import type { AppVariables, EnvBindings } from "../types/env";
 
-import type { AppEnv } from "../types";
+const authRoutes = new Hono<{ Bindings: EnvBindings; Variables: AppVariables }>();
 
-const registerSchema = z.object({
-  email: z.string().trim().email(),
-  password: z.string(),
+authRoutes.get("/providers", (c) => ok({ providers: getConfiguredProviders(c.env) }));
+
+authRoutes.post("/register", async (c) => {
+  const body = await readJsonBody(c);
+  const email = typeof body.email === "string" ? body.email : "";
+  const password = typeof body.password === "string" ? body.password : "";
+  const session = await registerWithPassword(c.env, { email, password });
+  return ok(session, { status: 201 });
 });
 
-const loginSchema = registerSchema;
-
-const refreshSchema = z.object({
-  refreshToken: z.string().min(1),
-});
-
-const forgotPasswordSchema = z.object({
-  email: z.string().trim().email(),
-});
-
-const resetPasswordSchema = z.object({
-  token: z.string().min(1),
-  password: z.string(),
-});
-
-export const authRoutes = new Hono<AppEnv>();
-
-authRoutes.post("/register", async (context) => {
-  const payload = registerSchema.parse(await parseJsonBody(context));
-  const session = await registerWithPassword(context.env, payload);
-  return jsonSuccess(context, session, 201);
-});
-
-authRoutes.post("/login", async (context) => {
-  const payload = loginSchema.parse(await parseJsonBody(context));
-  const session = await loginWithPassword(context.env, {
-    ...payload,
-    ipAddress: getClientIp(context),
-    userAgent: getUserAgent(context),
+authRoutes.post("/login", async (c) => {
+  const body = await readJsonBody(c);
+  const email = typeof body.email === "string" ? body.email : "";
+  const password = typeof body.password === "string" ? body.password : "";
+  const session = await loginWithPassword(c.env, {
+    email,
+    password,
+    ipAddress: getClientIp(c.req.header("cf-connecting-ip")),
+    userAgent: getUserAgent(c.req.header("user-agent"))
   });
-  return jsonSuccess(context, session);
+  return ok(session);
 });
 
-authRoutes.post("/refresh", async (context) => {
-  const payload = refreshSchema.parse(await parseJsonBody(context));
-  const accessToken = await refreshAccessToken(context.env, payload.refreshToken);
-  return jsonSuccess(context, { accessToken });
-});
-
-authRoutes.post("/forgot-password", async (context) => {
-  const payload = forgotPasswordSchema.parse(await parseJsonBody(context));
-  const result = await createPasswordReset(context.env, payload.email);
-  return jsonSuccess(context, result);
-});
-
-authRoutes.post("/reset-password", async (context) => {
-  const payload = resetPasswordSchema.parse(await parseJsonBody(context));
-  await resetPasswordWithToken(context.env, payload);
-  return jsonSuccess(context, {
-    message: "Password has been reset successfully.",
-  });
-});
-
-authRoutes.get("/oauth/:provider", async (context) => {
-  const provider = getOAuthProvider(context.req.param("provider"));
-  const mode = context.req.query("mode") === "link" ? "link" : "login";
-  try {
-    const auth = mode === "link" ? await authenticateRequest(context) : null;
-    const { url } = await createOAuthAuthorization(context.env, {
-      provider,
-      mode,
-      userId: auth?.userId ?? null,
-    });
-
-    if (mode === "link") {
-      return jsonSuccess(context, { authorizationUrl: url });
-    }
-
-    return context.redirect(url, 302);
-  } catch (error) {
-    if (mode === "login") {
-      const code = error instanceof ApiError ? error.code : "OAUTH_FAILED";
-      return context.redirect(getOAuthErrorRedirectUrl(context.env, code), 302);
-    }
-
-    throw error;
+authRoutes.post("/refresh", async (c) => {
+  const body = await readJsonBody(c);
+  const refreshToken = typeof body.refreshToken === "string" ? body.refreshToken : "";
+  if (!refreshToken) {
+    return fail("INVALID_TOKEN", "Refresh token is required.");
   }
+  const accessToken = await refreshAccessToken(c.env, refreshToken);
+  return ok({ accessToken });
 });
 
-authRoutes.get("/oauth/:provider/callback", async (context) => {
-  const provider = getOAuthProvider(context.req.param("provider"));
-  const code = context.req.query("code");
-  const state = context.req.query("state");
+authRoutes.post("/logout", () => ok({ message: "Logged out" }));
+
+authRoutes.get("/oauth/:provider", async (c) => {
+  const provider = getOAuthProvider(c.req.param("provider"));
+  const { url } = await createOAuthAuthorization(c.env, provider);
+  return c.redirect(url, 302);
+});
+
+authRoutes.get("/oauth/:provider/callback", async (c) => {
+  const provider = getOAuthProvider(c.req.param("provider"));
+  const code = c.req.query("code");
+  const state = c.req.query("state");
 
   if (!code || !state) {
-    throw new ApiError(400, "INVALID_TOKEN", "OAuth callback is missing code or state.");
+    return c.redirect(getOAuthErrorRedirectUrl(c.env, "OAUTH_MISSING_CODE"), 302);
   }
 
   try {
-    const result = await handleOAuthCallback(context.env, {
-      provider,
-      code,
-      state,
-    });
-
-    if (result.mode === "link") {
-      return context.redirect(
-        getOAuthRedirectUrl(context.env, {
-          mode: "link",
-          provider: result.provider,
-        }),
-        302,
-      );
-    }
-
-    const tokens = await loginAfterOAuth(context.env, {
-      user: result.user,
+    const user = await handleOAuthCallback(c.env, { provider, code, state });
+    const tokens = await loginAfterOAuth(c.env, {
+      user,
       method: provider,
-      ipAddress: getClientIp(context),
-      userAgent: getUserAgent(context),
+      ipAddress: getClientIp(c.req.header("cf-connecting-ip")),
+      userAgent: getUserAgent(c.req.header("user-agent"))
     });
 
-    return context.redirect(
-      getOAuthRedirectUrl(context.env, {
-        mode: "login",
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-      }),
-      302,
-    );
+    return c.redirect(getOAuthRedirectUrl(c.env, tokens), 302);
   } catch (error) {
     console.error(error);
-    return context.redirect(getOAuthErrorRedirectUrl(context.env, "OAUTH_FAILED"), 302);
+    const code = error instanceof ApiError ? error.code : "OAUTH_FAILED";
+    return c.redirect(getOAuthErrorRedirectUrl(c.env, code), 302);
   }
 });
+
+async function readJsonBody(
+  c: Context<{ Bindings: EnvBindings; Variables: AppVariables }>
+): Promise<Record<string, unknown>> {
+  try {
+    const body = await c.req.json<Record<string, unknown>>();
+    return body ?? {};
+  } catch {
+    return {};
+  }
+}
+
+export default authRoutes;

@@ -1,46 +1,44 @@
-# Monster7 Member
+# Monster8 Sports Bingo
 
-Cloudflare 全端會員系統實作，採 mono repo 結構：
+Monster8 是延續 Monster #7 Cloudflare 架構模式的新專案，包含：
 
-- `web-app/`: React 18 + TypeScript + Tailwind CSS
-- `api/`: Cloudflare Workers + Hono + D1/R2/KV
+- `api/`: Cloudflare Worker + Hono + D1 + KV + Cron Trigger
+- `web-app/`: React + Vite 前端
 
-## Local Development
+## 目標
 
-### Web App
+- 公開 SportsGameOdds 資料頁
+- 訪客 / 會員皆可使用的 Bingo Bingo 試玩系統
+- 訪客以 guest session 辨識，登入後不合併舊試玩紀錄
+- 所有 Cloudflare 資源以 `wrangler` CLI 建立與部署
+
+## 快速開始
 
 ```bash
-cd web-app
+cd /Users/a01-0225-0624/CodeMonster/monster8-sports-bingo
 npm install
-npm run dev
 ```
 
 ### API
 
 ```bash
-cd api
-npm install
+cd /Users/a01-0225-0624/CodeMonster/monster8-sports-bingo/api
 cp .dev.vars.example .dev.vars
-# edit .dev.vars and set ADMIN_SEED_PASSWORD
-npm run db:migrate:local
-npm run seed:local
 npm run dev
 ```
 
-Local admin seed:
+### Web App
 
-- email: `admin@monster7.dev`
-- password: read from `api/.dev.vars` via `ADMIN_SEED_PASSWORD`
+```bash
+cd /Users/a01-0225-0624/CodeMonster/monster8-sports-bingo/web-app
+cp .env.example .env.local
+npm run dev
+```
 
-## Environment Files
+## 重點規則
 
-- `web-app/.env.staging`: staging 非機密前端設定
-- `web-app/.env.production`: production 非機密前端設定
-- `web-app/.env.local`: 本機覆寫，不進 git
-- `api/.dev.vars`: 本機 Worker secrets，不進 git
-- `api/.wrangler/`: 本機 D1 / KV / R2 狀態與暫存，不進 git
-
-## Deployment
-
-- `main` branch: staging deployment
-- `staging` branch: production deployment
+- Sports Data 對訪客公開
+- Bingo 訪客首次即有 10,000 試玩金
+- 模擬儲值只接受整數，且無上限
+- 開獎前 1 秒截止投注
+- 超級獎號 bonus 預設為獎金乘以 2 倍
