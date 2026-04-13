@@ -27,7 +27,7 @@ app.use(
       ]);
       return allowed.has(origin) ? origin : fallbackOrigin;
     },
-    allowHeaders: ["Content-Type", "x-user-id"],
+    allowHeaders: ["Content-Type", "x-user-id", "x-guest-id"],
     allowMethods: ["GET", "POST", "OPTIONS"],
     credentials: true
   })

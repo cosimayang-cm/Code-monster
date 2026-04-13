@@ -4,6 +4,7 @@ import type { Context } from "hono";
 import type { Actor, AppVariables, EnvBindings } from "../types/env";
 
 const GUEST_COOKIE = "m8_guest";
+const GUEST_HEADER = "x-guest-id";
 
 function createGuestId(): string {
   return `guest_${crypto.randomUUID()}`;
@@ -24,7 +25,8 @@ export function resolveActor(
     return actor;
   }
 
-  let guestId = getCookie(c, GUEST_COOKIE);
+  const guestHeader = c.req.header(GUEST_HEADER)?.trim();
+  let guestId = guestHeader?.startsWith("guest_") ? guestHeader : getCookie(c, GUEST_COOKIE);
   if (!guestId) {
     guestId = createGuestId();
     const requestUrl = new URL(c.req.url);
