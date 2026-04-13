@@ -8,7 +8,7 @@ import type { AppVariables, EnvBindings } from "../types/env";
 const wallet = new Hono<{ Bindings: EnvBindings; Variables: AppVariables }>();
 
 wallet.get("/balance", async (c) => {
-  const actor = resolveActor(c);
+  const actor = await resolveActor(c);
   const current = await ensureWallet(c.env.DB, actor);
   return ok({
     actor,
@@ -18,7 +18,7 @@ wallet.get("/balance", async (c) => {
 });
 
 wallet.get("/transactions", async (c) => {
-  const actor = resolveActor(c);
+  const actor = await resolveActor(c);
   const page = Number.parseInt(c.req.query("page") ?? "1", 10);
   const pageSize = Number.parseInt(c.req.query("pageSize") ?? "20", 10);
   const transactions = await listWalletTransactions(c.env.DB, actor, Math.max(1, page), Math.min(100, Math.max(1, pageSize)));
@@ -26,7 +26,7 @@ wallet.get("/transactions", async (c) => {
 });
 
 wallet.post("/deposit", async (c) => {
-  const actor = resolveActor(c);
+  const actor = await resolveActor(c);
   let body: { amount?: number } = {};
   try {
     body = await c.req.json<{ amount?: number }>();
@@ -48,7 +48,7 @@ wallet.post("/deposit", async (c) => {
 });
 
 wallet.post("/sports-bet", async (c) => {
-  const actor = resolveActor(c);
+  const actor = await resolveActor(c);
   let body: {
     amount?: number;
     eventId?: string;

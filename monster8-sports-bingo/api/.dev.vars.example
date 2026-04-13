@@ -1,1 +1,6 @@
 SPORTSGAMEODDS_API_KEY=replace-me
+JWT_SECRET=replace-with-32-char-secret
+GOOGLE_CLIENT_ID=replace-me
+GOOGLE_CLIENT_SECRET=replace-me
+GITHUB_CLIENT_ID=replace-me
+GITHUB_CLIENT_SECRET=replace-me

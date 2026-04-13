@@ -128,7 +128,7 @@ bingo.get("/draws/:roundId/results", async (c) => {
     return fail("ROUND_NOT_FOUND", "Round was not found", 404);
   }
 
-  const actor = resolveActor(c);
+  const actor = await resolveActor(c);
   const bets = await listActorBetsForRound(c.env.DB, actor, round.round_id);
   return ok({ round, actor, bets });
 });
@@ -161,7 +161,7 @@ bingo.get("/stats/odd-even", async (c) => {
 });
 
 bingo.get("/bets/me", async (c) => {
-  const actor = resolveActor(c);
+  const actor = await resolveActor(c);
   const page = Math.max(1, Number.parseInt(c.req.query("page") ?? "1", 10));
   const pageSize = Math.min(100, Math.max(1, Number.parseInt(c.req.query("pageSize") ?? "20", 10)));
   const bets = await listActorBets(c.env.DB, actor, page, pageSize);
@@ -169,13 +169,13 @@ bingo.get("/bets/me", async (c) => {
 });
 
 bingo.get("/bets/me/:roundId", async (c) => {
-  const actor = resolveActor(c);
+  const actor = await resolveActor(c);
   const bets = await listActorBetsForRound(c.env.DB, actor, c.req.param("roundId"));
   return ok({ actor, bets });
 });
 
 bingo.post("/bet", async (c) => {
-  const actor = resolveActor(c);
+  const actor = await resolveActor(c);
   let body: {
     roundId?: string;
     betType?: string;

@@ -7,6 +7,8 @@ workers_dev = true
 WEB_APP_ORIGIN = "https://staging.velocabet.com,https://main.monster8-2xbet.pages.dev"
 SPORTS_API_BASE_URL = "https://api.sportsgameodds.com/v2"
 SUPER_NUMBER_MULTIPLIER = "2"
+APP_URL = "https://staging.velocabet.com"
+API_URL = "https://monster8-sports-bingo-api.cosima-monster7.workers.dev"
 
 [[d1_databases]]
 binding = "DB"
@@ -24,6 +26,8 @@ name = "monster8-sports-bingo-api-production"
 WEB_APP_ORIGIN = "https://velocabet.com,https://monster8-2xbet.pages.dev"
 SPORTS_API_BASE_URL = "https://api.sportsgameodds.com/v2"
 SUPER_NUMBER_MULTIPLIER = "2"
+APP_URL = "https://velocabet.com"
+API_URL = "https://monster8-sports-bingo-api-production.cosima-monster7.workers.dev"
 
 [[env.production.d1_databases]]
 binding = "DB"

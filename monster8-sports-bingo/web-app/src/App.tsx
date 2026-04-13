@@ -1,8 +1,21 @@
 import { FormEvent, useEffect, useState } from "react";
 
-import { API_BASE_URL, apiRequest } from "./lib/api";
-
-type Actor = { type: "guest" | "user"; id: string };
+import {
+  API_BASE_URL,
+  apiRequest,
+  clearAuthSession,
+  completeOAuthLogin,
+  consumeOAuthCallback,
+  getCurrentUser,
+  getOAuthLoginUrl,
+  getOAuthProviders,
+  hasStoredAuthTokens,
+  login,
+  register,
+  type Actor,
+  type AuthProvider,
+  type AuthUser
+} from "./lib/api";
 
 type WalletBalance = {
   actor: Actor;
@@ -309,6 +322,17 @@ const numberGrid = Array.from({ length: 80 }, (_, index) => index + 1);
 export default function App() {
   const [tab, setTab] = useState<(typeof tabs)[number]["id"]>("overview");
   const [viewer, setViewer] = useState<Actor | null>(null);
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+  const [authProviders, setAuthProviders] = useState<Record<AuthProvider, boolean>>({
+    google: false,
+    github: false
+  });
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authSubmitting, setAuthSubmitting] = useState(false);
+  const [authError, setAuthError] = useState("");
   const [wallet, setWallet] = useState<WalletBalance | null>(null);
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
   const [current, setCurrent] = useState<CurrentState | null>(null);
@@ -350,8 +374,7 @@ export default function App() {
   const [selectedWalletBetHydrated, setSelectedWalletBetHydrated] = useState(false);
 
   useEffect(() => {
-    void refreshDashboard();
-    void refreshSportsDirectory();
+    void bootstrapApp();
   }, []);
 
   useEffect(() => {
@@ -581,6 +604,16 @@ export default function App() {
       ? selectedEventMarkets.filter((market) => market.id === "popular" || market.id === "moneyline")
       : selectedEventMarkets.filter((market) => market.id === selectedSportsMarket);
   const selectedDepositConfig = depositMethodConfigs.find((method) => method.id === selectedDepositMethod) ?? depositMethodConfigs[0];
+  const viewerLabel = authUser
+    ? authUser.name
+      ? `${authUser.name} / ${authUser.email}`
+      : authUser.email
+    : viewer?.type === "guest"
+      ? "訪客模式"
+      : viewer
+        ? viewer.id
+        : "載入中";
+  const walletOwnerLabel = authUser?.name ?? authUser?.email ?? (viewer?.type === "guest" ? "訪客模式" : "--");
   const shortcutCards = [
     {
       id: "sports",
@@ -701,6 +734,11 @@ export default function App() {
 
     if (criticalResults[0].status === "fulfilled") {
       setViewer(criticalResults[0].value.actor);
+      if (criticalResults[0].value.actor.type === "guest" && !hasStoredAuthTokens()) {
+        setAuthUser(null);
+      }
+    } else if (!hasStoredAuthTokens()) {
+      setAuthUser(null);
     }
     if (criticalResults[1].status === "fulfilled") {
       setWallet(criticalResults[1].value);
@@ -792,7 +830,83 @@ export default function App() {
 
   async function refreshAll(): Promise<void> {
     setFeedback("");
-    await Promise.all([refreshDashboard(), refreshSportsDirectory()]);
+    await Promise.all([syncCurrentUser(), refreshDashboard(), refreshSportsDirectory()]);
+  }
+
+  async function bootstrapApp(): Promise<void> {
+    const callback = consumeOAuthCallback();
+
+    if (callback.tokens) {
+      completeOAuthLogin(callback.tokens);
+      setFeedback("OAuth 登入成功，已切回會員模式。");
+    } else if (callback.error) {
+      setFeedback(formatAuthErrorMessage(callback.error));
+    }
+
+    try {
+      setAuthProviders(await getOAuthProviders());
+    } catch {
+      setAuthProviders({ google: false, github: false });
+    }
+
+    await Promise.all([syncCurrentUser(), refreshDashboard(), refreshSportsDirectory()]);
+  }
+
+  async function syncCurrentUser(): Promise<void> {
+    if (!hasStoredAuthTokens()) {
+      setAuthUser(null);
+      return;
+    }
+
+    try {
+      const currentUser = await getCurrentUser();
+      setAuthUser(currentUser);
+    } catch {
+      clearAuthSession();
+      setAuthUser(null);
+    }
+  }
+
+  function openAuthModal(mode: "login" | "register"): void {
+    setAuthMode(mode);
+    setAuthError("");
+    setAuthModalOpen(true);
+  }
+
+  async function submitAuthForm(event: FormEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault();
+    setAuthSubmitting(true);
+    setAuthError("");
+
+    try {
+      const user =
+        authMode === "login"
+          ? await login({ email: authEmail, password: authPassword })
+          : await register({ email: authEmail, password: authPassword });
+
+      setAuthUser(user);
+      setAuthModalOpen(false);
+      setAuthPassword("");
+      setFeedback(authMode === "login" ? "登入成功，已切回會員模式。" : "註冊成功，已自動登入。");
+      await refreshDashboard();
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : "登入失敗，請稍後再試。");
+    } finally {
+      setAuthSubmitting(false);
+    }
+  }
+
+  function startOAuthLogin(provider: AuthProvider): void {
+    window.location.href = getOAuthLoginUrl(provider);
+  }
+
+  async function logoutCurrentUser(): Promise<void> {
+    clearAuthSession();
+    setAuthUser(null);
+    setAuthModalOpen(false);
+    setAuthError("");
+    setFeedback("已登出，並切回訪客模式。");
+    await refreshDashboard();
   }
 
   function applyQuickFilter(filter: QuickSportFilter): void {
@@ -1003,9 +1117,31 @@ export default function App() {
             </button>
           ))}
         </nav>
-        <button className="header-refresh" onClick={() => void refreshAll()} type="button">
-          重新整理
-        </button>
+        <div className="header-actions">
+          {authUser ? (
+            <>
+              <div className="header-user-chip">
+                <strong>{authUser.name ?? authUser.email}</strong>
+                <span>{authUser.email}</span>
+              </div>
+              <button className="secondary-button" onClick={() => void logoutCurrentUser()} type="button">
+                登出
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="secondary-button" onClick={() => openAuthModal("login")} type="button">
+                登入
+              </button>
+              <button className="primary-button header-register-button" onClick={() => openAuthModal("register")} type="button">
+                註冊
+              </button>
+            </>
+          )}
+          <button className="header-refresh" onClick={() => void refreshAll()} type="button">
+            重新整理
+          </button>
+        </div>
       </header>
 
       <main className="dashboard-body">
@@ -1047,7 +1183,7 @@ export default function App() {
 
           <aside className="status-panel">
             <InfoCell label="API" value={API_BASE_URL} />
-            <InfoCell label="身份" value={viewer ? `${viewer.type} / ${viewer.id}` : "載入中"} />
+            <InfoCell label="身份" value={viewerLabel} />
             <InfoCell label="餘額" value={wallet ? `${wallet.balance.toLocaleString()} 元` : "載入中"} emphasis />
             <InfoCell label="下一期" value={current?.currentRound.round_id ?? "--"} />
             <InfoCell label="截止時間" value={current ? formatDateTime(current.cutoffAt) : "--"} />
@@ -1552,7 +1688,7 @@ export default function App() {
               <div className="section-header">
                 <div>
                   <h2>錢包</h2>
-                  <span>{viewer ? `${viewer.type} / ${viewer.id}` : "--"}</span>
+                  <span>{walletOwnerLabel}</span>
                 </div>
               </div>
               <div className="balance-card">
@@ -1737,6 +1873,109 @@ export default function App() {
           </>
         ) : null}
       </main>
+
+      {authModalOpen ? (
+        <div
+          className="auth-modal-backdrop"
+          onClick={() => {
+            if (!authSubmitting) {
+              setAuthModalOpen(false);
+            }
+          }}
+        >
+          <section
+            className="auth-modal"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="auth-modal-header">
+              <div>
+                <h2>{authMode === "login" ? "會員登入" : "建立帳號"}</h2>
+                <span>{authMode === "login" ? "延續 Monster7 的登入、登出與 OAuth 流程。" : "註冊後會直接建立 Monster8 會員身份。"}</span>
+              </div>
+              <button
+                className="auth-close-button"
+                onClick={() => setAuthModalOpen(false)}
+                type="button"
+              >
+                關閉
+              </button>
+            </div>
+
+            <div className="auth-mode-tabs">
+              <button
+                className={authMode === "login" ? "auth-mode-tab active" : "auth-mode-tab"}
+                onClick={() => setAuthMode("login")}
+                type="button"
+              >
+                登入
+              </button>
+              <button
+                className={authMode === "register" ? "auth-mode-tab active" : "auth-mode-tab"}
+                onClick={() => setAuthMode("register")}
+                type="button"
+              >
+                註冊
+              </button>
+            </div>
+
+            <form className="auth-form" onSubmit={(event) => void submitAuthForm(event)}>
+              <label className="field-block full-width">
+                <span>Email</span>
+                <input
+                  autoComplete="email"
+                  onChange={(event) => setAuthEmail(event.target.value)}
+                  placeholder="you@example.com"
+                  type="email"
+                  value={authEmail}
+                />
+              </label>
+              <label className="field-block full-width">
+                <span>Password</span>
+                <input
+                  autoComplete={authMode === "login" ? "current-password" : "new-password"}
+                  onChange={(event) => setAuthPassword(event.target.value)}
+                  placeholder="至少 8 碼，需含大小寫英文與數字"
+                  type="password"
+                  value={authPassword}
+                />
+              </label>
+
+              {authError ? <div className="auth-error">{authError}</div> : null}
+
+              <button className="primary-button auth-submit-button" disabled={authSubmitting} type="submit">
+                {authSubmitting ? "處理中..." : authMode === "login" ? "登入" : "註冊並登入"}
+              </button>
+            </form>
+
+            <div className="oauth-divider">
+              <span>或使用社群帳號</span>
+            </div>
+
+            <div className="oauth-button-row">
+              <button
+                className="oauth-button"
+                disabled={!authProviders.google}
+                onClick={() => startOAuthLogin("google")}
+                type="button"
+              >
+                使用 Google 登入
+              </button>
+              <button
+                className="oauth-button"
+                disabled={!authProviders.github}
+                onClick={() => startOAuthLogin("github")}
+                type="button"
+              >
+                使用 GitHub 登入
+              </button>
+            </div>
+
+            {!authProviders.google && !authProviders.github ? (
+              <p className="oauth-hint">目前尚未設定社群登入憑證，可先使用帳密登入。</p>
+            ) : null}
+          </section>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -2143,6 +2382,19 @@ function formatDateTime(value: string): string {
     minute: "2-digit",
     hour12: false
   }).format(parsed);
+}
+
+function formatAuthErrorMessage(code: string): string {
+  const mapping: Record<string, string> = {
+    OAUTH_FAILED: "OAuth 登入失敗，請稍後再試一次。",
+    OAUTH_NOT_CONFIGURED: "目前尚未設定社群登入，請先使用帳密登入。",
+    OAUTH_MISSING_CODE: "OAuth 回傳資料不完整，請重新發起登入。",
+    OAUTH_EMAIL_REQUIRED: "社群登入未提供可用信箱，請改用其他方式登入。",
+    ACCOUNT_DISABLED: "此帳號已停用，請聯絡管理員。",
+    INVALID_CREDENTIALS: "帳號或密碼錯誤，請重新確認。"
+  };
+
+  return mapping[code] ?? `登入失敗：${code}`;
 }
 
 function formatEuropeanOdds(value: number | undefined, fallback = 1.9): string {

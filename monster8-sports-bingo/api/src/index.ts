@@ -1,11 +1,14 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
+import { ApiError } from "./lib/errors";
 import { resolveActor } from "./lib/auth";
 import { settleMostRecentRound } from "./lib/db";
 import { fail, ok } from "./lib/json";
+import authRoutes from "./routes/auth";
 import bingoRoutes from "./routes/bingo";
 import sportsRoutes from "./routes/sports";
+import usersRoutes from "./routes/users";
 import walletRoutes from "./routes/wallet";
 import type { AppVariables, EnvBindings } from "./types/env";
 
@@ -27,13 +30,20 @@ app.use(
       ]);
       return allowed.has(origin) ? origin : fallbackOrigin;
     },
-    allowHeaders: ["Content-Type", "x-user-id", "x-guest-id"],
+    allowHeaders: ["Authorization", "Content-Type", "x-guest-id"],
     allowMethods: ["GET", "POST", "OPTIONS"],
     credentials: true
   })
 );
 
-app.onError((error) => fail("INTERNAL_ERROR", error.message, 500));
+app.onError((error) => {
+  if (error instanceof ApiError) {
+    return fail(error.code, error.message, error.status, error.details);
+  }
+
+  console.error(error);
+  return fail("INTERNAL_ERROR", error.message, 500);
+});
 
 app.get("/health", (c) =>
   ok({
@@ -43,10 +53,12 @@ app.get("/health", (c) =>
 );
 
 app.get("/api/viewer", async (c) => {
-  const actor = resolveActor(c);
+  const actor = await resolveActor(c);
   return ok({ actor });
 });
 
+app.route("/api/auth", authRoutes);
+app.route("/api/users", usersRoutes);
 app.route("/api", sportsRoutes);
 app.route("/api/bingo", bingoRoutes);
 app.route("/api/wallet", walletRoutes);
